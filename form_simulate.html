@@ -1,0 +1,174 @@
+<form id="form_simulate" name="form_simulate" action="#">
+  <!-- simulate mode panel -->
+  <div id="mode_panel">
+    <a href="#" class="close_button" id="close_simulateForm"></a>
+    <hr style="visibility:hidden">
+    <span class="text">Simulation mode</span>
+    <select id="mode_select" id="radioSimulateMode" onchange="togglePanels(this.options[this.options.selectedIndex].value)">
+      <option value="none">Normal plot</option>
+      <option value="mixing">Mixing mode</option>
+      <optgroup label="Crystallization">
+        <option value="BatchCrystal">Batch crystallization</option>
+        <option value="RayleighCrystal">Rayleigh fractionation</option>
+      </optgroup>
+      <optgroup label="Remelting">
+        <option value="RayleighRemelting">Rayleigh remelting</option>
+      </optgroup>
+      <optgroup label="Melting">
+        <option value="BatchMelt">Batch melting</option>
+        <option value="RayleighMelt">Rayleigh fractional melting</option>
+        <option value="AggregateMelt">Aggregate fractional melting</option>
+      </optgroup>
+      <optgroup label="Considering Major">
+        <option value="FracRemeltWithMajor">Fractionation / Remelting</option>
+      </optgroup>
+    </select>
+    <hr>
+
+  </div>
+
+  <!-- select file panel -->
+  <div id="partitioningFile_panel" class="simulate_panel" style="display:none">
+
+    <label class="file" for="selectMeltingFile">
+      Partitioning coefficient file (.CSV)
+      <input type="file" id="selectMeltingFile" accept=".csv" style="display:none">
+    </label>
+    <hr> Selected file:
+    <span id="partitioningFile"></span>
+    <hr>
+  </div>
+
+  <!-- phase table panel -->
+  <div id="phase_panel" class="simulate_panel" style="display:none">
+    <div id="simulatePhase">
+      <span class="text">Initial abundance ratio & reaction stoichiometory of solid phases</span>
+      <table>
+        <tbody>
+          <tr class="header">
+            <th>Phase</th>
+            <th>Initial abundance</th>
+            <th>Reaction</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr>
+  </div>
+
+
+  <!-- set fractions panel -->
+  <div id="fraction_panel" class="simulate_panel" style="display:none">
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" type="text" id="fraction" size="70" autocomplete="on" list="fractionList" required>
+      <label class="mdl-textfield__label" for="#fraction">Fraction</label>
+
+      <datalist id="fractionList">
+        <option value="0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1"></option>
+        <option value="0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5"></option>
+        <option value="0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.1 0.15 0.2 0.25 0.3"></option>
+        <option value="0.005 0.01 0.015 0.02 0.025 0.03 0.035 0.04 0.045 0.05 0.055 0.06 0.065 0.07 0.075 0.08 0.085 0.09 0.095 0.1">
+      </datalist>
+    </div>
+  </div>
+
+  <!-- Reaisual panel -->
+  <div id="residual_panel" class="simulate_panel" style="display:none">
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="display:none">
+      <input class="mdl-textfield__input" id="residual" type="text">
+      <label class="mdl-textfield__label" for="#residual">Residual melt ratio</label>
+    </div>
+    <hr>
+
+  </div>
+
+
+  <!-- Major panel -->
+  <div id="major_panel" class="simulate_panel" style="display:none">
+    <style>
+      #major_panel .mdl-textfield {
+        width: 10vw;
+      }
+
+      #major_panel .mdl-textfield__input {
+        width: 10vw;
+      }
+    </style>
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" id="targetMgN" type="text" value="91.5">
+      <label class="mdl-textfield__label" for="#targetMgN">Target Mg#</label>
+    </div>
+
+    <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="equalDivision_switch">
+      <input type="checkbox" id="equalDivision_switch" class="mdl-switch__input">
+      <span class="mdl-switch__label">Equal step size of F</span>
+    </label>
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" id="equalDivision_size" type="number" value="10">
+      <label class="mdl-textfield__label" for="#equalDivision_size">Step size</label>
+    </div>
+
+    <hr>
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" id="targetPhase" type="text" value="orthopyroxene">
+      <label class="mdl-textfield__label" for="#targetPhase">Target phase</label>
+    </div>
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" id="water" type="text" value="0">
+      <label class="mdl-textfield__label" for="#water">water content (wt%)</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" id="pressure" type="text" value="10000">
+      <label class="mdl-textfield__label" for="#pressure">Pressure (bar)</label>
+    </div>
+  </div>
+
+  <script>
+    /* function for toggle console panels */
+    function togglePanels(mode) {
+
+      var simulateMode = mode;
+      var panelClass = "simulate_panel";
+      /* hide panels */
+      d3.selectAll("." + panelClass).transition().attr("style", "display:none");
+
+      /* check simulate mode */
+      if (simulateMode == "BatchMelt") {
+        var ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "RayleighMelt") {
+        ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "AggregateMelt") {
+        ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "BatchCrystal") {
+        ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "RayleighCrystal") {
+        ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "RayleighRemelting") {
+        ids = ["partitioningFile_panel", "fraction_panel", "phase_panel"];
+      } else if (simulateMode == "FracRemeltWithMajor") {
+        ids = ["partitioningFile_panel", "major_panel", "phase_panel"];
+      } else if (simulateMode == "mixing") {
+        ids = ["fraction_panel"];
+      } else if (simulateMode == "none") {
+        ids = ["none"];
+      } else {
+        alert("Bad melting mode parameter");
+        return;
+      };
+
+
+      /* show panels */
+      for (var key in ids) {
+        var id = ids[key];
+
+        d3.select("#" + id).transition().attr("style", "display:");
+      }
+      componentHandler.upgradeDom();
+    }
+  </script>
+
+</form>

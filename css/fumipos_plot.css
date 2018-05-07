@@ -1,0 +1,904 @@
+/* 共通コンポーネント */
+	
+
+	/* スクロールバー */
+
+	
+::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color: rgba(0,0,0,0.5);
+}
+ 
+::-webkit-scrollbar-thumb {
+		background-color: #2196f3;
+}
+
+canvas{
+	background-color: #fff;
+}
+
+body{
+	font-size: 1.2rem;
+	
+}
+
+hr{
+	border-top: 1.5px dashed #444;
+}
+
+form{
+	color: #4e4ebb;
+	font: 1.5rem "Arial";
+}
+
+/* overload material- */
+.mdl-textfield__input{
+	font-size: 1.5rem;
+}
+
+.mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+.mdl-textfield--floating-label.is-invalid .mdl-textfield__label{
+	font-size: 1rem;
+}
+
+.mdl-textfield.is-disabled.is-disabled .mdl-textfield__label,
+.mdl-textfield__label, 
+fieldset[disabled] .mdl-textfield .mdl-textfield__label{
+	color: #3f51b5;
+}
+
+	
+	/* main wrapper */
+
+
+#wrapper {
+  position: relative;
+  width: 100%;
+  background: #fff;
+  -webkit-transition: all .5s ease;
+  transition: all .3s ease;
+  z-index: 2;
+}
+
+	
+	/* ファイル選択ボタン */
+	
+	
+label.button{
+	color: #fff;
+	background-color: #2196f3;
+	cursor: pointer;
+	min-width: 10vw;
+	font-size: 1.5rem;
+	margin: 5px 5px;
+	padding:10px;
+	border: none;
+	border-radius: 5px;
+}
+
+label.button:hover,
+label.button:focus{
+	background-color: #FF4081;
+}
+
+label.button:active{
+	border: 0.5px solid #FF4081;
+	background-color: #FF4081;
+}
+
+
+label.file{
+	background-color: transparent;
+	border: 0.5px solid #444;
+	color: #444;
+	cursor: pointer;
+	min-width: 10vw;
+	font-size: 1.5rem;
+	margin: 5px 5px;
+	padding:10px;
+}
+
+label.file:hover,
+label.file:focus{
+	transition: all .3s;
+	background-color: #2196f3;
+	color: #fff;
+	border: 0.5px solid #2196f3;
+}
+
+label.file:active{
+	border: 0.5px solid #FF4081;
+	background-color: #FF4081;
+}
+
+
+input.button{
+	background-color: transparent;
+	border: 0.5px solid #444;
+	color: #444;
+	border-radius: 5px;
+}
+
+input.button:hover,
+input.button:focus{
+	transition: all .3s;
+	background-color: #2196f3;
+	color: #fff;
+	border: 0.5px solid #2196f3;
+}
+
+input.button:active{
+	border: 0.5px solid #FF4081;
+	background-color: #FF4081;
+}
+
+input[type="text"]{
+	font-size: 1.5rem;
+}
+
+input[type="color"]{
+	background-color: #fff;
+	border: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	/*height: 100%;*/
+}
+
+select{
+	font-size: 1.2rem;
+	background: none;
+	border: 1px solid #2196f3;
+}
+
+	/* Input */
+.mdl-textfield__input{
+	color: #000;
+}
+	
+	/* Tooltip */
+	
+
+#tooltip{
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  padding: 0 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+/* サイドメニュー */
+
+
+
+.overlay {
+  content: '';
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.1);
+  -webkit-transition: all .3s ease;
+  transition: all .3s ease;
+  z-index: 3;
+}
+
+.overlay::after {
+  content: "Click to close";
+  visibility: hidden;
+  position: fixed;
+  top: 40%;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 50px;
+  color: rgba(255,255,255,0.1);
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  -webkit-transition: all .3s ease;
+  transition: all .3s ease;
+}
+.side-open .overlay ,
+.top-open .overlay{
+  visibility: visible;
+  cursor: pointer;
+  background: rgba(0,0,0,0.3);
+}
+.side-open .overlay::after,
+.top-open .overlay::after {
+  visibility: visible;
+  color: rgba(255,255,255,.8);
+}
+
+	/* サイドメニュー main */
+.side-menu {
+	overflow: auto;
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100%;
+  padding-top: 60px;
+  background: #2A408E;
+  z-index: 4;
+  transition: all .5s ease;
+}
+
+	.side-menu ul{
+	
+	}
+	
+	.side-menu li{
+	
+	}
+	
+	.side-menu a,
+	.side-menu a:focus,
+	.side-menu a:visited{
+		text-decoration: none;
+		color: #fff;
+		font-size: 1.5rem;
+	}
+
+	/* 開閉用ボタン */
+.side-menu-btn {
+  position: fixed;
+  top: 2px;
+  right: 0px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  z-index: 9999;
+}
+
+	/* ボタンのスタイル(丸の中にハンバーガー/ばつ印) */
+#panel-btn{
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  /*margin: 20px 0 10px;*/
+  border-radius: 50%;
+}
+#panel-btn:hover{
+
+}
+#panel-btn-icon{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1vw;
+  height: 2px;
+  margin: -1px 0 0 -7px;
+  background: #cfdae4;
+  transition: .2s;
+}
+#panel-btn-icon:before, #panel-btn-icon:after{
+  display: block;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1vw;
+  height: 2px;
+  background: #cfdae4;
+  transition: .3s;
+}
+#panel-btn-icon:before{
+  margin-top: -6px;
+}
+#panel-btn-icon:after{
+  margin-top: 4px;
+}
+#panel-btn .close{
+  background: transparent;
+}
+#panel-btn .close:before, #panel-btn .close:after{
+  margin-top: 0;
+}
+#panel-btn .close:before{
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+#panel-btn .close:after{
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+
+	/* サイドメニューオープン */
+.side-open .wrapper,
+.side-open .overlay {
+  -webkit-transform: translate3d(-150px, 0, 0);
+  transform: translate3d(-150px, 0, 0);
+}
+
+.side-open .side-menu{
+	-webkit-transform: translate3d(-350px, 0, 0);
+  transform: translate3d(-350px, 0, 0);
+}
+
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+/* トップメニュー */
+
+
+	/* menu space */
+	
+
+#menuSpace{
+	width: 100%;
+	height: 5vh;
+}
+
+#fixed-menu {
+  position: fixed;
+  top: 0;
+  z-index: 6;
+  width: 100%;
+  min-height: 4vh;
+  padding: 0;
+  background: #2e4153;
+  border-bottom: solid 2px #2196f3;
+	box-shadow: 0px 2px 3px 2px rgba(0,0,0,0.3), 0px 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+
+#fixed-menu-contents {
+  margin: 0;
+  padding: 0;
+}
+
+	
+	/* menu button */
+	
+
+#home{
+  display: block;
+  position: relative;
+  float: left;
+  width: 64px;
+  height: 4vh;
+  border-right: 1px solid #22303d;
+  border-left: 1px solid #22303d;
+  color: #e4eaf0;
+  text-decoration: none;
+}
+#home:before {
+  position: absolute;
+  top: 6px;
+  left: 16px;
+  color: #cfdae4;
+  font-size: 1.5rem ;
+  content: url("../image/ic_home_white_24px.svg");
+}
+
+
+.menu-btn{
+	font-size: 1.5rem;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  float: left;
+  z-index: 100;
+  padding: 0 10px 0 30px;
+  color: #cfdae4;
+  line-height: 4vh;
+  text-decoration: none;
+  border-right: solid 1px #000;
+}
+.menu-btn:before {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  color: #cfdae4;
+  font: 1.5vw ;
+  content: "▼";
+}
+
+#home:hover,
+#home:hover:before,
+#home:focus:before,
+.menu-btn:hover,
+.menu-btn:focus,
+.menu-btn:hover:before,
+.menu-btn:focus:before{
+	color: #ffffff;
+  background-color: #2196f3;
+}
+
+.menu-btn:active,
+.menu-btn:active::before{
+	background-color: #FF4081;
+}
+
+	
+	/* Form背景 */
+	
+#mainFile,
+#symbolForm,
+#legend_setting,
+#simulate_setting{
+	display:none;
+	margin: 10px auto;
+	background-color: rgba(250,250,255,0.9);
+	padding: 10px;
+	z-index: 11;
+	border-radius: 5px;
+	box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
+	max-height: 90vh;
+	overflow: auto;
+}
+		
+
+		/* read main file */
+		
+	
+#mainFile{
+	top: 30px;
+	left: 5%;
+	position: fixed;
+	width: 40vw;
+	overflow: auto;
+}
+
+
+
+	#mainFile input.button{
+		cursor: pointer;
+		min-width: 10vw;
+		font-size: 1.5rem;
+		margin: 5px 0px;
+		padding:10px;
+	}
+
+		
+		/* symbol setting */
+		
+
+#symbolForm{
+	top: 30px;
+	left: 15%;
+	position: fixed;
+	width: 25vw;
+	min-width:300px;
+	min-height: 100px;
+}
+
+
+	form.symbolForm{
+		width: 90%;
+		min-height: 500px;
+	}
+
+		
+		/* Legend setting */
+		
+		
+#legend_setting{
+	position: fixed;
+	top: 30px;
+	left: 25%;
+	min-width: 25vw;
+}
+
+
+
+	#form_legend input.button{
+		cursor: pointer;
+		min-width: 10vw;
+		font-size: 1.5rem;
+		margin: 5px 0px;
+		padding: 10px;
+	}
+
+
+	#legend_form{
+		margin: 5px;
+	}
+
+		#legend_table{
+			margin: 0px;	
+		}
+
+			#legend_table input.color{
+				background-color: #fff;
+				border: none;
+				padding:0px;
+			}
+
+			#legendKey{
+				color: #fff;
+				background: none;
+				border:none;
+				font-weight: bold;
+				text-align: center;
+			}
+
+			/* 凡例テーブルの共通部分 */
+			
+table{
+	margin: 5px auto 5px;
+	border: solid 1px black; 
+	border-collapse: collapse;
+}
+
+thead th{
+	font-size: 1.5rem;
+	border: solid;
+	color: #fff;
+	border-color: #3F51B5;
+	border-width: 1px;
+	text-align: center;
+	background-color: #2e4153;
+}
+
+th,
+td{
+	font-size: 1.5rem;
+	border: solid;
+	color: #424242;
+	border-color: #3F51B5;
+	border-width: 1px;
+	text-align: center;
+}
+
+th{
+	background-color: #eee;
+	padding: 0 10px;
+}
+
+td.switch{
+	background-color: #fff;
+	box-shadow: 0px 0px 0px 2px rgba(33, 150, 243, 0.8) inset;
+			/*border: 2px solid #2196f3;*/
+	cursor: pointer;
+}
+
+td.switch:hover,
+td.switch:focus{
+	box-shadow: 0px 0px 0px 2px rgba(255, 64, 129, 0.8) inset;
+}
+
+		/* simulate setting */
+		
+
+#simulate_setting{
+	top: 30px;
+	left: 20%;
+	position: fixed;
+	min-width: 30vw;
+	max-width: 60vw;
+	min-height: 800px;
+}
+
+	
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+/* Graph Setting menu */
+
+
+.eleInput__Binary .mdl-textfield{
+	width: 10vw;
+	min-width: 70px;
+}
+
+.eleInput__Abundance .mdl-textfield{
+	width: 90%;
+	min-width: 300px;
+}
+
+.rangeInput__Binary .mdl-textfield,
+.rangeInput__Abundance .mdl-textfield{
+	width: 6vw;
+	min-width: 50px;
+}
+
+.imageInput__Binary .mdl-textfield,
+.imageInput__Abundance .mdl-textfield{
+	width: 6vw;
+	min-width: 100px;
+}
+
+
+	/* Graph form */
+div.formAbundance,
+div.formBinary{
+	top: 50px;
+	left: 30%;
+	display:none;
+	position: fixed;
+	width: 40vw;
+	min-width: 300px;
+	margin: 5px auto;
+	padding: 15px;
+	background-color: rgba(250,250,255,0.9);
+	z-index:11;
+	border-radius: 5px;
+	box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
+}
+
+form.abundance input.button{
+	font-size: 1.5rem;
+	padding: 10px;
+}
+
+
+	/* UI button */
+a.close_button::before{
+	content: url(../image/ic_close_black_24px.svg);
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+a.close_button:hover::before,
+a.close_button:focus::before{
+	content: url(../image/ic_close_black_24px_hover.svg);
+	position: absolute;
+}
+
+
+	/* 背景オーバーレイ */
+#setting_overlay{
+	z-index:10;
+	display:none;
+	position: fixed;
+	top: 0;
+	left:0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.3);
+}
+
+#setting_overlay::before{
+	content:"Click to close";
+	position: fixed;
+	top: 90vh;
+	left: 5vw;
+	color: #fff;
+	font-size: 3vw;
+}
+
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+/* Contents */
+
+
+.clearfix::after{
+	content: '';
+	display: block;
+	clear: both;
+	background: rgba(0,0,0,0);
+}
+
+
+div.logo{
+	margin: 5px auto 5px;
+	border-radius: 40px;
+}
+
+img.logo{
+	transition: transform 0.3s;
+}
+
+img.logo:hover{
+	transform: rotate(-360deg);
+}
+
+
+div.title{
+	letter-spacing: 1px;
+}
+
+#header{
+	box-sizing:border-box;
+	width: 100%;
+	background-image: linear-gradient(-90deg, #000000, #1200B8);
+	letter-spacing: 2px;
+	text-align: center;
+	box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+	z-index:4;
+	height: 3vw;
+}
+
+#header_text{
+	margin:auto auto;
+	width: 70%;
+	height:90%;
+	font-size: 2.5vw;
+	color: #ffffff;
+}
+
+#footer{
+	box-sizing:border-box;
+	width: 100%;
+	min-height: 150px;
+	padding: 10px;
+	background-image: linear-gradient(-180deg, #00334D, #000305);
+	color: #ffffff;
+	text-align: center;
+	z-index:4;
+}	
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+/* Graph */
+
+	/* graph area */
+	
+
+#graph_area{
+	box-sizing:border-box;
+	min-height: 100%;
+	width: 100%;
+	padding: 5px;
+	background-color: #ffffff;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+
+.wrapper-state-highlight{
+	width: 20%;
+	height: 20%;
+	border: dotted 2px #0000ff;
+}
+	
+	
+	/* wrapperHarker */
+	/* wrapperAbundance */
+	
+.wrapperBinary,
+.wrapperAbundance{
+	box-sizing:border-box;
+	background-color: #fff;
+	min-width:20%;
+	min-height:10%;
+	margin:1px;
+	padding: 5px;
+	border-bottom:solid 1px #fff;
+}
+
+.wrapperBinary:hover,
+.wrapperAbundance:hover{
+	border-bottom:solid 1px #2196f3;
+}
+
+.wrapperBinary.active,
+.wrapperAbundance.active{
+	border: 1px solid #2196f3;
+}
+	
+	/* graph UI button */
+	
+	
+.wrapperBinary ul,
+.wrapperAbundance ul{
+	width: 100%;
+	list-style: none;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px;
+	display: flex;
+	justify-content: space-around;
+	
+}
+
+.wrapperBinary li,
+.wrapperAbundance li{
+	flex:1;
+	display:flex;
+	justify-content: center;
+}
+
+a.nav_save::before{
+	content:url(../image/ic_file_download_24px.svg);
+	position: relative;
+	
+}
+
+a.nav_save:hover::before,
+a.nav_save:focus::before{
+	transition: all .3s;
+	content:url(../image/ic_file_download_24px_hover.svg);
+}
+
+
+a.nav_setting::before{
+	content:url(../image/ic_settings_black_24px.svg);
+	position: relative;
+}
+
+a.nav_setting:hover::before,
+a.nav_setting:focus::before{
+	transition: all .3s;
+	content:url(../image/ic_settings_black_24px_hover.svg);
+}
+
+a.nav_visual::before{
+	content:url(../image/ic_visibility_black_24px.svg);
+}
+
+a.nav_visual:hover::before,
+a.nav_visual:focus::before{
+	transition: all .3s;
+	content:url(../image/ic_visibility_black_24px_hover.svg);
+}
+
+
+a.nav_delete::before{
+	content:url(../image/ic_delete_sweep_black_24px.svg);
+	position: relative;
+	
+}
+
+a.nav_delete:hover::before,
+a.nav_delete:focus::before{
+	transition: all .3s;
+	content:url(../image/ic_delete_sweep_black_24px_hover.svg);
+}
+
+	
+	/* GraphAppender */
+	
+
+#graphAppender{
+	min-width: 20vw;
+	min-height: 20vh;
+	padding: 2vh 1.2vw;
+	margin: 1.2vh 1.2vw;
+	background:#fff;
+	color: #fff;
+	border-radius: 10px;
+
+}
+
+form.graphAppender{
+	width: 25vw;
+	min-height: 200px;
+	padding: 5px;
+	margin: 0px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+
+
+input.graphAppender{
+	cursor: pointer;
+	min-width: 300px;
+	font-size: 1.5rem;
+	margin: 5px 0px;
+	padding:30px 10px;
+}
+
+input.graphAppender:hover,
+input.graphAppender:focus{
+	
+}
+
+/* _/_/_/_/_/_/_/_/_/_/ */
+
+

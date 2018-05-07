@@ -1,0 +1,318 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" charset="UTF-8">
+	
+	<script src="./js/jquery-2.2.0.min.js" charset="utf-8"></script>
+	<script src="./js/d3.js" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="./css/material_icons.css" charset="utf-8">
+	<link rel="stylesheet" href="./css/material.indigo-pink.min.css" charset="utf-8">
+	<script defer src="./js/material.min.js" charset="utf-8"></script>
+	
+	<script src="./js/fumipos_common.js" charset="utf-8"></script>
+	<script src="./js/plot_compositions.js" charset="utf-8"></script>
+	<script src="./js/plot_on_map.js" charset="utf-8"></script>
+	<link rel="stylesheet" href="./css/plot_mine.css" type="text/css" charset="utf-8">
+	<link rel="icon" type="image/png" href="./image/Harker.png" sizes="32x32">
+	<title>Spatial distribution</title>
+</head>
+
+<body>
+
+<style>
+		
+		.eleInput .mdl-textfield{
+			width: 100px;
+		}
+		.rangeInput .mdl-textfield{
+			width: 50px;
+		}
+		.imageInput .mdl-textfield{
+			width: 100px;
+		}
+		
+		div.eleInput{
+			width: 350px;
+		}
+		
+		div.logInput{
+			width: 150px;
+		}
+		
+	</style>
+
+<style type="text/css">
+div.map{
+	width:45%;
+	height:70%;
+	margin:10px;
+}
+
+.SvgOverlay {
+	position: relative;
+	width: 45%;
+	height: 70%;   
+	padding: 10px;        
+}
+
+.SvgOverlay svg {
+	position: absolute;
+	top: -4000px;
+	left: -4000px;
+	width: 8000px;
+	height: 8000px;        
+}
+
+.SvgOverlay path {
+	stroke: black;
+	stroke-width: 1px;
+	fill-opacity: .6;
+}
+</style>
+
+<!-- ツールチップDOM -->
+<span id="tooltipOnMap"></span>
+<span id="tooltipHarker"></span>
+
+<!-- サイドオープン時メインコンテンツを覆う -->
+<div class="overlay" id="js__overlay"></div>
+
+
+<!-- サイドメニュー -->
+<nav class="side-menu">
+	<!-- 凡例 -->
+	<div class="legend" >
+		<script type="text/javascript">
+			writeLegend();
+		</script>
+	</div>
+</nav>
+
+<!-- 開閉用ボタン -->
+<div class="side-menu-btn" id="js__sideMenuBtn"> 
+	<a href="#" id="panel-btn"><span id="panel-btn-icon"></span></a>
+</div>
+	
+	
+<div id="fixed-menu">
+<div id="fixed-menu-contents">
+	<a href="./index.html" id="home"></a>
+
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Select File</a>
+		<div class="panel selectFile">
+			<!-- 入力ファイル選択フォーム -->
+			<div id="mainFile">
+				<script type="text/javascript">
+					writeFormMainFile();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Map Diagram</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker0">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Diagram 1</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker1">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Diagram 2</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker2">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+<div class="wrapper">
+	<div class="menuSpace"></div>
+	
+	<!-- Header -->
+	<div class="header">
+		<h3>Plot on Map</h3>
+	</div>
+
+	<div id="graph" class="clearfix">
+		<div class="map map0" style="float:left"></div>
+
+		
+		<div class="graphHarker Harker0" style="float:left">
+			<h1 class="Harker">graph title</h1>
+		</div>
+		
+		<div class="graphHarker Harker1" style="float:left">
+			<h1 class="Harker"></h1>
+		</div>
+		
+		<div class="graphHarker Harker2" style="float:left">
+			<h1 class="Harker"></h1>
+		</div>
+	</div>
+
+	<div class="footer">
+		<script type="text/javascript">
+			writeFooter();
+		</script>
+	</div>
+</div>
+	
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+<script src="./js/CsvFunction.js">
+</script>
+<script type="text/javascript">
+	// Initialize
+	var fileMain=document.getElementById("selectFileMain");
+	var testDataButton=document.getElementById("use_test_data");
+	var readerMain=new FileReader();
+	var csvMainObj=new Array();
+	var csvRefObj=new Array();
+	
+	testDataButton.onclick=function(ev){
+		var data = new XMLHttpRequest();
+		data.open("GET","./data/lava_compositions.csv",false);
+		data.send(null);
+		csvMainObj=creatCsvObject(data.responseText);
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+	}
+	
+	// csvMainObj にメインデータファイルの内容を読み込み
+	fileMain.onchange=function(evt){
+		var file=evt.target.files;
+		readerMain.readAsText(file[0]);
+		
+		readerMain.onload=function(ev){
+			csvMainObj=creatCsvObject(readerMain.result);
+		};
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+	};
+	
+	// Form 初期化
+	var mapObj=$("div.map");
+	var mapDOM=new Array;
+	var formHarkers=$("div.formHarker form");
+
+	var dummyArray=new Array();
+	for (var i=0; i < formHarkers.length; i++){
+		dummyArray.push(i);
+	}
+
+	console.log(dummyArray)
+	
+
+	d3.selectAll("div.imageInput").selectAll("input.mdl-slider").data(dummyArray).each(function(d){
+	console.log(d)
+		if (d == 0){
+			d3.select(this)
+			.attr("value",0.4)
+		}else{
+			d3.select(this)
+			.attr("value",0.25)
+		}
+	});
+	d3.selectAll("div.imageInput").selectAll("input.mdl-textfield__input").data(dummyArray).each(function(d,i){
+		if (d[i] == 0){
+			d3.select(this)
+			.attr("value",0.5)
+		}else{
+			d3.select(this)
+			.attr("value",1)
+		}
+	});
+
+	for (var i=0; i < mapObj.length; i++){
+		mapDOM[i] = new google.maps.Map(mapObj[i], {
+			zoom: 7,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			center: new google.maps.LatLng(33.855050, 133.522465),
+			scaleControl: true       
+		});
+	};
+	
+	
+	for (var i=0; i < formHarkers.length; i++){
+		initializeHarker("div.Harker"+i,formHarkers[i]);
+		
+		if (i == 0){
+			d3.select("div#formHarker"+i).selectAll("input")
+			.attr("onchange","plotHarker(csvMainObj,csvRefObj,'div.Harker"+i+"',formHarkers["+i+"])"+"; plotOnMap(csvMainObj,'div.Harker"+i+"',mapDOM["+i+"],formHarkers["+i+"])");
+		}else{
+			d3.select("div#formHarker"+i).selectAll("input")
+			.attr("onchange","plotHarker(csvMainObj,csvRefObj,'div.Harker"+i+"',formHarkers["+i+"])");
+		}
+	};
+
+	
+</script>
+
+
+<!-- _/_/_/_/_/_/_/_/_/_/ メニュー用スクリプト _/_/_/_/_/_/_/_/_/_/ -->
+
+<!-- サイドメニュー動作 -->
+<script>
+$(function() {
+	var $body = $('body');
+  $("#panel-btn").click(function() {
+    $body.toggleClass('side-open');
+    $('#js__overlay').on('click', function () {
+      $body.removeClass('side-open');
+      $("#panel-btn-icon").toggleClass("close");
+    	return false;
+     
+    });
+    $("#panel-btn-icon").toggleClass("close");
+    return false;
+  });
+});
+</script>
+
+<!-- トップメニュー動作 -->
+<script>
+$(function() {
+	var $body = $('body');
+  $(".menu-btn").click(function(){
+    var clickMenu = $("+.panel",this);
+    $(".panel").not(clickMenu).slideUp();
+  		clickMenu.toggle("fast");
+
+    	$(".panel:visible").prev().css("background","#283948");
+    	$(".panel:hidden").prev().css("background","#2e4153");
+    	return false;
+    
+  });
+});
+</script>
+</body>
+</html>

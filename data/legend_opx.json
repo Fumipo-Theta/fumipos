@@ -1,0 +1,12 @@
+{
+	"key":"phase",
+	"legends":[
+		{
+			"name":"opx",
+			"class":"opx",
+			"color":"#000000",
+			"stroke":false,
+			"symbol":"circle"
+		}
+	]
+}

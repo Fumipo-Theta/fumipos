@@ -1,0 +1,25 @@
+<div id="legend_form">
+	<form name="form_legend" id="form_legend">
+		<a href="#" class="close_button" id="close_legendForm"></a>
+		<hr style="visibility:hidden">
+		<label class="file" for="legendJSON">
+			Select legend file(.JSON) 
+			<input  id="legendJSON" type="file" accept=".json" style="display:none;">
+		</label>
+		<input id="legendAutoLoad" type='button' style="display:none;">
+		<hr>
+		<!--
+		<input class="showFlag" type="checkbox" name="mine" checked>Show others<br>
+		<input class="showFlag" type="checkbox" name="felsic" checked>Show felsic<br>
+		<input class="showFlag" type="checkbox" name="intermediate" checked>Show intermediate<br>
+		<input class="showFlag" type="checkbox" name="mafic" checked>Show mafic<br>
+		-->
+		Selected file: <span id="legendFileLabel"></span>
+		<hr>
+		<input id="hideAll_button" class="button" type="button" value="Hide all" >
+		<input id="showAll_button" class="button" type="button" value="Show all" >
+	</form>
+</div>
+
+<div id="legend_table">
+</div>

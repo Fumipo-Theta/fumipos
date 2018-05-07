@@ -1,0 +1,58 @@
+{
+  "sideMenu": {
+    "url": "false",
+    "target": "false",
+    "button": "false",
+    "overlay": "false",
+    "draggable": "false",
+    "close": "false",
+    "label": "false"
+  },
+  "fixedMenu": {
+    "dataFile": {
+      "url": "./form_main_file.html",
+      "target": "#mainFile",
+      "button": "#mainFile_btn",
+      "overlay": "#setting_overlay",
+      "draggable": "true",
+      "close": "#close_selectFile",
+      "label": "Select file"
+    },
+    "symbol": {
+      "url": "./form_symbol.html",
+      "target": "#symbolForm",
+      "button": "#visual_btn",
+      "overlay": "#setting_overlay",
+      "draggable": "false",
+      "close": "#close_symbolForm",
+      "label": "Symbol"
+    },
+    "legend": {
+      "url": "./form_legend.html",
+      "target": "#legend_setting",
+      "button": "#legend_btn",
+      "overlay": "#setting_overlay",
+      "draggable": "false",
+      "close": "#close_legendForm",
+      "label": "Legend"
+    },
+    "simulate": {
+      "url": "./form_simulate.html",
+      "target": "#simulate_setting",
+      "button": "#melting_btn",
+      "overlay": "false",
+      "draggable": "true",
+      "close": "#close_simulateForm",
+      "label": "Simulate"
+    }
+  },
+  "graphAppender": {
+    "url": "./fumipos_graphAppender.html",
+    "target": "#graphAppender",
+    "draggable": "false"
+  },
+  "footer": {
+    "url": "./fumipos_footer.html",
+    "target": "#footer"
+  }
+}

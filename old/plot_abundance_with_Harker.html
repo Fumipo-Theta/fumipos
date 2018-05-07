@@ -1,0 +1,278 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" charset="UTF-8">
+	
+	<script src="./js/jquery-2.2.0.min.js" charset="utf-8"></script>
+	<script src="./js/d3.js" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="./css/material_icons.css" charset="utf-8">
+	<link rel="stylesheet" href="./css/material.indigo-pink.min.css" charset="utf-8">
+	<script defer src="./js/material.min.js" charset="utf-8"></script>
+	
+	<script src="./js/fumipos_common.js" charset="utf-8"></script>
+	<script src="./js/plot_compositions.js" charset="utf-8"></script>
+	<script src="./js/plot_abundance.js" charset="utf-8"></script>
+	<link rel="stylesheet" href="./css/plot_mine.css" type="text/css" charset="utf-8">
+	<link rel="icon" type="image/png" href="./image/Harker.png" sizes="32x32">
+	<title>plot abundance with Harker</title>
+</head>
+
+
+<body>
+	<style>
+		
+				.csvInput .mdl-textfield{
+					font-size: 10;
+					width: 90%;
+				}
+				
+				.abundance div.eleInput .mdl-textfield{
+					font-size: 50%;
+					width: 90%;
+				}
+				
+				.Harker div.eleInput .mdl-textfield{
+					width: 100px;
+				}
+
+				.rangeInput .mdl-textfield{
+					width: 50px;
+				}
+				.imageInput .mdl-textfield{
+					width: 100px;
+				}
+				
+		
+	</style>
+	
+	<span id="tooltipAbundance"></span>
+	<span id="tooltipHarker"></span>
+	
+	
+	<!-- サイドオープン時メインコンテンツを覆う -->
+  <div class="overlay" id="js__overlay"></div>
+	
+	<!-- サイドメニュー -->
+	<nav class="side-menu">
+		<!-- 凡例 -->
+		<div class="legend" >
+			<script type="text/javascript">
+				writeLegend();
+			</script>
+		</div>
+	</nav>
+
+	<!-- 開閉用ボタン -->
+	<div class="side-menu-btn" id="js__sideMenuBtn"> 
+		<a href="#" id="panel-btn"><span id="panel-btn-icon"></span></a>
+	</div>
+	
+
+<div id="fixed-menu">
+<div id="fixed-menu-contents">	
+	<a href="./index.html" id="home"></a>
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Select File</a>
+		<div class="panel selectFile">
+			<!-- 入力ファイル選択フォーム -->
+			<div id="mainFile">
+				<script type="text/javascript">
+					writeFormMainFile();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Abundance pattern</a>
+		<div class="panel">
+			<!-- Abundance pattern のフォーム -->
+			<div class="formAbundance" id="formAbundance0">
+				<script type="text/javascript">
+					writeFormAbundance();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Variation 1</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker0">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Variation 2</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker1">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Variation 3</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker2">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Variation 4</a>
+		<div class="panel">
+			<!-- Harker ダイアグラムのフォーム -->	
+			<div class="formHarker" id="formHarker3">
+				<script type="text/javascript">
+					writeFormHarker();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+</div>
+</div>
+	
+	<div class="wrapper">
+		<div class="menuSpace"></div>
+	
+		<div class="header">
+			<h3>Abundance pattern & variation diagram</h3>
+		</div>	
+		<!-- グラフエリア -->
+		<div id="graph" name="graph" class="clearfix">
+			<div class="abundance0" style="float:left">
+			</div>
+			<div class="graphHarker Harker0" style="float:left">
+			</div>
+			<div class="graphHarker Harker1" style="float:left">
+			</div>
+			<div class="graphHarker Harker2" style="float:left">
+			</div>
+			<div class="graphHarker Harker3" style="float:left">
+			</div>
+	</div>
+
+
+	<div class="footer">
+		<script type="text/javascript">
+			writeFooter();
+		</script>
+	</div>
+</div>
+
+</body>
+
+<!-- ファイル読み込み -->
+<script src="./js/CsvFunction.js">
+</script>
+<script type="text/javascript">
+	// Initialize
+	var fileMain=document.getElementById("selectFileMain");
+	var testDataButton=document.getElementById("use_test_data");
+	var readerMain=new FileReader();
+	var csvMainObj=new Array();
+	var csvRefObj=new Array();
+	
+	testDataButton.onclick=function(ev){
+		var data = new XMLHttpRequest();
+		data.open("GET","./data/lava_compositions.csv",false);
+		data.send(null);
+		csvMainObj=creatCsvObject(data.responseText);
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+	}
+	
+	// csvMainObj にメインデータファイルの内容を読み込み
+	fileMain.onchange=function(evt){
+		var file=evt.target.files;
+		readerMain.readAsText(file[0]);
+		
+		readerMain.onload=function(ev){
+			csvMainObj=creatCsvObject(readerMain.result);
+		};
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+	};
+	
+</script>
+
+<!-- グラフ初期化 -->
+<script>
+d3.selectAll("div.formHarker").selectAll("div.imageInput").selectAll("input.mdl-slider").attr("value","0.25");
+d3.selectAll("div.formHarker").selectAll("div.imageInput").selectAll("input.mdl-textfield__input").attr("value","1");
+	var formHarkers=$("div.formHarker form");
+
+	console.log(formHarkers[0]);
+
+	for (var i=0; i < formHarkers.length; i++){
+		initializeHarker("div.Harker"+i,formHarkers[i]);
+		d3.select("div#formHarker"+i).selectAll("input")
+			.attr("onchange","plotHarker(csvMainObj,'div.Harker"+i+"',formHarkers["+i+"]);toggleVisibility()");
+	};
+	
+	var formAbundances=$("div.formAbundance form");
+
+	console.log(formAbundances[0]);
+
+	for (var i=0; i < formAbundances.length; i++){
+		initializeAbundance("div.Abundance"+i,formAbundances[i]);
+		d3.select("div#formAbundance"+i).selectAll("input")
+			.attr("onchange","plotAbundance(csvMainObj,csvRefObj,'div.abundance"+i+"',formAbundances["+i+"]);toggleVisibility()");
+		d3.select("div#formAbundance"+i).selectAll("select")
+			.attr("onchange","plotAbundance(csvMainObj,csvRefObj,'div.abundance"+i+"',formAbundances["+i+"]);toggleVisibility()");
+	};
+</script>
+
+<!-- サイドメニュー動作 -->
+<script>
+$(function() {
+	var $body = $('body');
+  $("#panel-btn").click(function() {
+    $body.toggleClass('side-open');
+    $('#js__overlay').on('click', function () {
+      $body.removeClass('side-open');
+      $("#panel-btn-icon").toggleClass("close");
+    	return false;
+     
+    });
+    $("#panel-btn-icon").toggleClass("close");
+    return false;
+  });
+});
+</script>
+
+<!-- トップメニュー動作 -->
+<script>
+$(function() {
+  $(".menu-btn").click(function(){
+    var clickMenu = $("+.panel",this);
+    clickMenu.toggle("fast");
+    $(".panel").not(clickMenu).slideUp();
+    $(".panel:visible").prev().css("background","#283948");
+    $(".panel:hidden").prev().css("background","#2e4153");
+    return false;
+  });
+});
+</script>
+</html>

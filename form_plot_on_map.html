@@ -1,0 +1,52 @@
+<form class="onMap">
+
+	<div class="eleInput">
+		For circle size
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="url" name="xName" pattern="^[0-9A-Za-z\s]+$" required autofocus >
+			<label class="mdl-textfield__label" for="#xName">input</label>
+		</div>
+		<br>
+		For circle color
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="url" name="yName" pattern="^[0-9A-Za-z\s]+$" required value="age">
+			<label class="mdl-textfield__label" for="#yName">input</label>
+		</div>
+	</div>
+	
+	<div class="rangeInput">
+		Rudius range
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" name="x_min">
+			<label class="mdl-textfield__label" for="#x_min">min</label>
+		</div>
+		:
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" name="x_max">
+			<label class="mdl-textfield__label" for="#x_max">max</label>
+		</div>
+		<br>
+		color range
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" name="y_min">
+			<label class="mdl-textfield__label" for="#y_min">min</label>
+		</div>
+		:
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" name="y_max">
+			<label class="mdl-textfield__label" for="#y_max">max</label>
+		</div>
+	</div>
+		
+	<div class="imageInput">
+		<div style="width: 300px"> 
+			<span class="text">Image size</span>
+			<input class="mdl-slider mdl-js-slider" type="range" name="imageSize" min="0.2" max="1" value="0.45" step="0.05">
+		</div>
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" name="aspect" value="0.75">
+			<label class="mdl-textfield__label" for="#aspect">aspect ratio</label>
+		</div>
+	</div>
+	
+</form>

@@ -1,0 +1,28 @@
+{
+	"key":"rockType",
+	"legends":[
+		{
+			"name":"Felsic",
+			"class":"felsic",
+			"color":"#ff8888",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"Intermediate",
+			"class":"intermediate",
+			"color":"#00aa00",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"Mafic",
+			"class":"mafic",
+			"color":"#0000ff",
+			"stroke":false,
+			"symbol":"circle"
+		}
+	]
+}

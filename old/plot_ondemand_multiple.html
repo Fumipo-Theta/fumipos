@@ -1,0 +1,1160 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<link rel="stylesheet" href="./css/material_icons.css" charset="utf-8">
+	<link rel="stylesheet" href="./css/material.indigo-pink.min.css" charset="utf-8">
+
+	<link rel="icon" type="image/png" href="./image/Harker.png" sizes="32x32">
+	<title>Binary variation & abundance pattern diagrams</title>
+</head>
+
+<body>
+<style>
+/* スクロールバー */
+::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+::-webkit-scrollbar-track {
+    background-color: rgba(0,0,0,0)
+}
+ 
+::-webkit-scrollbar-thumb {
+		background-color: rgba(10,20,50,0.5)
+}
+
+body{
+	font-size: 1.2vw;
+	
+}
+
+span#tooltipAbundance{
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  padding: 0 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1vw;
+  opacity: 0.8;
+}
+
+span#tooltipHarker{
+  position: absolute;
+  z-index: 10;
+  visibility: hidden;
+  padding: 0 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1vw;
+  opacity: 0.8;
+}
+</style>
+	
+	<span id="tooltipHarker"></span>
+	<span id="tooltipAbundance"></span>
+
+	<!-- サイドオープン時メインコンテンツを覆う -->
+  <div class="overlay" id="js__overlay"></div>
+	
+	<!-- サイドメニュー -->
+<style>
+.overlay {
+  content: '';
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.1);
+  -webkit-transition: all .5s ease;
+  transition: all .5s ease;
+  z-index: 3;
+}
+
+.overlay::after {
+  content: "Click to close";
+  visibility: hidden;
+  position: fixed;
+  top: 40%;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 50px;
+  color: rgba(255,255,255,0.1);
+  font-size: 40px;
+  font-weight: bold;
+  text-align: center;
+  -webkit-transition: all .5s ease;
+  transition: all .5s ease;
+}
+.side-open .overlay ,
+.top-open .overlay{
+  visibility: visible;
+  cursor: pointer;
+  background: rgba(0,0,0,0.3);
+}
+.side-open .overlay::after,
+.top-open .overlay::after {
+  visibility: visible;
+  color: rgba(255,255,255,.8);
+}
+
+/* サイドメニュー ※リストのスタイルは省略 */
+.side-menu {
+	overflow: auto;
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100%;
+  padding-top: 20px;
+  background: #2A408E;
+  z-index: 4;
+  transition: all .5s ease;
+}
+
+/* 開閉用ボタン ※ボタンの細かいスタイルは省略 */
+.side-menu-btn {
+  position: fixed;
+  top: 2px;
+  right: 0px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  z-index: 9999;
+}
+
+/* ボタンのスタイル(丸の中にハンバーガー/ばつ印) */
+#panel-btn{
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  /*margin: 20px 0 10px;*/
+  border-radius: 50%;
+}
+#panel-btn:hover{
+
+}
+#panel-btn-icon{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1vw;
+  height: 2px;
+  margin: -1px 0 0 -7px;
+  background: #cfdae4;
+  transition: .2s;
+}
+#panel-btn-icon:before, #panel-btn-icon:after{
+  display: block;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1vw;
+  height: 2px;
+  background: #cfdae4;
+  transition: .3s;
+}
+#panel-btn-icon:before{
+  margin-top: -6px;
+}
+#panel-btn-icon:after{
+  margin-top: 4px;
+}
+#panel-btn .close{
+  background: transparent;
+}
+#panel-btn .close:before, #panel-btn .close:after{
+  margin-top: 0;
+}
+#panel-btn .close:before{
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+#panel-btn .close:after{
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+/* メインコンテンツ */
+.wrapper {
+  position: relative;
+  width: 100%;
+  background: #fff
+  -webkit-transition: all .5s ease;
+  transition: all .5s ease;
+  z-index: 2;
+}
+
+/* サイドメニューオープン */
+.side-open .wrapper,
+.side-open .overlay {
+  -webkit-transform: translate3d(-150px, 0, 0);
+  transform: translate3d(-150px, 0, 0);
+}
+
+.side-open .side-menu{
+	-webkit-transform: translate3d(-350px, 0, 0);
+  transform: translate3d(-350px, 0, 0);
+}
+
+
+/* Legend */
+div#legend_setting{
+	display:none;
+	position: fixed;
+	top: 30px;
+	left: 25%;
+	z-index: 11;
+	min-width: 25vw;
+	margin: 10px;
+	padding: 10px;
+	background-color: rgba(250,250,255,0.6);
+	border: solid 2px #2196f3;
+	border-radius: 5px;
+}
+
+div#legend_setting:before{
+	content:url("./image/ic_open_with_white_24px.svg");
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 2px;
+	box-shadow: 0 0 3px 2px rgba(0,0,0,0.3) inset;
+}
+
+table{
+	margin: 5px auto 5px;
+	border: solid 1px black; 
+	border-collapse: collapse;
+}
+
+table:hover{
+	box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.8);
+}
+
+thead th{
+	font-size: 1.2vw;
+	border: solid;
+	color: #fff;
+	border-color: #3F51B5;
+	border-width: 1px;
+	text-align: center;
+	background-color: #2e4153;
+}
+
+th,
+td{
+	font-size: 1.2vw;
+	border: solid;
+	color: #3F51B5;
+	border-color: #3F51B5;
+	border-width: 1px;
+	text-align: center;
+}
+
+th{
+	background-color: #ddd;
+}
+
+td{
+	background-color: #fff;
+}
+
+td:hover{
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8) inset;
+}
+
+td{
+	cursor: pointer;
+}
+
+td.felsic,
+td.intermediate,
+td.mafic{
+	color: #000000;
+}
+</style>
+	<nav class="side-menu">
+
+	</nav>
+
+	<!-- 開閉用ボタン -->
+	<div class="side-menu-btn" id="js__sideMenuBtn"> 
+		<a href="#" id="panel-btn"><span id="panel-btn-icon"></span></a>
+	</div>
+	
+	<!-- Fixed トップメニュー -->
+<style>
+div.menuSpace{
+	width: 100%;
+	height: 4vh;
+}
+
+#fixed-menu {
+  position: fixed;
+  top: 0;
+  z-index: 6;
+  width: 100%;
+  min-height: 4vh;
+  padding: 0;
+  background: #2e4153;
+}
+
+
+#fixed-menu-contents {
+  width: 70%;
+  margin: 0 0 0 0;
+  padding: 0;
+}
+a#home{
+  display: block;
+  position: relative;
+  float: left;
+  width: 4vw;
+  height: 4vh;
+  border-right: 1px solid #22303d;
+  border-left: 1px solid #22303d;
+  color: #e4eaf0;
+  text-decoration: none;
+}
+a#home:before {
+  position: absolute;
+  top: 0.4vh;
+  left: 1.5vw;
+  color: #cfdae4;
+  font-size: 1.5vw ;
+  content: "🏠";
+}
+
+
+a.menu-btn{
+	font-size: 1.2vw;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  float: left;
+  z-index: 100;
+  padding: 0 10px 0 30px;
+  color: #cfdae4;
+  line-height: 4vh;
+  text-decoration: none;
+  border-right: solid 1px #000;
+}
+.menu-btn:before {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  color: #cfdae4;
+  font: 1.5vw ;
+  content: "▼";
+}
+
+a#home:hover,
+a#home:hover:before,
+a.menu-btn:hover,
+a.menu-btn:hover:before{
+  color: #fff;
+}
+
+
+div#mainFile{
+	display:none;
+	top: 30px;
+	left: 5%;
+	position: fixed;
+	width: 40vw;
+	margin: 10px auto;
+	padding: 5px;
+	background-color: rgba(250,250,255,0.5);
+	z-index:11;
+	border: solid 2px #2196f3;
+	border-radius: 5px;
+}
+
+div#commonForm{
+	display:none;
+	top: 30px;
+	left: 15%;
+	position: fixed;
+	z-index:11;
+	margin: 10px auto;
+	width: 25vw;
+	min-height: 100px;
+	background-color: rgba(250,250,255,0.6);
+	border: solid 2px #2196f3;
+	border-radius: 5px;
+}
+
+div#commonForm:hover{
+	background-color: rgba(250,250,255,0.75);
+}
+
+div#commonForm:before{
+	content:url("./image/ic_open_with_white_24px.svg");
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 2px;
+	box-shadow: 0 0 3px 2px rgba(0,0,0,0.3) inset;
+}
+
+
+form.commonForm{
+	padding: 10px;
+	width: 90%;
+	min-height: 500px;
+}
+
+
+
+</style>
+	<div id="fixed-menu">
+		<div id="fixed-menu-contents">
+			<a href="./index.html" id="home"></a>
+	
+			<a href="#" class="menu-btn" id="mainFile_btn">Select File</a>
+			<a href="#" class="menu-btn" id="visual_btn">Visual setting</a>
+			<a href="#" class="menu-btn" id="legend_btn">Legend setting</a>
+		</div>
+	</div>
+
+		<!-- トップメニュー コンテンツ -->
+	<div id="mainFile">
+	</div>
+	
+	<div id="commonForm">
+	</div>
+	
+	<div id="legend_setting">
+	</div>
+	
+		
+	
+		<!-- シンボルのスタイルを定義したcss -->
+		<link rel="stylesheet" href="./css/legend_region.css" type="text/css" charset="utf-8">
+
+	<!-- Graph Setting menu -->
+<style>
+.eleInput__Harker .mdl-textfield{
+	width: 8vw;
+	min-width: 70px;
+}
+
+.eleInput__Abundance .mdl-textfield{
+	font-size: 50%;
+	width: 35vw;
+	min-width: 300px;
+}
+
+.rangeInput__Harker .mdl-textfield{
+	width: 4vw;
+	min-width: 50px;
+}
+
+.rangeInput__Abundance .mdl-textfield{
+	width: 4vw;
+	min-width: 50px;
+}
+
+.imageInput__Harker .mdl-textfield{
+	width: 6vw;
+	min-width: 100px;
+}
+
+.imageInput__Abundance .mdl-textfield{
+	width: 4vw;
+	min-width: 50px;
+}
+
+div.formAbundance{
+	top: 50px;
+	left: 30%;
+	display:none;
+	position: fixed;
+	width: 40vw;
+	min-width: 300px;
+	margin: 5px auto;
+	padding: 5px;
+	background-color: rgba(250,250,255,0.5);
+	z-index:11;
+	border: solid 2px #2196f3;
+	border-radius: 5px;
+}
+
+div.formAbundance:hover{
+	background-color: rgba(250,250,255,0.75);
+}
+
+div.formAbundance:before{
+	content:url("./image/ic_open_with_white_24px.svg");
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 2px;
+	box-shadow: 0 0 3px 2px rgba(0,0,0,0.3) inset;
+}
+
+div.formHarker{
+	top: 50px;
+	left: 30%;
+	display:none;
+	position: fixed;
+	width: 40vw;
+	min-width: 300px;
+	margin: 5px auto;
+	padding: 5px;
+	background-color: rgba(250,250,255,0.5);
+	z-index:11;
+	border: solid 2px #2196f3;
+	border-radius: 5px;
+}
+
+div.formHarker:hover{
+	background-color: rgba(250,250,255,0.75);
+}
+
+div.formHarker:before{
+	content:url("./image/ic_open_with_white_24px.svg");
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 2px;
+	box-shadow: 0 0 3px 2px rgba(0,0,0,0.3) inset;
+}
+
+a.close_button::before{
+	content: url(./image/ic_close_black_24px.svg);
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+a.close_button:hover::before{
+	content: url(./image/ic_close_black_24px_hover.svg);
+	position: absolute;
+}
+
+div#setting_overlay{
+	z-index:10;
+	display:none;
+	position: fixed;
+	top: 0;
+	left:0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.75);
+}
+
+form.abundance,form.Harker{
+	height: 80%;
+	box-sizing:border-box;
+	color: #2e40a4;
+	font: 1.2vw "Arial";
+}
+
+</style>
+	<div id="setting_menu">
+		<div id="setting_overlay"></div>
+	</div>
+
+
+	<!-- コンテンツ -->
+<style>
+.clearfix::after{
+	content: '';
+	display: block;
+	clear: both;
+	background: rgba(0,0,0,0);
+}
+
+
+div.logo{
+	margin: 5px auto 5px;
+	border-radius: 40px;
+}
+
+img.logo{
+	transition: transform 0.3s;
+}
+
+img.logo:hover{
+	transform: rotate(-360deg);
+}
+
+
+div.title{
+	letter-spacing: 1px;
+}
+
+div.header{
+	box-sizing:border-box;
+	width: 100%;
+	background-image: linear-gradient(-90deg, #000000, #1200B8);
+	letter-spacing: 2px;
+	text-align: center;
+	box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.5);
+	z-index:4;
+	height: 3vw;
+}
+
+div.header_text{
+	margin:auto auto;
+	width: 70%;
+	height:90%;
+	font-size: 2.5vw;
+	color: #ffffff;
+}
+
+.footer{
+	box-sizing:border-box;
+	width: 100%;
+	min-height: 150px;
+	padding: 10px;
+	background-image: linear-gradient(-180deg, #00334D, #000305);
+	color: #ffffff;
+	text-align: center;
+	z-index:4;
+}	
+</style>
+	<div class="wrapper">
+		<div class="menuSpace"></div>
+		<!-- Header -->
+		<div class="header">
+			<div class="header_text">
+				Binary Variation & Abundance Pattern
+			</div>
+		</div>
+		
+		<!-- Graph描画域 -->
+		<style>
+
+span.console{
+	font-size: 20px;
+	color:#000099;
+	text-align: left;
+}
+
+.axis text{
+	font: 1vw "Arial";
+}
+
+text.xlabel,
+text.ylabel{
+	font: 1.2vw "Arial";
+}
+
+.axis path,
+.axis line{
+	fill:none;
+	stroke: #000000;
+	stroke-width: 2;
+	shape-rendering: crispEdges;
+}
+
+
+h1.Harker,
+h1.abundance,
+h1.Map{
+	font-size: 1.5vw;
+}
+
+h1,
+svg{
+	margin: 0;
+}
+
+div#graph_area{
+	box-sizing:border-box;
+	min-height: 100%;
+	width: 100%;
+	padding: 5px;
+	background-color: #ffffff;
+}
+
+div#graph{
+	box-sizing:border-box;
+	width: 100%;
+	background-color: #ffffff;
+}
+
+.wrapper-state-highlight{
+	width: 20%;
+	height: 20%;
+	border: dotted 2px #0000ff;
+}
+
+div.wrapperHarker{
+	box-sizing:border-box;
+	background-color: #fff;
+	min-width:20%;
+	min-height:10%;
+	margin:1px;
+	border-bottom:solid 1px #fff;
+}
+
+div.wrapperHarker:hover{
+	border-bottom:solid 1px #2196f3;
+}
+
+div.wrapperAbundance{
+	box-sizing:border-box;
+	background-color: #fff;
+	min-width: 20%;
+	min-height: 10%;
+	margin: 1px;
+	border-bottom:solid 1px #fff;
+}
+
+div.wrapperAbundance:hover{
+	border-bottom:solid 1px #2196f3;
+}
+
+
+ul{
+	width: 70%;
+	list-style: none;
+	margin-left: auto;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px;
+}
+
+li{
+	display:inline;
+	margin-right: 4vw;
+}
+
+
+a.nav_setting::before{
+	content:url(./image/ic_settings_black_24px.svg);
+	position: relative;
+}
+
+a.nav_setting:hover::before{
+	content:url(./image/ic_settings_black_24px_hover.svg);
+}
+
+a.nav_visual::before{
+	content:url(./image/ic_visibility_black_24px.svg);
+}
+
+a.nav_visual:hover::before{
+	content:url(./image/ic_visibility_black_24px_hover.svg);
+}
+
+
+a.nav_delete::before{
+	content:url(./image/ic_delete_sweep_black_24px.svg);
+	position: relative;
+	
+}
+
+a.nav_delete:hover::before{
+	content:url(./image/ic_delete_sweep_black_24px_hover.svg);
+}
+
+
+div#graphAppender{
+	min-width: 20vw;
+	min-height: 20vh;
+	padding: 2vh 1.2vw;
+	margin: 1.2vh 1.2vw;
+	border: 2px dashed rgba(0,0,255,1);
+	background:#fff;
+	color: #fff;
+	border-radius: 10px;
+
+}
+
+form.graphAppender{
+	width: 20vw;
+	height: 20vh;
+	padding: 5px;
+	margin: 0px;
+}
+
+input.graphAppender{
+	cursor: pointer;
+	min-width: 20vw;
+	font-size: 1.2vw;
+	margin: 5px 0px;
+	padding:10px;
+	background-color: #2196f3;
+	color: #fff;
+	border: none;
+}
+
+input.graphAppender:hover{
+	background-color: #FF4081;
+}
+
+</style>
+		<!-- graph area -->
+		<div id="graph_area" name="graph" class="clearfix">
+			<div id="graph">
+			</div>
+			
+			<!-- graphAppender -->
+		 	<div id="graphAppender" style="float:left">
+		 		<form class="graphAppender">
+					<input class="graphAppender" type="button" value="+ Binary variation" onclick="graphAppend.setGraph('binary')">
+		 			
+					<input class="graphAppender" type="button" value="+ Abundance pattern" onclick="graphAppend.setGraph('abundance')">
+		 		</form>
+		 	</div>
+		</div>
+		
+		<!-- footer -->
+		<div class="footer" id="footer">
+		</div>
+		
+	</div>
+</body>
+
+<!-- Loading javascript component -->
+	<script src="./js/jquery-2.2.0.min.js" charset="utf-8"></script>
+	<script src="./js/jquery-ui.min.js" charset="utf-8"></script>
+	<script src="./js/jquery.ui.touch-punch.min.js" charset="utf-8"></script>
+	<script src="./js/d3.js" charset="utf-8"></script>
+	<script defer src="./js/material.min.js" charset="utf-8"></script>
+	
+	<script src="./js/plot_compositions.js" charset="utf-8"></script>
+	<script src="./js/plot_abundance.js" charset="utf-8"></script>
+	<script src="./js/common_setting.js" charset="utf-8"></script>
+
+<!-- Dynamic loading-->
+<script type="text/javascript">
+	/* Footer */
+	$.ajax({
+				type: "GET",
+				url: "./fumipos_footer.html",
+				cache: false, //キャッシュを利用するか（お好みで）
+				async: false, //非同期で読み込むか（お好みで）
+				dataType: "html",
+				success: function(data){
+					$("div#footer").html($(data)).trigger('create'); 
+				},
+				error: function(){
+					console.log("Failed to load form")
+				}
+	});
+
+	/* Top fixed menu */
+			$.ajax({
+				type: "GET",
+				url: "./form_main_file.html",
+				cache: false, //キャッシュを利用するか（お好みで）
+				async: false, //非同期で読み込むか（お好みで）
+				dataType: "html",
+				success: function(data){
+					$("div#mainFile").html($(data)).trigger('create'); 
+				},
+				error: function(){
+					console.log("Failed to load form")
+				}
+			});
+			
+			$.ajax({
+				type: "GET",
+				url: "./form_common.html",
+				cache: false, //キャッシュを利用するか（お好みで）
+				async: false, //非同期で読み込むか（お好みで）
+				dataType: "html",
+				success: function(data){
+					$("div#commonForm").html($(data)).trigger('create'); 
+				},
+				error: function(){
+					console.log("Failed to load form")
+				}
+			});
+			
+			/* common form にマウスイベントを設定 */
+			d3.select("#commonForm").selectAll("input")
+				.attr("onchange","replotGraphs()");
+			
+			$.ajax({
+				type: "GET",
+				url: "./form_legend_region.html",
+				cache: false, //キャッシュを利用するか（お好みで）
+				async: false, //非同期で読み込むか（お好みで）
+				dataType: "html",
+				success: function(data){
+					$("div#legend_setting").html($(data)).trigger('create'); 
+				},
+				error: function(){
+					console.log("Failed to load form")
+				}
+			});
+</script>
+			
+	<!-- tdにマウスイベントを与えるjavascriptのロード -->
+<script src="./js/legend_region.js" charset="utf-8">
+</script>
+
+<script>
+	/* GraphAppender */
+	
+	
+	var formDOM=new Array();
+	
+	var GraphAppender=function(graphAreaID){
+		this.graphArea=d3.select(graphAreaID);
+		this.graphNumCounter=0;
+		this.harkerNumCounter=0;
+		this.abundanceNumCounter=0;
+		this.menuContent=new Array();
+		this.menuContent=["setting","delete"];
+	}
+	
+		GraphAppender.prototype.setGraph=function(graphType){
+			if (graphType == "binary"){
+				var graphTypeString="Harker";
+				var formURL="./form_Harker.html";
+				var initializer=initializeHarker;
+				var graphNum=this.harkerNumCounter;
+				this.harkerNumCounter=this.harkerNumCounter+1;
+			}else if (graphType == "abundance"){
+				graphTypeString="Abundance";
+				formURL="./form_abundance.html";
+				initializer=initializeAbundance;
+				graphNum=this.abundanceNumCounter;
+				this.abundanceNumCounter=this.abundanceNumCounter+1;
+			}
+			
+			/* Create graph & menu rapper */
+			this.graphArea.append("div")
+					.attr("class","wrapper"+graphTypeString+" "+graphTypeString+graphNum)
+					.attr("style","float:left");
+			
+			/* Create uncountable list */
+			d3.select("div.wrapper"+graphTypeString+"."+graphTypeString+graphNum).append("div")
+					.attr("class","nav_"+graphTypeString+graphNum)
+					.append("ul")
+					
+			/* Create list menu */
+			var menuDOM=d3.select("div.nav_"+graphTypeString+graphNum).select("ul").selectAll("li").data(this.menuContent);
+				
+			/* Append graph button */
+			menuDOM.enter().append("li")
+					.attr("class",function(d){return "nav_"+d+graphNum;})
+					.append("a")
+						.attr("id",function(d){return "nav_"+d+"_"+graphTypeString+graphNum;})
+						.attr("class",function(d){return "nav_"+d;});
+
+			
+				/*  Set open event for menu */
+				var num=graphNum;
+				$("a#nav_setting_"+graphTypeString+graphNum).click(function(){
+					$("div#setting_overlay").fadeIn();
+					$("div#form"+graphTypeString+num).fadeIn();
+				})
+					
+				/*  Set delete event */
+				$("a#nav_delete_"+graphTypeString+graphNum).click(function(){
+					$("div#form"+graphTypeString+num).remove();
+					$("div.wrapper"+graphTypeString+"."+graphTypeString+num).remove();
+				})
+				
+			/* Create setting form */
+			d3.select("div#setting_menu").append("div")
+					.attr("class","form"+graphTypeString)
+					.attr("id","form"+graphTypeString+graphNum);
+			$.ajax({
+				type: "GET",
+				url: formURL,
+				cache: false, //キャッシュを利用するか（お好みで）
+				async: false, //非同期で読み込むか（お好みで）
+				dataType: "html",
+				success: function(data){
+					$("div#form"+graphTypeString+graphNum).append($(data)).trigger('create'); 
+				},
+				error: function(){
+					console.log("Failed to load form")
+				}
+			});
+			
+			$(function(){
+				$("div#form"+graphTypeString+graphNum). draggable();
+			})
+			
+				/* Set close event for manu */
+				$("div#form"+graphTypeString+graphNum+" a.close_button").click(function(){
+					$("div#setting_overlay").fadeOut();
+					$("div#form"+graphTypeString+num).fadeOut();
+				})
+				
+				$("div#setting_overlay").click(function(){
+					$("div#setting_overlay").fadeOut();
+					$("div#form"+graphTypeString+num).fadeOut();
+				})
+					
+			/* Create graph area*/
+			d3.select("div.wrapper"+graphTypeString+"."+graphTypeString+graphNum).append("div")
+					.attr("class","graph"+graphTypeString+" "+graphTypeString+graphNum);
+			
+				/* Create setting form (Harker)*/
+				d3.select("div#formHarker"+graphNum).select("div.imageInput__"+graphTypeString).select("input.mdl-slider").attr("value","0.3");
+				d3.select("div#formHarker"+graphNum).select("div.imageInput__"+graphTypeString).select("input.mdl-textfield__input").attr("value","0.8");
+				
+				d3.select("div#formAbundance"+graphNum).select("div.imageInput__"+graphTypeString).select("input.mdl-slider").attr("value","0.5");
+				d3.select("div#formAbundance"+graphNum).select("div.imageInput__"+graphTypeString).select("input.mdl-textfield__input").attr("value","0.9");
+
+				/* DOMを再解釈 */
+				componentHandler.upgradeDom();
+				
+				/* Initialize graph area */
+				formDOM[this.graphNumCounter]=$('#form'+graphTypeString+graphNum+' > form');
+
+				initializer("div.graph"+graphTypeString+"."+graphTypeString+graphNum,formDOM[this.graphNumCounter][0]);
+			
+				//console.log(formDOM[this.graphNumCounter][0])
+				/* Add eventListenor*/
+				d3.select("div#form"+graphTypeString+graphNum).select("form")
+						.attr("onchange","plot"+graphTypeString+"(csvMainObj,csvRefObj,'div.graph"+graphTypeString+"."+graphTypeString+graphNum+"',formDOM["+this.graphNumCounter+"][0]);toggleVisibility()");
+
+
+				this.graphNumCounter=this.graphNumCounter+1;
+		}
+		
+	// _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+	
+
+	
+	var graphAppend=new GraphAppender("#graph");
+
+	
+	/* jQuery-UI Sortable */
+	$(function(){
+		$("#graph").sortable({
+			cursor: "move",
+			opacity: 0.7,
+		});
+		$("#graph").disableSelection();
+	})
+	
+	$(function(){
+		$("#commonForm"). draggable({
+			cursor: "move"
+		});
+	})
+	
+	$(function(){
+		$("#legend_setting"). draggable({
+			cursor: "move"
+		});
+	})
+	
+</script>
+
+<!-- ファイル読み込み -->
+<script src="./js/CsvFunction.js"></script>
+<script type="text/javascript">
+	// Initialize
+	var fileMain=document.getElementById("selectFileMain");
+	var testDataButton=document.getElementById("use_test_data");
+	var readerMain=new FileReader();
+	var csvMainObj=new Array();
+	var csvRefObj=new Array();
+	
+	testDataButton.onclick=function(ev){
+		var data = new XMLHttpRequest();
+		data.open("GET","./data/lava_compositions.csv",false);
+		data.send(null);
+		csvMainObj=creatCsvObject(data.responseText);
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+		replotGraphs();
+	}
+	
+	// csvMainObj にメインデータファイルの内容を読み込み
+	fileMain.onchange=function(evt){
+		var file=evt.target.files;
+		readerMain.readAsText(file[0]);
+		
+		readerMain.onload=function(ev){
+			csvMainObj=creatCsvObject(readerMain.result);
+		};
+		
+		var refData = new XMLHttpRequest();
+		refData.open("GET","./data/Refferencial_abundance.csv",false);
+		refData.send(null);
+		csvRefObj=creatCsvObject(refData.responseText);
+		replotGraphs();
+	};
+</script>
+
+<!-- サイドメニュー動作 -->
+<script type="text/javascript">
+$(function() {
+	var $body = $('body');
+  $("#panel-btn").click(function() {
+    $body.toggleClass('side-open');
+    $('#js__overlay').on('click', function () {
+      $body.removeClass('side-open');
+      $("#panel-btn-icon").toggleClass("close");
+    	return false;
+     
+    });
+    $("#panel-btn-icon").toggleClass("close");
+    return false;
+  });
+});
+</script>
+<!-- トップメニュー動作 -->
+<script>
+$(function() {
+  $("#mainFile_btn").click(function(){
+    $("#mainFile").fadeIn();
+    $("#setting_overlay").fadeIn();
+    return false;
+  });
+});
+
+$("#setting_overlay").click(function(){
+	$("#setting_overlay").fadeOut();
+	$("#mainFile").fadeOut();
+})
+
+$(function() {
+  $("#visual_btn").click(function(){
+    $("#commonForm").fadeIn();
+    $("#setting_overlay").fadeIn();
+    return false;
+  });
+});
+
+$("#setting_overlay").click(function(){
+	$("#setting_overlay").fadeOut();
+	$("#commonForm").fadeOut();
+})
+
+$(function() {
+  $("#legend_btn").click(function(){
+    $("#legend_setting").fadeIn();
+    $("#setting_overlay").fadeIn();
+    return false;
+  });
+});
+
+$("#setting_overlay").click(function(){
+	$("#setting_overlay").fadeOut();
+	$("#legend_setting").fadeOut();
+})
+</script>
+</html>

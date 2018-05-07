@@ -1,0 +1,187 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" charset="UTF-8">
+	
+	<script src="./js/jquery-2.2.0.min.js" charset="utf-8"></script>
+	<script src="./js/d3.js" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="./css/material_icons.css" charset="utf-8">
+	<link rel="stylesheet" href="./css/material.indigo-pink.min.css" charset="utf-8">
+	<script defer src="./js/material.min.js" charset="utf-8"></script>
+	
+	<script src="./js/fumipos_common.js" charset="utf-8"></script>
+	<script src="./js/plot_abundance.js" charset="utf-8"></script>
+	<link rel="stylesheet" href="./css/plot_mine.css" type="text/css" charset="utf-8">
+	<link rel="icon" type="image/png" href="./image/Harker.png" sizes="32x32">
+	<title>plot abundance</title>
+</head>
+
+
+<body>
+	<style>
+	div#form{
+		box-sizing:border-box;
+	}
+	
+	.csvInput .mdl-textfield{
+		font-size: 10;
+		width: 480px;
+	}
+	.eleInput .mdl-textfield{
+		font-size: 50%;
+		width: 480px;
+	}
+	.rangeInput .mdl-textfield{
+		width: 50px;
+	}
+	.imageInput .mdl-textfield{
+		width: 100px;
+	}
+
+	</style>
+	
+	
+	<!-- ツールチップDOM -->
+	<span id="tooltipAbundance"></span>
+
+	<!-- サイドオープン時メインコンテンツを覆う -->
+  <div class="overlay" id="js__overlay"></div>
+	
+	<!-- サイドメニュー -->
+	<nav class="side-menu">
+		<!-- 凡例 -->
+		<div class="legend" >
+			<script type="text/javascript">
+				writeLegend();
+			</script>
+		</div>
+	</nav>
+
+	<!-- 開閉用ボタン -->
+	<div class="side-menu-btn" id="js__sideMenuBtn"> 
+		<a href="#" id="panel-btn"><span id="panel-btn-icon"></span></a>
+	</div>
+	
+	
+<div id="fixed-menu">
+<div id="fixed-menu-contents">
+	<a href="./index.html" id="home"></a>
+
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Select File</a>
+		<div class="panel selectFile">
+			<!-- 入力ファイル選択フォーム -->
+			<div id="mainFile">
+				<script type="text/javascript">
+					writeFormMainFile();
+				</script>
+			</div>
+		</div>
+	</div>
+	
+
+	<div class="panel-wrap">
+		<a href="#" class="menu-btn">Abundance pattern</a>
+		<div class="panel">
+			<!-- Abundance pattern のフォーム -->
+			<div class="formAbundance" id="formAbundance0">
+				<script type="text/javascript">
+					writeFormAbundance();
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+	<div class="wrapper">
+		<div class="menuSpace"></div>
+	
+		<!-- Header -->
+		<div class="header">
+				<h3>Plot abundance pattern</h3>
+		</div>
+	
+		<div id="graph" class="clearfix">
+			<!-- svg描画領域 -->
+			<div class="abundance0" style="float:left">
+				<h1 class="abundance">Graph Title</h1>
+			</div>
+		</div>
+
+		<div class="footer">
+			<script type="text/javascript">
+				writeFooter();
+			</script>
+		</div>
+	</div>
+</body>
+
+<!-- ファイル読み込み -->
+<script src="./js/CsvFunction.js">
+</script>
+<script type="text/javascript">
+	// Initialize
+	var fileMain=document.getElementById("selectFileMain");
+	var readerMain=new FileReader();
+	var csvMainObj=new Array();
+	
+	// csvMainObj にメインデータファイルの内容を読み込み
+	fileMain.onchange=function(evt){
+		var file=evt.target.files;
+		readerMain.readAsText(file[0]);
+		
+		readerMain.onload=function(ev){
+			csvMainObj=creatCsvObject(readerMain.result);
+		};
+	};
+	
+</script>
+
+<!-- グラフ初期化 -->
+<script>
+	var formAbundances=$("div.formAbundance form");
+
+	console.log(formAbundances[0]);
+
+	for (var i=0; i < formAbundances.length; i++){
+		initializeAbundance("div.Abundance"+i,formAbundances[i]);
+		d3.select("div#formAbundance"+i).selectAll("input")
+			.attr("onchange","plotAbundance(csvMainObj,'div.abundance"+i+"',formAbundances["+i+"]); toggleVisibility()");
+		d3.select("div#formAbundance"+i).selectAll("select")
+			.attr("onchange","plotAbundance(csvMainObj,'div.abundance"+i+"',formAbundances["+i+"]);toggleVisibility()");
+	};
+</script>
+
+<!-- サイドメニュー動作 -->
+<script>
+$(function() {
+	var $body = $('body');
+  $("#panel-btn").click(function() {
+    $body.toggleClass('side-open');
+    $('#js__overlay').on('click', function () {
+      $body.removeClass('side-open');
+      $("#panel-btn-icon").toggleClass("close");
+    	return false;
+     
+    });
+    $("#panel-btn-icon").toggleClass("close");
+    return false;
+  });
+});
+</script>
+
+<!-- トップメニュー動作 -->
+<script>
+$(function() {
+  $(".menu-btn").click(function(){
+    var clickMenu = $("+.panel",this);
+    clickMenu.toggle("fast");
+    $(".panel").not(clickMenu).slideUp();
+    $(".panel:visible").prev().css("background","#283948");
+    $(".panel:hidden").prev().css("background","#2e4153");
+    return false;
+  });
+});
+</script>
+</html>

@@ -1,0 +1,85 @@
+/* graph components */
+
+
+span.console{
+	font-size: 20px;
+	color:#000099;
+	text-align: left;
+}
+
+
+
+g.x.axis text,
+g.y.axis text{
+	font: 20px "Arial";
+}
+
+text.xlabel,
+text.ylabel{
+	font: 24px "Arial";
+}
+
+
+g.x.axis path,
+g.x.axis line,
+g.y.axis path,
+g.y.axis line{
+	fill:none;
+	stroke: #000000;
+	stroke-width: 2;
+	shape-rendering: crispEdges;
+}
+
+path{
+	fill:none;
+}
+
+
+h1.binary,
+h1.abundance,
+h1.Map{
+	font-size: 24px;
+}
+
+h1,
+svg{
+	margin: 0;
+}
+
+/* Common legend */
+
+circle.mine{
+	stroke: #000;
+}
+
+circle.mix{
+	fill: #fff;
+	stroke: #000;
+}
+
+path.mix{
+	stroke: #000;
+}
+
+circle.melting{
+	fill: #fff;
+	stroke: #000;
+}
+
+path.melting{
+	stroke: #000;
+}
+
+.abundance.undefined{
+	stroke: #000000;
+}
+
+
+.binary.undefined{
+	fill: #000000;
+}
+
+
+td.undefined{
+	color: #000000;
+}

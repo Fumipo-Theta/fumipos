@@ -1,0 +1,75 @@
+<form class="binary"  action="#">
+		<a href="#" class="close_button"></a>
+		<hr style="visibility:hidden">
+		<div class="eleInput__Binary">
+			<span class="text">element</span>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="xName" pattern="^[0-9A-Za-z\s]+$" required autofocus list="indexList" autocomplete="on">
+			<label class="mdl-textfield__label" for="#xName">x</label>
+			</div>
+			
+			<span class="text">vs.</span>
+			
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="yName" pattern="^[0-9A-Za-z\s]+$" required list="indexList" autocomplete="on">
+			<label class="mdl-textfield__label" for="#yName">y</label>
+			</div>
+			
+			
+		</div>
+		
+		<hr>
+		
+		<div class="rangeInput__Binary">
+			<span class="text">Range</span>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="x_min">
+			<label class="mdl-textfield__label" for="#x_min">x min</label>
+			</div>
+			<span class="text">:</span>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="x_max">
+			<label class="mdl-textfield__label" for="#x_max">x max</label>
+			</div>
+
+			<span class="text">&</span>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="y_min">
+			<label class="mdl-textfield__label" for="#y_min">y min</label>
+			</div>
+			<span class="text">:<span>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="y_max" >
+			<label class="mdl-textfield__label" for="#y_max">y max</label>
+			</div>
+		</div>
+		
+		<hr>
+		<div class="logInput">
+			<label for="#checkLogX">
+			<input  type="checkbox" id="checkLogX">
+			<span class="text">log x</span>
+			</label>
+			
+			<label for="#checkLogY">
+			<input  type="checkbox" id="checkLogY" >
+			<span class="text">log y</span>
+			</label>
+		</div>
+		<hr>
+			
+		
+		<div class="imageInput__Binary">
+		
+			<div style="width: 300px"> 
+			<span class="text">Image size</span>
+			<input class="mdl-slider mdl-js-slider" type="range" id="imageSize" min="0.2" max="1" value="0.45" step="0.05">
+			</div>
+			<hr>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			<input class="mdl-textfield__input" type="text" id="aspect" value="1">
+			<label class="mdl-textfield__label" for="#aspect">aspect ratio</label>
+			</div>
+		</div>
+
+	</form>

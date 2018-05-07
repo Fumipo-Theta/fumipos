@@ -1,0 +1,208 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../csslib/material_icons.css" charset="utf-8">
+  <link rel="stylesheet" href="../csslib/material.indigo-pink.min.css" charset="utf-8">
+  <link rel="stylesheet" href="./css/fumipos_plot.css" charset="utf-8">
+  <link rel="icon" type="image/png" href="./image/icon.png" sizes="64x64">
+  <style type="text/css" id="graph_style"></style>
+  <title>FUMIPOS multiple plot</title>
+</head>
+
+<body>
+  <style>
+    body {
+      display: flex;
+      background-color: blue;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .containor {
+      width: 90%;
+      height: 90%;
+    }
+  </style>
+
+  <div id="root1" class="containor"></div>
+  <div id="root2" class="containor"></div>
+
+  <!-- Loading javascript component -->
+  <script src="../jslib/jquery-2.2.0.min.js" charset="utf-8"></script>
+  <script src="../jslib/jquery-ui.min.js" charset="utf-8"></script>
+  <script defer src="../jslib/jquery.ui.touch-punch.min.js" charset="utf-8"></script>
+  <script src="../jslib/d3.min.js" charset="utf-8"></script>
+  <script defer src="../jslib/material.min.js" charset="utf-8"></script>
+  <script src="../jslib/textFile.js"></script>
+  <script src="../jslib/matrix_simple.js" charset="utf-8"></script>
+  <script src="../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script>
+  </script>
+  <script src="./js/fumiposAPI.v3.1.js" charset="utf-8"></script>
+</body>
+<script type="text/javascript">
+
+
+  const initializer = {
+    'ui_setting_file': "./ui_setting.json",
+    'component': {
+      'sideMenu': false,
+      'fixedMenu': {
+        'dataFile': true,
+        'symbol': true,
+        'legend': true,
+        'simulate': true
+      },
+      'graphAppender': true,
+      'footer': false
+    },
+
+    'legend': {
+      'userStyleURL': './data/legend_region.json',
+      'commonStyleURL': './css/graph_common.css'
+    },
+    'userDataSetting': {
+      'useDefault': true,
+      'url': './data/lava_compositions.csv'
+    },
+    'referenceDataSetting': {
+      'useDefault': true,
+      'url': './data/Refferencial_abundance.csv'
+    }
+  }
+
+  const autoMode = {
+    'menuConfig': {
+      'symbol': [
+        {
+          'id': 'outOpacity',
+          'min': 0,
+          'max': 1,
+          'step': 0.1,
+          'value': 0.1
+        },
+        {
+          'id': 'baseOpacity',
+          'min': 0,
+          'max': 1,
+          'step': 0.1,
+          'value': 0.8
+        },
+        {
+          'id': 'onOpacity',
+          'min': 0,
+          'max': 1,
+          'step': 0.1,
+          'value': 1
+        },
+        {
+          'id': 'outRadius',
+          'min': 1,
+          'max': 12,
+          'step': 0.5,
+          'value': 6
+        },
+        {
+          'id': 'baseRadius',
+          'min': 1,
+          'max': 12,
+          'step': 0.5,
+          'value': 6
+        },
+        {
+          'id': 'onRadius',
+          'min': 1,
+          'max': 12,
+          'step': 0.5,
+          'value': 9
+        },
+        {
+          'id': 'outWidth',
+          'min': 0,
+          'max': 3,
+          'step': 0.05,
+          'value': 0.25
+        },
+        {
+          'id': 'baseWidth',
+          'min': 0,
+          'max': 3,
+          'step': 0.05,
+          'value': 1
+        },
+        {
+          'id': 'onWidth',
+          'min': 0,
+          'max': 3,
+          'step': 0.05,
+          'value': 3
+        }
+      ]
+    },
+    "defaultSetting": {
+      'symbol': {
+        outOpacity: 0.1,
+        baseOpacity: 0.8,
+        onOpacity: 1,
+
+        outRadius: 6,
+        baseRadius: 6,
+        onRadius: 9,
+
+        outWidth: 0.25,
+        baseWidth: 1,
+        onWidth: 3,
+      }
+    },
+    'plot': [
+      {
+        'type': 'binary',
+        'inputList': [
+          { 'id': 'xName', 'type': 'value', 'value': 'SiO2' },
+          { 'id': 'yName', 'type': 'value', 'value': 'MgO' },
+          { 'id': 'x_min', 'type': 'value', 'value': null },
+          { 'id': 'x_max', 'type': 'value', 'value': null },
+          { 'id': 'y_min', 'type': 'value', 'value': null },
+          { 'id': 'y_max', 'type': 'value', 'value': null },
+          { 'id': 'checkLogX', 'type': 'checked', 'value': false },
+          { 'id': 'checkLogY', 'type': 'checked', 'value': false },
+          { 'id': 'imageSize', 'type': 'value', 'value': 0.3 },
+          { 'id': 'aspect', 'type': 'value', 'value': 0.8 }
+        ]
+      },
+      {
+        'type': 'abundance',
+        'inputList': [
+          { 'id': 'eleName', 'type': 'value', 'value': 'La Ce Pr Nd Sm Eu Gd Tb Dy Ho Er Tm Yb Lu' },
+          { 'id': 'reserver', 'type': 'value', 'value': 'PM,Sun&McDonough-1989' },
+          { 'id': 'y_min', 'type': 'value', 'value': 0.01 },
+          { 'id': 'y_max', 'type': 'value', 'value': 1000 },
+          { 'id': 'imageSize', 'type': 'value', 'value': 0.7 },
+          { 'id': 'aspect', 'type': 'value', 'value': 0.8 }
+        ]
+
+      }
+    ]
+
+  }
+
+
+  const fumipo1 = new fumiposAPI.Fumipo("root1", initializer);
+  const fumipo2 = new fumiposAPI.Fumipo("root2", initializer);
+  window.addEventListener('load', function () {
+    fumipo1.initialize();
+    fumipo2.initialize();
+  }, false);
+  window.addEventListener('load', function () {
+    fumipo1.setSharedParameters(autoMode.menu);
+    fumipo2.setSharedParameters(autoMode.menu);
+  }, false);
+
+  window.onbeforeunload = function (e) {
+    return "Unload ?";
+  };
+
+</script>
+
+</html>

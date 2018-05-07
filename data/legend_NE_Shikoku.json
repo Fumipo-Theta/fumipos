@@ -1,0 +1,52 @@
+{
+	"key":"region",
+	"legends":[
+		{
+			"name":"Osaka",
+			"class":"Osaka",
+			"color":"#dd9900",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"E-NE Shikoku",
+			"class":"E-NE_shikoku",
+			"color":"#0000ff",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"C-NE Shikoku",
+			"class":"C-NE_shikoku",
+			"color":"#ff0000",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"W-NE Shikoku",
+			"class":"W-NE_shikoku",
+			"color":"#00aa00",
+			"stroke":false,
+			"symbol":"circle"
+		},
+
+		{
+			"name":"Reservor",
+			"class":"Reserver",
+			"color":"#005500",
+			"stroke":false,
+			"symbol":"circle"
+		},
+		
+		{
+			"name":"Model",
+			"class":"Model",
+			"color":"#040",
+			"stroke":true,
+			"symbol":"circle"
+		}
+	]
+}
