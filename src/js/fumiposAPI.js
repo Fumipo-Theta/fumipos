@@ -1,7 +1,11 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(["../jslib/d3.min", "../multiCrystallization/js / multiCrystallization_v1.4.1", "../jslib/textFile"], factory);
+    define([
+      "../../../jslib/d3.min",
+      "../../../multiCrystallization/js/multiCrystallization_v1.4.1",
+      "../../../jslib/textFile"
+    ], factory);
   } else if (typeof exports === 'object') {
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
@@ -15,33 +19,25 @@
 
   //┌-- Module loading -----------------------------------------------------------------┐
 
-  let d3, Crystal, tf;
+  const d3 = (typeof require === 'undefined' && typeof _d3 === 'object') ?
+    _d3
+    : require('../../../jslib/d3.min.js');
 
-  if (typeof require === "undefined" && typeof _d3 === "object") {
-    d3 = _d3;
-  } else {
-    d3 = require('"../jslib/d3.min.js');
-  }
+  const Crystal = (typeof require === 'undefined' && typeof _Crystal === 'function') ?
+    _Crystal
+    : require('../../../multiCrystallization/js/multiCrystallization_v1.4.1.js');
 
-  if (typeof require === "undefined" && typeof _Crystal === "function") {
-    Crystal = _Crystal;
-  } else {
-    Crystal = require('../multiCrystallization/js / multiCrystallization_v1.4.1.js');
-  }
+  const tf = (typeof require === 'undefined' && typeof _tf === 'object') ?
+    _tf
+    : require('../../../jslib/textFile');
 
-  if (typeof require === "undefined" && typeof _tf === "object") {
-    tf = _tf;
-  } else {
-    tf = require('../jslib/textFile.js');
-  }
 
-  let load;
 
-  if (typeof require === "undefined") {
-    load = fetch;
-  } else {
-    load = require("../../node_modules/node-fetch");
-  }
+  const load = (typeof require === 'undefined') ?
+    fetch
+    : require("node-fetch");
+
+
   //└----------------------------------------------------------------------------------┘
 
 
