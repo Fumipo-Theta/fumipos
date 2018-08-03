@@ -9,25 +9,36 @@
   <link rel="icon" type="image/png" href="image/icon.png" sizes="64x64">
   <style type="text/css" id="graph_style"></style>
   <title>FUMIPOS multiple plot</title>
+  <script src="../../jslib/loadScript.js"></script>
 </head>
 
 <body>
   <!-- Loading javascript component -->
-  <!--script src="../jslib/jquery-2.2.0.min.js" charset="utf-8"></script-->
-  <!--script src="../jslib/jquery-ui.min.js" charset="utf-8"></script-->
-  <!--script defer src="../jslib/jquery.ui.touch-punch.min.js" charset="utf-8"></script-->
-  <!--script src="../jslib/d3.min.js" charset="utf-8"></script-->
-  <script src="js/material.min.js" charset="utf-8"></script>
-  <!--script src="../jslib/textFile.js"></script-->
-  <!--script src="../jslib/matrix_simple.js" charset="utf-8"></script-->
-  <!--script src="../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script-->
+  <!--script src="../../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script-->
 
-  <script src="js/main.js" charset="utf-8"></script>
 
   <datalist id="indexList"></datalist>
 </body>
 
 <script type="text/javascript">
+  if (typeof require !== "undefined") {
+    const remote = require('electron').remote;
+    const dialog = remote.dialog;
+    const browserWindow = remote.BrowserWindow;
+    var webScripts = [];
+  } else {
+    var webScripts = [
+      "../../jslib/jquery-2.2.0.min.js",
+      "../../jslib/jquery-ui.min.js",
+      "../../jslib/jquery.ui.touch-punch.min.js",
+      "js/material.min.js",
+      "../../jslib/d3.v5.min.js",
+      "../../jslib/textFile.js",
+      "../../jslib/matrix.js"
+    ]
+  }
+  const scripts = [...webScripts];
+  scripts.map(src => loadScript({ src }));
 
 
   const initializer = {
