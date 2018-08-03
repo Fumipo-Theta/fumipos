@@ -91,7 +91,6 @@
 
 
   /* HTML component loader */
-
   fumiposAPI.loadHTML = function (obj) {
     return new Promise(function (res, rej) {
 

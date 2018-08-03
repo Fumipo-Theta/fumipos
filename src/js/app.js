@@ -9,6 +9,7 @@
       root.menuFileLoad,
       root.menuSymbol,
       root.menuLegend,
+      root.menuTest,
       //root.fumiposAPI
     );
   }
@@ -17,6 +18,7 @@
   menuFileLoad,
   menuSymbol,
   menuLegend,
+  menuTest,
   /*_fumiposAPI*/) {
   /*
   const fumiposAPI = (typeof require === 'undefined' && (typeof _fumiposAPI === 'object' || typeof _fumiposAPI === 'function'))
@@ -170,7 +172,8 @@
     topMenu.register(
       menuFileLoad,
       menuSymbol,
-      menuLegend
+      menuLegend,
+      menuTest
     );
   }
 

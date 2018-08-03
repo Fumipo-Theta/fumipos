@@ -1,3 +1,17 @@
+/**
+ * TopMenu
+ * 
+ * FUMIPOSのトップメニューバーにメニューボタンと
+ * 設定メニューを設定する.
+ * 
+ * メニューはjavascriptモジュールの形で作成する.
+ * メニューは4つのオブジェクトを提供する.
+ * 1. template:: uiState => HTML string
+ * 2. eventSetter :: (emitter, uiState) => function
+ * 3. option :: {buttonLabel: String, draggable:Bool}
+ * 4. style :: String
+ */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -31,22 +45,29 @@
 
     register(...menus) {
       menus.forEach(({ template, option, eventSetter, style }) => {
+        const contentId = "menu-bar-content-"
+          + this.menuCount++;
+        const btnId = "btn-" + contentId;
+
+        const openButton = document.createElement("a");
+        openButton.classList.add("menu-btn")
+        openButton.id = btnId;
+        openButton.innerText = option.label;
+        this.menuBar.appendChild(openButton);
+        const left = openButton.offsetLeft;
+
+
         const dom = document.createElement("div")
-        const contentId = "menu-bar-content-" + this.menuCount++;
+
         dom.id = contentId;
         dom.classList.add("menu-bar-content");
         dom.setAttribute("style", style);
         this.menuSpace.appendChild(dom);
+        dom.style.left = left;
         $("#" + contentId).html(template(this.uiState)).trigger("create");
 
-        const openButton = document.createElement("a");
-        openButton.classList.add("menu-btn")
-        const btnId = "btn-" + contentId;
-        openButton.id = btnId;
-        openButton.innerText = option.label;
-        this.menuBar.appendChild(openButton);
-        eventSetter(this.emitter, this.uiState);
 
+        eventSetter(this.emitter, this.uiState);
         TopMenu.setOpenClose(
           "#" + btnId,
           "#" + contentId,
