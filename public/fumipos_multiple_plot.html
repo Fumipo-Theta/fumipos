@@ -13,6 +13,28 @@
 </head>
 
 <body>
+  <div id="wrapper">
+    <span id="tooltip"></span>
+    <div id="setting_menu">
+      <div id="setting_overlay"></div>
+    </div>
+    <div id="overlay" class="overlay"></div>
+
+
+    <div id="fixed-menu">
+      <div id="fixed-menu-contents">
+        <a id="home" href="./index.html"></a>
+      </div>
+    </div>
+    <div id="menuSpace"></div>
+
+    <div id="graph_area">
+      <div id="graphAppender">
+      </div>
+    </div>
+
+    <div id="footer"></div>
+  </div>
   <!-- Loading javascript component -->
   <!--script src="../../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script-->
 
@@ -33,187 +55,21 @@
       "../../jslib/jquery.ui.touch-punch.min.js",
       "js/material.min.js",
       "../../jslib/d3.v5.min.js",
-      "../../jslib/textFile.js",
-      "../../jslib/matrix.js"
+      "../../jslib/textParser.js",
+      "../../jslib/matrix/matrix.js",
+      "../src/js/fumiposAPI.js",
+      "../src/js/top-menu.js",
+      "../src/js/menu-file-load.js",
+      "../src/js/menu-symbol.js",
+      "../src/js/menu-legend.js",
+      "../src/js/app.js"
     ]
   }
   const scripts = [...webScripts];
   scripts.map(src => loadScript({ src }));
 
 
-  const initializer = {
-    'component': {
-      'sideMenu': false,
-      'fixedMenu': {
-        'dataFile': {
-          'url': "./form_main_file.html",
-          'target': "#mainFile",
-          'button': "#mainFile_btn",
-          'overlay': "#setting_overlay",
-          'close': "#close_selectFile",
-          'label': 'Select file'
-        },
-        'symbol': {
-          'url': "./form_symbol.html",
-          'target': "#symbolForm",
-          'button': "#visual_btn",
-          'overlay': "#setting_overlay",
-          'draggable': false,
-          'close': "#close_symbolForm",
-          'label': 'Symbol'
-        },
-        'legend': {
-          url: "./form_legend.html",
-          target: "#legend_setting",
-          button: "#legend_btn",
-          overlay: "#setting_overlay",
-          draggable: false,
-          close: "#close_legendForm",
-          'label': 'Legend'
-        },
-        'simulate': {
-          url: "./form_simulate.html",
-          target: "#simulate_setting",
-          button: "#melting_btn",
-          overlay: false,
-          draggable: true,
-          close: "#close_simulateForm",
-          'label': 'Simulate'
-        }
-      },
-      'graphAppender': {
-        url: "./fumipos_graphAppender.html",
-        target: "#graphAppender",
-        draggable: false
-      },
-      'footer': {
-        url: "./fumipos_footer.html",
-        target: "#footer"
-      }
-    },
 
-    'legend': {
-      'userStyleURL': './data/legend_region.json',
-      'commonStyleURL': './css/graph_common.css'
-    },
-    'userDataSetting': {
-      'useDefault': true,
-      'url': './data/lava_compositions.csv'
-    },
-    'referranceDataSetting': {
-      'useDefault': true,
-      'url': './data/Refferencial_abundance.csv'
-    }
-  }
-
-  const autoMode = {
-    'menu': {
-      'symbol': [
-        {
-          'id': 'outOpacity',
-          'min': 0,
-          'max': 1,
-          'step': 0.1,
-          'value': 0.1
-        },
-        {
-          'id': 'baseOpacity',
-          'min': 0,
-          'max': 1,
-          'step': 0.1,
-          'value': 0.8
-        },
-        {
-          'id': 'onOpacity',
-          'min': 0,
-          'max': 1,
-          'step': 0.1,
-          'value': 1
-        },
-        {
-          'id': 'outRadius',
-          'min': 1,
-          'max': 12,
-          'step': 0.5,
-          'value': 6
-        },
-        {
-          'id': 'baseRadius',
-          'min': 1,
-          'max': 12,
-          'step': 0.5,
-          'value': 6
-        },
-        {
-          'id': 'onRadius',
-          'min': 1,
-          'max': 12,
-          'step': 0.5,
-          'value': 9
-        },
-        {
-          'id': 'outWidth',
-          'min': 0,
-          'max': 3,
-          'step': 0.05,
-          'value': 0.25
-        },
-        {
-          'id': 'baseWidth',
-          'min': 0,
-          'max': 3,
-          'step': 0.05,
-          'value': 1
-        },
-        {
-          'id': 'onWidth',
-          'min': 0,
-          'max': 3,
-          'step': 0.05,
-          'value': 3
-        }
-      ]
-    },
-    'plot': [
-      {
-        'type': 'binary',
-        'inputList': [
-          { 'id': 'xName', 'type': 'value', 'value': 'SiO2' },
-          { 'id': 'yName', 'type': 'value', 'value': 'MgO' },
-          { 'id': 'x_min', 'type': 'value', 'value': null },
-          { 'id': 'x_max', 'type': 'value', 'value': null },
-          { 'id': 'y_min', 'type': 'value', 'value': null },
-          { 'id': 'y_max', 'type': 'value', 'value': null },
-          { 'id': 'checkLogX', 'type': 'checked', 'value': false },
-          { 'id': 'checkLogY', 'type': 'checked', 'value': false },
-          { 'id': 'imageSize', 'type': 'value', 'value': 0.3 },
-          { 'id': 'aspect', 'type': 'value', 'value': 0.8 }
-        ]
-      },
-      {
-        'type': 'abundance',
-        'inputList': [
-          { 'id': 'eleName', 'type': 'value', 'value': 'La Ce Pr Nd Sm Eu Gd Tb Dy Ho Er Tm Yb Lu' },
-          { 'id': 'reserver', 'type': 'value', 'value': 'PM,Sun&McDonough-1989' },
-          { 'id': 'y_min', 'type': 'value', 'value': 0.01 },
-          { 'id': 'y_max', 'type': 'value', 'value': 1000 },
-          { 'id': 'imageSize', 'type': 'value', 'value': 0.7 },
-          { 'id': 'aspect', 'type': 'value', 'value': 0.8 }
-        ]
-
-      }
-    ]
-
-  }
-
-
-  const fumipo = fumiposAPI.createFumipo(initializer);
-  window.addEventListener('load', fumiposAPI.workSpaceInitialize(fumipo), false);
-  window.addEventListener('load', fumiposAPI.autoFixedMenu(autoMode.menu), false);
-
-  window.onbeforeunload = function (e) {
-    return "Unload ?";
-  };
 
 </script>
 

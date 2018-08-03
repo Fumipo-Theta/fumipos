@@ -13,7 +13,11 @@
     module.exports = factory();
   } else {
     // Browser globals (root is window)
-    root.fumiposAPI = factory(root.d3, root.Crystal, root.textFile);
+    root.fumiposAPI = factory(
+      root.d3,
+      root.Crystal,
+      root.TextParser
+    );
   }
 }(this, function (_d3, _Crystal, _tf) {
 
@@ -23,14 +27,12 @@
     _d3
     : require('../../../jslib/d3.min.js');
 
-  const Crystal = (typeof require === 'undefined' && typeof _Crystal === 'function') ?
-    _Crystal
-    : require('../../../multiCrystallization/js/multiCrystallization_v1.4.1.js');
+  const Crystal = _Crystal
 
-  const tf = (typeof require === 'undefined' && typeof _tf === 'object') ?
-    _tf
-    : require('../../../jslib/textFile');
 
+  const tf = (typeof require === 'undefined' && (typeof _tf === 'object' || typeof _tf === 'function'))
+    ? _tf
+    : require('../../../jslib/textParser');
 
 
   const load = (typeof require === 'undefined') ?
@@ -154,10 +156,7 @@
     let body = d3.select('body');
 
     /* Main contents wrapper */
-    let wrapper = d3.select('body').append('div').attr('id', 'wrapper');
-    wrapper.append('div').attr('id', 'menuSpace');
-    wrapper.append('div').attr('id', 'graph_area').attr('name', 'graph')
-      .append('div').attr('id', 'graphAppender');
+
 
     /* グラフを並び替えられるようにする */
     //if (window.matchMedia('(max-width:1024px)').matches) {
@@ -186,18 +185,7 @@
 
 
 
-    /* footer */
-    if (setting.component.footer) {
-      wrapper.append('div').attr('id', 'footer');
-      fumiposAPI.loadHTML(setting.component.footer);
-    }
 
-    /* Tooltip */
-    body.insert('span', '#wrapper').attr('id', 'tooltip');
-
-    /* Graph setting */
-    body.insert('div', '#wrapper').attr('id', 'setting_menu')
-      .append('div').attr('id', 'setting_overlay');
 
 
     /* Side menu */
@@ -227,11 +215,6 @@
 
     /* Fixed menu */
     if (setting.component.fixedMenu) {
-      body.insert('div', '#wrapper').attr('id', 'fixed-menu')
-        .append('div').attr('id', 'fixed-menu-contents')
-        .append('a').attr('id', 'home').attr('href', './index.html');
-
-      body.insert('div', '#wrapper').attr('id', 'top-menu');
 
       for (let key in setting.component.fixedMenu) {
         let menu = setting.component.fixedMenu[key];
