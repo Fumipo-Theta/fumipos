@@ -1,13 +1,5 @@
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.menuSymbol = factory();
-  }
-}(this, function () {
-  const template = uiState => `
+
+export  const template = uiState => `
   <form class="symbolForm" name="symbolForm" style="width: 90%;min-height: 500px;">
     <a href="#" class="close_button" id="close_symbolForm"></a>
     <hr style="visibility:hidden">
@@ -40,26 +32,18 @@
     <input class="mdl-slider mdl-js-slider" type="range" id="onWidth" min="0" max="3" value="3" step="0.05">
   `;
 
-  const eventSetter = (emitter, uiState) => {
+export  const eventSetter = (emitter, uiState) => {
 
   }
 
-  const option = {
+export  const option = {
     label: "Symbol",
     draggable: false
   }
 
-  const style = `
+export  const style = `
   left: 15%;
   width: 25vw;
   min-width:300px;
   min-height: 100px;
   `
-
-  return {
-    template,
-    option,
-    eventSetter,
-    style
-  };
-}))

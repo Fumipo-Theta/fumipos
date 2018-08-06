@@ -1,13 +1,5 @@
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.menuLegend = factory();
-  }
-}(this, function () {
-  const template = uiState => `
+
+export  const template = uiState => `
   <style>
   #form_legend input.button{
     cursor: pointer;
@@ -64,24 +56,17 @@
 </div>
   `;
 
-  const eventSetter = (emmiter, uiState) => {
+export  const eventSetter = (emmiter, uiState) => {
 
   }
 
-  const option = {
+export  const option = {
     label: "Legend",
     draggable: false
   }
 
-  const style = `
+ export const style = `
   left: 25%;
   min-width: 25vw;
   `;
 
-  return {
-    template,
-    eventSetter,
-    option,
-    style
-  };
-}))
