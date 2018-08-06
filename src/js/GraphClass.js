@@ -10,6 +10,10 @@ export default class GraphClass {
     this.graphCount++;
   }
 
+  getCount() {
+    return this.graphCount;
+  }
+
   buttonLabel() {
     return this.label;
   }
@@ -18,8 +22,12 @@ export default class GraphClass {
     return this.type;
   }
 
-  genTemplate(uiState) {
+  getTemplate(uiState) {
     return this.template(uiState);
+  }
+
+  getStyle() {
+    return this.style();
   }
 
   appendGraph() {
