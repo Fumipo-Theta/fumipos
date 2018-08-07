@@ -5,6 +5,9 @@ import * as menuLegend from "./menu-legend.js";
 import * as menuTest from "./menu-test.js";
 import GraphAppender from "./graph-appender.js";
 import GraphBinaryPlot from "./Graph-binary-plot.js";
+import * as graphSettingBtn from "./graph-btn-setting.js";
+import * as graphDeleteBtn from "./graph-btn-delete.js";
+import * as graphPngBtn from "./graph-btn-save_as_png.js";
 
 const initializer = {
   'component': {
@@ -159,7 +162,11 @@ window.onload = ev => {
     menuTest
   );
 
-  ga.initialize();
+  ga.initialize([
+    graphSettingBtn,
+    graphPngBtn,
+    graphDeleteBtn
+  ]);
   ga.register(new GraphBinaryPlot());
   ga.appendGraphButton({ label: "Abundance", type: "Abundance" });
   ga.appendGraphButton({ label: "Test", type: "Test" });

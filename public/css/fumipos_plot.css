@@ -34,22 +34,6 @@ form{
   font: 1.5rem "Arial";
 }
 
-/* overload material- */
-.mdl-textfield__input{
-  font-size: 1.5rem;
-}
-
-.mdl-textfield--floating-label.is-dirty .mdl-textfield__label,
-.mdl-textfield--floating-label.is-focused .mdl-textfield__label,
-.mdl-textfield--floating-label.is-invalid .mdl-textfield__label{
-  font-size: 1rem;
-}
-
-.mdl-textfield.is-disabled.is-disabled .mdl-textfield__label,
-.mdl-textfield__label, 
-fieldset[disabled] .mdl-textfield .mdl-textfield__label{
-  color: #3f51b5;
-}
 
 /* Place holder of input
 Usage::
@@ -62,6 +46,7 @@ Usage::
 [CSSの便利なセレクタ「:placeholder-shown疑似クラス」を使うと、フローティングラベルも簡単に実装できる | コリス](https://coliss.com/articles/build-websites/operation/css/css-only-floating-label.html)
 */
 .inp {
+  display: inline-block;
   position: relative;
   margin: auto;
   width: 100%;
@@ -225,11 +210,7 @@ select{
   border: 1px solid #2196f3;
 }
 
-  /* Input */
-.mdl-textfield__input{
-  color: #000;
-}
-  
+
   /* Tooltip */
   
 
@@ -584,10 +565,6 @@ td.switch:focus{
 /* Graph Setting menu */
 
 
-.eleInput__Binary .mdl-textfield{
-  width: 10vw;
-  min-width: 70px;
-}
 
 .eleInput__Abundance .mdl-textfield{
   width: 90%;
@@ -757,8 +734,7 @@ div.title{
   /* wrapperHarker */
   /* wrapperAbundance */
   
-.wrapperBinary,
-.wrapperAbundance{
+.graph{
   box-sizing:border-box;
   background-color: #fff;
   min-width:20%;
@@ -768,21 +744,18 @@ div.title{
   border-bottom:solid 1px #fff;
 }
 
-.wrapperBinary:hover,
-.wrapperAbundance:hover{
+.graph:hover{
   border-bottom:solid 1px #2196f3;
 }
 
-.wrapperBinary.active,
-.wrapperAbundance.active{
+.graph.active{
   border: 1px solid #2196f3;
 }
   
   /* graph UI button */
   
   
-.wrapperBinary ul,
-.wrapperAbundance ul{
+.graph ul{
   width: 100%;
   list-style: none;
   margin-top: 0px;
@@ -793,36 +766,15 @@ div.title{
   
 }
 
-.wrapperBinary li,
-.wrapperAbundance li{
+.graph li{
   flex:1;
   display:flex;
   justify-content: center;
 }
 
-a.nav_save::before{
-  content:url(../image/ic_file_download_24px.svg);
-  position: relative;
-  
-}
-
-a.nav_save:hover::before,
-a.nav_save:focus::before{
-  transition: all .3s;
-  content:url(../image/ic_file_download_24px_hover.svg);
-}
 
 
-a.nav_setting::before{
-  content:url(../image/ic_settings_black_24px.svg);
-  position: relative;
-}
 
-a.nav_setting:hover::before,
-a.nav_setting:focus::before{
-  transition: all .3s;
-  content:url(../image/ic_settings_black_24px_hover.svg);
-}
 
 a.nav_visual::before{
   content:url(../image/ic_visibility_black_24px.svg);
@@ -835,17 +787,7 @@ a.nav_visual:focus::before{
 }
 
 
-a.nav_delete::before{
-  content:url(../image/ic_delete_sweep_black_24px.svg);
-  position: relative;
-  
-}
 
-a.nav_delete:hover::before,
-a.nav_delete:focus::before{
-  transition: all .3s;
-  content:url(../image/ic_delete_sweep_black_24px_hover.svg);
-}
 
   
   /* GraphAppender */
@@ -881,12 +823,5 @@ input.graphAppender{
   margin: 5px 0px;
   padding:30px 10px;
 }
-
-input.graphAppender:hover,
-input.graphAppender:focus{
-  
-}
-
-/* _/_/_/_/_/_/_/_/_/_/ */
 
 

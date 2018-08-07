@@ -3,14 +3,14 @@ export default class GraphAppender {
   constructor(graphAreaId, graphMenuContentsId, overlayId, eventEmitter, uiState) {
     this.emitter = eventEmitter;
     this.uiState = uiState;
-    this.eachGraphMenu = ["save", "setting", "delete"];
+    this.graphMenuBtns = [];
     this.graphAreaId = graphAreaId;
     this.graphMenuContentsId = graphMenuContentsId;
     this.overlayId = overlayId;
     this.graphClass = {};
   }
 
-  initialize() {
+  initialize(graphMenuBtns) {
     const div = document.createElement("div");
     div.id = "graphAppender";
     div.innerHTML = `
@@ -20,6 +20,20 @@ export default class GraphAppender {
     document.querySelector("#" + this.graphAreaId).appendChild(div);
 
     this.dom = document.querySelector("#graphAppend_button");
+
+    this.graphMenuBtns = graphMenuBtns;
+
+
+
+    document.querySelector("body").appendChild(
+      (_ => {
+        const style = document.createElement("style")
+        style.innerHTML = this.graphMenuBtns.map(({ style }) => style)
+          .reduce((a, b) => a + "\n" + b, "");
+        style.id = "graph-menu-btn-style";
+        return style;
+      })()
+    )
   }
 
 
@@ -43,8 +57,16 @@ export default class GraphAppender {
   }
 
   appendGraph(type) {
-    this.appendGraphSetting(type)
-
+    const G = this.graphClass[type];
+    const id = G.getCount();
+    this.appendGraphSetting(G);
+    this.appendGraphArea(G);
+    G.appendGraph(
+      this.getTypeId("graph", type, id),
+      this.getTypeId("setting", type, id),
+      id
+    )
+    G.incrementCounter();
   }
 
   appendGraphButton({ label, type }) {
@@ -59,16 +81,23 @@ export default class GraphAppender {
       false
     )
     this.dom.appendChild(appendBtn);
+
   }
 
-  appendGraphSetting(type) {
-    const G = this.graphClass[type];
-    const settingId = this.getSettingId(type, G.getCount());
+  appendGraphSetting(G) {
+    const type = G.graphType();
+    const id = G.getCount()
+    const settingId = this.getTypeId("setting", type, id);
 
     const setting = document.createElement("div");
     setting.innerHTML = G.getTemplate(this.uiState);
     setting.id = settingId;
     setting.setAttribute("style", G.getStyle());
+    setting.addEventListener(
+      "change",
+      ev => G.updateGraph(id),
+      false
+    )
     document.querySelector("#" + this.graphMenuContentsId)
       .appendChild(setting);
 
@@ -76,13 +105,63 @@ export default class GraphAppender {
       "",
       "#" + settingId,
       "#" + this.overlayId
-    )
+    );
+
+
+    $(`#${settingId} input`)[0].focus();
     $("#" + settingId).fadeIn();
     $("#" + this.overlayId).fadeIn();
   }
 
-  getSettingId(type, id) {
-    return `setting-${type}-${id}`;
+  /**
+   * div#${graphAreaId}
+   *  \-div#graph-${type}_${id}.class
+   *    \-div#nav-${type}_${id}
+   *      \-ul
+   *        \-li
+   *          \-a#nav_save-${type}-${id}.nav_save
+   *        \-li
+   *          \-a#nav_setting-${type}-${id}.nav_setting
+   *    \-
+   * @param {*} G 
+   */
+  appendGraphArea(G) {
+    const type = G.graphType();
+    const id = G.getCount();
+    const graphArea = d3.select("#" + this.graphAreaId);
+
+    const graph = graphArea.insert("div", "#graphAppender")
+    graph.attr("class", "graph");
+    graph.attr("id", this.getTypeId("graph", type, id))
+
+    const graphMenu = graph.append("div");
+    graphMenu.attr("id", this.getTypeId("nav", type, id));
+    graphMenu.append("ul")
+      .attr("style", this.menuBtnStyle);
+
+    const graphBtns = graphMenu.select("ul")
+      .selectAll("li")
+      .data(this.graphMenuBtns);
+    graphBtns.enter().append("li")
+      .append("a")
+      .attr("id", d => this.getTypeId(d.btnName, type, id))
+      .attr("class", d => d.btnName)
+      .on("click", d => d.click(
+        "#" + this.getTypeId("graph", type, id),
+        "#" + this.getTypeId("setting", type, id),
+        "#" + this.overlayId,
+        id,
+        G
+      ));
+
+    const plot = graph.append("div");
+    plot.attr("id", this.getTypeId("plot", type, id));
+    plot.attr("class", "plot")
+    $(`#${this.getTypeId("graph", type, id)}`).addClass("active");
+  }
+
+  getTypeId(prefix, type, id) {
+    return `${prefix}-${type}_${id}`;
   }
 
   static setOpenClose(btn, content, overlay) {
@@ -94,10 +173,12 @@ export default class GraphAppender {
     $(overlay).click(function () {
       $(overlay).fadeOut();
       $(content).fadeOut();
+      $(".graph.active").removeClass("active");
     });
     $(`${content} .close_button`).click(function () {
       $(overlay).fadeOut();
       $(content).fadeOut();
+      $(".graph.active").removeClass("active");
     });
 
 
