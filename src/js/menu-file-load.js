@@ -84,7 +84,7 @@ export function eventSetter(emitter, uiState) {
     }).then(function (text) {
       uiState.refData = toEntries(tf.text2Dataframe(text, "csv"));
 
-      emitter.replotGraphsObj(uiState);
+      emitter.replotGraph();
       document.querySelector("#selectedRefFile").innerHTML = (url);
     })
 
@@ -108,8 +108,7 @@ export function eventSetter(emitter, uiState) {
         mapEntries(d => ({ dummy: 1 })),
       )(toEntries(tf.text2Dataframe(reader.result, "csv")))
 
-      emitter.replotGraphsObj(uiState);
-
+      emitter.replotGraph();
       emitter.createDataColumnIndex(uiState);
     };
 
@@ -128,28 +127,13 @@ export function eventSetter(emitter, uiState) {
     reader.onload = function (ev) {
       uiState.refData = toEntries(tf.text2Dataframe(reader.result, "csv"));
 
-      //fumiposAPI.replotGraphsObj(fumipo);
+      emitter.replotGraph();
     };
 
     for (var i = 0; i < file.length; i++) {
       document.querySelector("#selectedRefFile").innerHTML = (file[i].name + "\n");
     }
   }
-  /*
-  if (uiState.useDefaultDataSet) {
-    document.getElementById("use_test_data").click();
-  } else {
-    $("#mainFile").fadeIn();
-    $("#setting_overlay").fadeIn();
-  }
-
-  if (uiState.referenceDataSetting) {
-    document.getElementById('use_test_ref').click();
-  } else {
-    $("#mainFile").fadeIn();
-    $("#setting_overlay").fadeIn();
-  }
-  */
 };
 
 export const option = {

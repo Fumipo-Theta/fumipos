@@ -156,7 +156,21 @@ const state = {
     { x: 2, y: 10, dummy: 1 },
     { y: 0, z: 11, dummy: 1 },
     { y: 1, z: 3, dummy: 1 }
-  ]
+  ],
+  symbol: {
+    baseOpacity: 0.7,
+    baseRadius: 6,
+    baseWidth: 1,
+    onOpacity: 0.9,
+    onRadius: 9,
+    onWidth: 3,
+    outOpacity: 0.3,
+    outRadius: 3,
+    outWidth: 0.25
+  },
+  styleClass: "",
+
+  dataStack: []
 }
 
 const emitter = new UIUpdater({

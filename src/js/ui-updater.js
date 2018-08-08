@@ -13,4 +13,12 @@ export default class UIUpdater {
     entered.merge(options)
       .attr("value", d => d);
   }
+
+  setGraphAppender(ga) {
+    this.graphAppender = ga;
+  }
+
+  replotGraph() {
+    this.graphAppender.replotAll();
+  }
 }

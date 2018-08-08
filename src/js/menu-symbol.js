@@ -1,6 +1,12 @@
 
-export  const template = uiState => `
-  <form class="symbolForm" name="symbolForm" style="width: 90%;min-height: 500px;">
+export const template = uiState => `
+  <style>
+    #symbolForm input{
+      width : 100%;
+    }
+  </style>
+
+  <form class="symbolForm" id="symbolForm" style="width: 90%;min-height: 500px;">
     <a href="#" class="close_button" id="close_symbolForm"></a>
     <hr style="visibility:hidden">
     Fade out opacity
@@ -32,16 +38,28 @@ export  const template = uiState => `
     <input class="mdl-slider mdl-js-slider" type="range" id="onWidth" min="0" max="3" value="3" step="0.05">
   `;
 
-export  const eventSetter = (emitter, uiState) => {
+export const eventSetter = (emitter, uiState) => {
+  uiState.symbol = {};
+  [...document.querySelectorAll("#symbolForm input")].forEach(dom => {
+    const id = dom.id;
+    uiState.symbol[id] = parseFloat(dom.value);
+    dom.addEventListener(
+      "change",
+      ev => {
+        uiState.symbol[id] = parseFloat(dom.value);
+        emitter.replotGraph()
+      },
+      false
+    )
+  })
+}
 
-  }
+export const option = {
+  label: "Symbol",
+  draggable: false
+}
 
-export  const option = {
-    label: "Symbol",
-    draggable: false
-  }
-
-export  const style = `
+export const style = `
   left: 15%;
   width: 25vw;
   min-width:300px;

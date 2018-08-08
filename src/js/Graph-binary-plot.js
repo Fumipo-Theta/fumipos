@@ -15,10 +15,10 @@ class Binary extends Graph {
     super(graph, setting);
   }
 
-  replot({ data }) {
+  replot({ data, symbol, styleClass }) {
     const { x, y } = this.state;
     const canvas = this.canvas;
-    const plotFunc = Binary.showPoint(x, y, this.scale, this.svgSize)
+    const plotFunc = Binary.showPoint(x, y, this.scale, this.svgSize, symbol, styleClass)
     //const { styleClass } = state;
 
     const circle = canvas.selectAll("circle").data(data);
@@ -35,12 +35,17 @@ class Binary extends Graph {
 
 
 
-  static showPoint(x, y, scale, { offset, padding }) {
-    const baseRadius = 4;
-    const baseOpacity = 0.8
+  static showPoint(x, y, scale, { offset, padding }, symbol, styleClass) {
+
     return function (d) {
       const cx = scale.x(+d[x.sup] / +d[x.sub]) //+ offset.x + padding.left;
       const cy = scale.y(+d[y.sup] / +d[y.sub])// + padding.buttom;
+      const styleColumn = (d.hasOwnProperty(styleClass))
+        ? d[styleClass]
+        : "";
+      const study = (d.hasOwnProperty("study"))
+        ? d.study
+        : "";
 
       if (isNaN(cx) || isNaN(cy) || !isFinite(cx) || !isFinite(cy)) {
         d3.select(this).transition()
@@ -50,12 +55,12 @@ class Binary extends Graph {
         return false;
       }
 
-      d3.select(this).attr("r", d => (d['study'] === 'mine') ? baseRadius * 1.5 : baseRadius)
-        .attr('stroke-width', d => (d['study'] === 'mine') ? '4px' : '0px')
+      d3.select(this).attr("r", (study === 'mine') ? symbol.baseRadius * 1.5 : symbol.baseRadius)
+        .attr('stroke-width', (study === 'mine') ? '4px' : '0px')
         .attr("fill", "black")
-        .attr("name", d => d["name"])
-        //.attr("class", function (d) { return ("Binary D" + d["ID"] + " " + d[styleClass] + " " + d["study"]) })
-        .attr("opacity", baseOpacity)
+        .attr("name", d => (d.hasOwnProperty("name")) ? d["name"] : "")
+        .attr("class", function (d) { return ("Binary D" + d.id + " " + styleColumn + " " + d.study) })
+        .attr("opacity", symbol.baseOpacity)
         .transition()
         .attr("cx", cx)
         .attr("cy", cy)

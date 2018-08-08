@@ -2,6 +2,7 @@
 export default class GraphAppender {
   constructor(graphAreaId, graphMenuContentsId, overlayId, eventEmitter, uiState) {
     this.emitter = eventEmitter;
+    this.emitter.setGraphAppender(this);
     this.uiState = uiState;
     this.graphMenuBtns = [];
     this.graphAreaId = graphAreaId;
@@ -166,7 +167,7 @@ export default class GraphAppender {
   }
 
 
-  updateDataset(dataEntries) {
+  replotAll() {
     Object.values(this.graphManager).forEach(G => {
       G.replot();
     })
