@@ -1,4 +1,21 @@
 import tf from "../../../jslib/textParser_esm.js";
+const {
+  Dataframe,
+  transduce,
+  statefullTransducer
+} = funcTools;
+const {
+  mapping,
+  intoArray
+} = transduce;
+const {
+  indexing
+} = statefullTransducer;
+const {
+  toEntries,
+  mapEntries
+} = Dataframe;
+
 
 const load = (typeof require === 'undefined') ?
   fetch
@@ -24,49 +41,57 @@ export function template(state) {
         Select plot file (.CSV)
     <input type="file" id="selectFileMain" accept=".csv" required style="display:none">
   </label>
-        <input class="button" type="button" id="use_test_data" value="Use test data">
-          <hr>
-            Selected file: <span id="selectedMainFile"></span>
+    <input class="button" type="button" id="use_test_data" value="Use test data">
+    <hr>
+    Selected file: <span id="selectedMainFile"></span>
 
-            <hr>
-              <label class="file" for="selectFileRef">
-                Select Abundance file (.CSV)
-    <input type="file" id="selectFileRef" accept=".csv" style="display:none">
-  </label>
-                <input class="button" type="button" id="use_test_ref" value="Use default">
-                  <hr>
-                    Selected file: <span id="selectedRefFile"></span>
+    <hr>
+    <label class="file" for="selectFileRef">
+      Select Abundance file (.CSV)
+      <input type="file" id="selectFileRef" accept=".csv" style="display:none">
+    </label>
+    <input class="button" type="button" id="use_test_ref" value="Use default">
+    <hr>
+    Selected file: <span id="selectedRefFile"></span>
 
-</form>`
+  </form>`
 };
 
 export function eventSetter(emitter, uiState) {
   document.getElementById("use_test_data").onclick = function (ev) {
-    let url = "./data/lava_compositions.csv";
+    const url = "./data/lava_compositions.csv";
     load(url).then(function (response) {
       return response.text();
     }).then(function (text) {
-      uiState.plotData = tf.text2Object(text, 'csv');
-      uiState.plotData.map((v) => {
-        if (!v.value.dummy) v.value.dummy = 1;
-      });
-      document.querySelector("#selectedMainFile").innerText(url);
-      emitter.createIndexList(uiState);
+
+      uiState.data = intoArray(
+        indexing(0),
+        mapping(([i, d]) => Object.assign(d, { id: i })),
+        mapEntries(d => ({ dummy: 1 })),
+      )(toEntries(tf.text2Dataframe(text, "csv")))
+
+      document.querySelector("#selectedMainFile").innerHTML = (url);
+      emitter.createDataColumnIndex(uiState);
     })
   };
 
+
   document.getElementById('use_test_ref').onclick = function (ev) {
-    let url = uiState.referenceDataSetting.url || "./data/Refferencial_abundance.csv";
+    const url = "./data/Refferencial_abundance.csv";
 
     load(url).then(function (response) {
       return response.text();
     }).then(function (text) {
-      uiState.refData = tf.text2Object(text, 'csv');
+      uiState.refData = toEntries(tf.text2Dataframe(text, "csv"));
+
       emitter.replotGraphsObj(uiState);
-      document.querySelector("#selectedRefFile").innerText(url);
+      document.querySelector("#selectedRefFile").innerHTML = (url);
     })
 
   }
+
+  document.getElementById("use_test_data").click();
+  document.getElementById('use_test_ref').click();
 
   /* Button for use user data */
   document.getElementById("selectFileMain").onchange = function (ev) {
@@ -76,19 +101,20 @@ export function eventSetter(emitter, uiState) {
     reader.readAsText(file[0]);
     //console.log(file)
     reader.onload = function (ev) {
-      uiState.plotData = tf.text2Object(reader.result, 'csv');
 
-      uiState.plotData.map((v) => {
-        if (!v.value.dummy) v.value.dummy = 1;
-      });
+      uiState.data = intoArray(
+        indexing(0),
+        mapping(([i, d]) => Object.assign(d, { id: i })),
+        mapEntries(d => ({ dummy: 1 })),
+      )(toEntries(tf.text2Dataframe(reader.result, "csv")))
 
       emitter.replotGraphsObj(uiState);
 
-      emitter.createIndexList(uiState);
+      emitter.createDataColumnIndex(uiState);
     };
 
     for (var i = 0; i < file.length; i++) {
-      document.querySelector("#selectedMainFile").innerText(file[i].name + "\n");
+      document.querySelector("#selectedMainFile").innerHTML = (file[i].name + "\n");
     }
   };
 
@@ -100,13 +126,13 @@ export function eventSetter(emitter, uiState) {
     reader.readAsText(file[0]);
     //console.log(file)
     reader.onload = function (ev) {
-      uiState.refData = tf.text2Object(reader.result, 'csv');
+      uiState.refData = toEntries(tf.text2Dataframe(reader.result, "csv"));
 
       //fumiposAPI.replotGraphsObj(fumipo);
     };
 
     for (var i = 0; i < file.length; i++) {
-      document.querySelector("#selectedRefFile").innerText(file[i].name + "\n");
+      document.querySelector("#selectedRefFile").innerHTML = (file[i].name + "\n");
     }
   }
   /*

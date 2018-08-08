@@ -17,5 +17,5 @@ a.nav_delete:focus::before{
 export function click(graph, setting, _, id, GraphManager) {
   $(graph).remove();
   $(setting).remove();
-  GraphManager.removeGraph(id);
+  GraphManager.remove(id);
 }

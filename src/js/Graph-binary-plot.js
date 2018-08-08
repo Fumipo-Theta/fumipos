@@ -15,9 +15,10 @@ class Binary extends Graph {
     super(graph, setting);
   }
 
-  replot(data, state) {
+  replot({ data }) {
     const { x, y } = this.state;
     const canvas = this.canvas;
+    const plotFunc = Binary.showPoint(x, y, this.scale, this.svgSize)
     //const { styleClass } = state;
 
     const circle = canvas.selectAll("circle").data(data);
@@ -28,9 +29,11 @@ class Binary extends Graph {
       .remove();
     const enter = circle.enter().append("circle")
       .attr("cy", -10)
-      .attr("cx", -10)
-    enter.merge(circle).each(Binary.showPoint(x, y, this.scale, this.svgSize))
+      .attr("cx", -10);
+    enter.merge(circle).each(plotFunc);
   }
+
+
 
   static showPoint(x, y, scale, { offset, padding }) {
     const baseRadius = 4;
@@ -39,7 +42,7 @@ class Binary extends Graph {
       const cx = scale.x(+d[x.sup] / +d[x.sub]) //+ offset.x + padding.left;
       const cy = scale.y(+d[y.sup] / +d[y.sub])// + padding.buttom;
 
-      if (isNaN(cx) || isNaN(cy)) {
+      if (isNaN(cx) || isNaN(cy) || !isFinite(cx) || !isFinite(cy)) {
         d3.select(this).transition()
           .attr("cy", -10)
           .attr("cx", -10)
@@ -116,24 +119,24 @@ class Binary extends Graph {
 
   }
 
-  updateExtent(dataEntries) {
-    if (!Array.isArray(dataEntries)) return null;
+  updateExtent({ data }) {
+    if (!Array.isArray(data)) return null;
     const { x, y } = this.state;
     this.extent.x = [
       (isNaN(x.min))
-        ? d3.min(dataEntries, d => +d[x.sup] / +d[x.sub])
+        ? d3.min(data.filter(d => isFinite(+d[x.sup] / +d[x.sub])), d => +d[x.sup] / +d[x.sub])
         : x.min,
       (isNaN(x.max))
-        ? d3.max(dataEntries, d => +d[x.sup] / +d[x.sub])
+        ? d3.max(data.filter(d => isFinite(+d[x.sup] / +d[x.sub])), d => +d[x.sup] / +d[x.sub])
         : x.max
     ];
 
     this.extent.y = [
       (isNaN(y.min))
-        ? d3.min(dataEntries, d => +d[y.sup] / +d[y.sub])
+        ? d3.min(data.filter(d => isFinite(+d[y.sup] / +d[y.sub])), d => +d[y.sup] / +d[y.sub])
         : y.min,
       (isNaN(y.max))
-        ? d3.max(dataEntries, d => +d[y.sup] / +d[y.sub])
+        ? d3.max(data.filter(d => isFinite(+d[y.sup] / +d[y.sub])), d => +d[y.sup] / +d[y.sub])
         : y.max
     ];
 
@@ -175,8 +178,8 @@ class Binary extends Graph {
 }
 
 export default class GraphBinaryPlot extends GraphManager {
-  constructor() {
-    super();
+  constructor(uiState) {
+    super(uiState);
     this.label = "Binary variation";
     this.type = "Binary";
     this.Graph = Binary;

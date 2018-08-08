@@ -43,20 +43,16 @@ export default class GraphAppender {
    * 1. 追加ボタンを登録
    * 2. 各Graphクラスへのグラフの登録やstate更新をラップする
    */
-  register(...graphManager) {
-    graphManager.forEach(G => {
-      G.setData(this.uiState.data);
-      this.appendGraphButton({
-        label: G.buttonLabel(),
-        type: G.graphType()
+  registerGraphManager(...GraphManager) {
+    GraphManager.forEach(G => {
+      const g = new G(this.uiState);
+      this.setGraphAppendButton({
+        label: g.buttonLabel(),
+        type: g.graphType()
       });
-      this.graphManager[G.graphType()] = G;
+      this.graphManager[g.graphType()] = g;
     })
     return this;
-  }
-
-  registerGraphClass(G) {
-    this.graphManager.push(G);
   }
 
   appendGraph(type) {
@@ -64,7 +60,7 @@ export default class GraphAppender {
     const id = G.getCount();
     this.appendGraphSetting(G);
     this.appendGraphArea(G);
-    G.appendGraph(
+    G.append(
       this.getTypeId("graph", type, id),
       this.getTypeId("setting", type, id),
       id
@@ -72,7 +68,7 @@ export default class GraphAppender {
     G.incrementCounter();
   }
 
-  appendGraphButton({ label, type }) {
+  setGraphAppendButton({ label, type }) {
     const appendBtn = document.createElement("input");
     appendBtn.id = `append${type}`;
     appendBtn.classList.add("button", "graphAppender");
@@ -98,7 +94,7 @@ export default class GraphAppender {
     setting.setAttribute("style", G.getStyle());
     setting.addEventListener(
       "change",
-      ev => G.updateGraph(id),
+      ev => G.update(id),
       false
     )
     document.querySelector("#" + this.graphMenuContentsId)
@@ -111,9 +107,9 @@ export default class GraphAppender {
     );
 
 
-    $(`#${settingId} input`)[0].focus();
     $("#" + settingId).fadeIn();
     $("#" + this.overlayId).fadeIn();
+    $(`#${settingId} input`)[0].focus();
   }
 
   /**
@@ -169,13 +165,10 @@ export default class GraphAppender {
     return `${prefix}-${type}_${id}`;
   }
 
-  updateState(uiState) {
-    this.uiState = uiState;
-  }
 
   updateDataset(dataEntries) {
     Object.values(this.graphManager).forEach(G => {
-      G.setData(dataEntries);
+      G.replot();
     })
   }
 

@@ -22,15 +22,15 @@ export class Graph {
     this.extent = { x: [0, 1], y: [0, 1] }
   }
 
-  initialize(dataEntries = testData) {
+  initialize(state) {
     this.readSetting();
     this.setStateX();
     this.setStateY();
-    this.updateExtent(dataEntries);
+    this.updateExtent(state);
     this.updateSvgSize();
     this.createSvg();
     this.createAxis();
-    this.update(dataEntries);
+    this.update(state);
   }
 
 
@@ -77,16 +77,16 @@ export class Graph {
     this.updateAxis();
   }
 
-  update(dataEntries = testData) {
+  update(state) {
     this.readSetting();
     this.setStateX();
     this.setStateY();
-    this.updateExtent(dataEntries);
+    this.updateExtent(state);
     this.updateSvgSize();
     this.updateSvg();
     this.updateTitle();
     this.updateAxis();
-    this.replot(dataEntries);
+    this.replot(state);
   }
 
   setTitle(text) {
@@ -194,23 +194,23 @@ export class Graph {
 
   }
 
-  updateExtent(df) {
+  updateExtent({ data }) {
 
   }
 }
 
 export class GraphManager {
-  constructor() {
+  constructor(uiState) {
     this.graphCount = 0;
     this.label = "";
     this.type = "";
     this.instance = {};
+    this.uiState = uiState;
   }
 
-  setData(dataEntries) {
-    this.data = dataEntries;
+  replot() {
     Object.values(this.instance).forEach(g => {
-      g.update(dataEntries);
+      g.update(this.uiState);
     })
   }
 
@@ -231,25 +231,25 @@ export class GraphManager {
     return this.type;
   }
 
-  getTemplate(uiState) {
-    return this.template(uiState);
+  getTemplate() {
+    return this.template(this.uiState);
   }
 
   getStyle() {
     return this.style();
   }
 
-  appendGraph(graphId, settingId, id) {
+  append(graphId, settingId, id) {
     this.instance[id] = new this.Graph(graphId, settingId);
-    this.instance[id].initialize(this.data)
+    this.instance[id].initialize(this.uiState)
   }
 
-  removeGraph(id) {
+  remove(id) {
     this.instance[id] = null;
   }
 
-  updateGraph(id) {
-    this.instance[id].update(this.data);
+  update(id) {
+    this.instance[id].update(this.uiState);
   }
 };
 

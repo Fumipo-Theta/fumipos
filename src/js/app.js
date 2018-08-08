@@ -8,6 +8,7 @@ import GraphBinaryPlot from "./Graph-binary-plot.js";
 import * as graphSettingBtn from "./graph-btn-setting.js";
 import * as graphDeleteBtn from "./graph-btn-delete.js";
 import * as graphPngBtn from "./graph-btn-save_as_png.js";
+import UIUpdater from "./ui-updater.js";
 
 const initializer = {
   'component': {
@@ -158,10 +159,19 @@ const state = {
   ]
 }
 
-const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", {}, state)
-const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", {}, state);
+const emitter = new UIUpdater({
+  id_index_datalist: "indexList"
+})
+
+const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", emitter, state)
+const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", emitter, state);
+
 
 window.onload = ev => {
+  $('#graph_area').sortable({
+    cursor: "move",
+    opacity: 0.7
+  });
   topMenu.initialize();
   topMenu.register(
     menuFileLoad,
@@ -176,9 +186,9 @@ window.onload = ev => {
       graphPngBtn,
       graphDeleteBtn
     )
-    .register(new GraphBinaryPlot());
-  ga.appendGraphButton({ label: "Abundance", type: "Abundance" });
-  ga.appendGraphButton({ label: "Test", type: "Test" });
+    .registerGraphManager(GraphBinaryPlot);
+  ga.setGraphAppendButton({ label: "Abundance", type: "Abundance" });
+  ga.setGraphAppendButton({ label: "Test", type: "Test" });
 }
 
 /*
