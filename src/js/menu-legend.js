@@ -1,5 +1,6 @@
 
-export  const template = uiState => `
+
+export const template = uiState => `
   <style>
   #form_legend input.button{
     cursor: pointer;
@@ -35,7 +36,7 @@ export  const template = uiState => `
   </style>
 
   <div id="legend_form">
-  <form name="form_legend" id="form_legend">
+  <form id="form_legend">
     <a href="#" class="close_button" id="close_legendForm"></a>
     <hr style="visibility:hidden">
     <label class="file" for="legendJSON">
@@ -55,17 +56,37 @@ export  const template = uiState => `
 <div id="legend_table">
 </div>
   `;
+const createLegendTable = obj => {
 
-export  const eventSetter = (emmiter, uiState) => {
+}
 
-  }
+export const eventSetter = (emmiter, uiState) => {
+  document.getElementById("legendJSON").addEventListener('change', function (ev) {
+    const file = ev.target.files;
+    const reader = new FileReader();
+    reader.readAsText(file[0]);
+    //console.log(file)
+    reader.onload = ev => {
+      var obj = JSON.parse(reader.result);
+      createLegendTable(obj);
+      emitter.replotGraph();
+    };
+    document.querySelector("#legendFileLabel").innerHTML = (file[0].name);
+  }, false);
 
-export  const option = {
-    label: "Legend",
-    draggable: false
-  }
+  document.querySelector("#hideAll_button")
+    .addEventListener('click', function (ev) { allHide() }, false);
+  document.querySelector("#showAll_button")
+    .addEventListener('click', function (ev) { allShow() }, false);
 
- export const style = `
+}
+
+export const option = {
+  label: "Legend",
+  draggable: false
+}
+
+export const style = `
   left: 25%;
   min-width: 25vw;
   `;

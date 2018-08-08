@@ -182,6 +182,15 @@ const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", em
 
 
 window.onload = ev => {
+
+  let url = './css/graph_common.css'
+
+  fetch(url).then(function (data) {
+    return data.text();
+  }).then(function (text) {
+    document.querySelector("#graph_style").innerHTML = (text);
+  });
+
   $('#graph_area').sortable({
     cursor: "move",
     opacity: 0.7

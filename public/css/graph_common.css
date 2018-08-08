@@ -11,12 +11,14 @@ span.console{
 
 g.x.axis text,
 g.y.axis text{
-	font: 20px "Arial";
+  font: 20px "Arial";
+  fill:black;
 }
 
 text.xlabel,
 text.ylabel{
-	font: 24px "Arial";
+  font: 24px "Arial";
+  fill:black;
 }
 
 
@@ -35,9 +37,7 @@ path{
 }
 
 
-h1.binary,
-h1.abundance,
-h1.Map{
+.plot h1{
 	font-size: 24px;
 }
 

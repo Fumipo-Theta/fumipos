@@ -16,7 +16,7 @@ a.nav_save:focus::before{
 
 export function click(graph, setting, __) {
   const svg = d3.select(graph).select("svg")
-  const style = ["#graphStyle", "legendStyle"]
+  const style = ["#graph_style", "legendStyle"]
     .map(id => {
       try {
         return document.querySelector(id).innerHTML

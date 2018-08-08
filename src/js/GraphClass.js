@@ -60,6 +60,7 @@ export class Graph {
       .attr("transform", "rotate (-90," + -offset.x + "," + axis.height * 0.6 + ")")
       .attr("x", -offset.x)
       .attr("y", axis.height * 0.6)
+      .attr("fill", "black")
       .text(" ");
 
     // x軸を登録
@@ -72,6 +73,7 @@ export class Graph {
       .attr("class", "xlabel")
       .attr("x", axis.width * 0.4)
       .attr("y", offset.y * 0.75)
+      .attr("fill", "black")
       .text(" ");
 
     this.updateAxis();
@@ -122,8 +124,10 @@ export class Graph {
 
     this.svg.select(".y.axis").select("path").transition()
       .attr("d", "M" + axis.width + ",0H0V" + axis.height + "H" + axis.width)
+
     this.svg.select(".x.axis").select("path").transition()
       .attr("d", "M0,-" + axis.height + "V0H" + axis.width + "V-" + axis.height)
+
 
     this.svg.select("text.ylabel").transition()
       .attr("transform", "rotate (-90," + -offset.x + "," + axis.height * 0.6 + ")")
