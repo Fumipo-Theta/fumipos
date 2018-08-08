@@ -148,7 +148,15 @@ const autoMode = {
 
 }
 
-const state = {}
+const state = {
+  data: [
+    { x: 1, y: 2, dummy: 1, study: "mine" },
+    { x: 0, y: -1, dummy: 1 },
+    { x: 2, y: 10, dummy: 1 },
+    { y: 0, z: 11, dummy: 1 },
+    { y: 1, z: 3, dummy: 1 }
+  ]
+}
 
 const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", {}, state)
 const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", {}, state);
@@ -162,12 +170,13 @@ window.onload = ev => {
     menuTest
   );
 
-  ga.initialize([
-    graphSettingBtn,
-    graphPngBtn,
-    graphDeleteBtn
-  ]);
-  ga.register(new GraphBinaryPlot());
+  ga.initialize()
+    .registerBtns(
+      graphSettingBtn,
+      graphPngBtn,
+      graphDeleteBtn
+    )
+    .register(new GraphBinaryPlot());
   ga.appendGraphButton({ label: "Abundance", type: "Abundance" });
   ga.appendGraphButton({ label: "Test", type: "Test" });
 }

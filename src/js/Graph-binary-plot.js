@@ -1,54 +1,141 @@
 import { GraphManager, Graph } from "./GraphClass.js";
+const {
+  transduce,
+  Dataframe
+} = funcTools;
+const {
+  mapping,
+  filtering,
+  intoArray
+} = transduce;
+
 
 class Binary extends Graph {
   constructor(graph, setting) {
     super(graph, setting);
   }
 
-  readSetting() {
-    super.readSetting();
+  replot(data, state) {
+    const { x, y } = this.state;
+    const canvas = this.canvas;
+    //const { styleClass } = state;
 
+    const circle = canvas.selectAll("circle").data(data);
+    circle.exit()
+      .transition()
+      .attr("cy", -10)
+      .attr("cx", -10)
+      .remove();
+    const enter = circle.enter().append("circle")
+      .attr("cy", -10)
+      .attr("cx", -10)
+    enter.merge(circle).each(Binary.showPoint(x, y, this.scale, this.svgSize))
+  }
+
+  static showPoint(x, y, scale, { offset, padding }) {
+    const baseRadius = 4;
+    const baseOpacity = 0.8
+    return function (d) {
+      const cx = scale.x(+d[x.sup] / +d[x.sub]) //+ offset.x + padding.left;
+      const cy = scale.y(+d[y.sup] / +d[y.sub])// + padding.buttom;
+
+      if (isNaN(cx) || isNaN(cy)) {
+        d3.select(this).transition()
+          .attr("cy", -10)
+          .attr("cx", -10)
+          .remove();
+        return false;
+      }
+
+      d3.select(this).attr("r", d => (d['study'] === 'mine') ? baseRadius * 1.5 : baseRadius)
+        .attr('stroke-width', d => (d['study'] === 'mine') ? '4px' : '0px')
+        .attr("fill", "black")
+        .attr("name", d => d["name"])
+        //.attr("class", function (d) { return ("Binary D" + d["ID"] + " " + d[styleClass] + " " + d["study"]) })
+        .attr("opacity", baseOpacity)
+        .transition()
+        .attr("cx", cx)
+        .attr("cy", cy)
+    }
+  }
+
+  updateSvgSize() {
+    const width = parseInt(
+      document.querySelector("body").clientWidth * this.state.imageSize);
+    const aspect = this.state.aspect;
+
+    this.svgSize.size = {
+      width: parseInt(width),
+      height: parseInt(width * aspect)
+    }
+  }
+
+  setStateX() {
     this.state.x = Binary.parseDataName(
       this.state.xName,
       this.state.x_min,
       this.state.x_max,
       this.state.checkLogX
     )
+  }
+
+  setStateY() {
     this.state.y = Binary.parseDataName(
       this.state.yName,
       this.state.y_min,
       this.state.y_max,
       this.state.checkLogY
     )
-
-    this.svgSize.size = this.getSvgSize();
   }
 
 
   updateTitle() {
     const { x, y } = this.state;
-    this.svg.select("h1").text(`${x.name} vs. ${y.name}`);
+    this.setTitle(`${x.name} vs. ${y.name}`);
   }
 
-  setAxis() {
+  updateAxisType() {
     const { size, axis } = this.svgSize;
     this.scale.x = (this.state.x.islog)
       ? d3.scaleLog()
       : d3.scaleLinear();
-    this.scale.x.domain(this.extent.x).range([0, axis.width]);
-    this.axis.x = (this.state.x.islog)
-      ? d3.axisBottom(this.scale.x).ticks(0, "e")
-      : d3.axisBottom(this.scale.x).ticks(5)
+    this.scale.x.domain(this.extent.x)
+      .range([0, axis.width])
+      .nice();
+    this.axis.x = d3.axisBottom(this.scale.x)
     this.axis.x.tickSize(6, -size.height);
 
     this.scale.y = (this.state.y.islog)
       ? d3.scaleLog()
       : d3.scaleLinear();
-    this.scale.y.domain(this.extent.y).range([axis.height, 0]);
-    this.axis.y = (this.state.y.islog)
-      ? d3.axisLeft(this.scale.y).ticks(0, "e")
-      : d3.axisLeft(this.scale.y).ticks(5)
+    this.scale.y.domain(this.extent.y)
+      .range([axis.height, 0])
+      .nice();
+    this.axis.y = d3.axisLeft(this.scale.y)
     this.axis.y.tickSize(6, -size.width);
+
+  }
+
+  updateExtent(dataEntries) {
+    if (!Array.isArray(dataEntries)) return null;
+    const { x, y } = this.state;
+    this.extent.x = [
+      (isNaN(x.min))
+        ? d3.min(dataEntries, d => +d[x.sup] / +d[x.sub])
+        : x.min,
+      (isNaN(x.max))
+        ? d3.max(dataEntries, d => +d[x.sup] / +d[x.sub])
+        : x.max
+    ];
+
+    this.extent.y = [
+      (isNaN(y.min))
+        ? d3.min(dataEntries, d => +d[y.sup] / +d[y.sub])
+        : y.min,
+      (isNaN(y.max))
+        ? d3.max(dataEntries, d => +d[y.sup] / +d[y.sub])
+        : y.max
+    ];
 
   }
 
@@ -84,18 +171,6 @@ class Binary extends Graph {
         }
     return Object.assign(obj, type);
   }
-
-  getSvgSize() {
-    const width = parseInt(
-      document.querySelector("body").clientWidth * this.state.imageSize);
-    const aspect = this.state.aspect;
-
-    return {
-      width: parseInt(width),
-      height: parseInt(width * aspect)
-    }
-  }
-
 
 }
 

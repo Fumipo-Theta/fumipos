@@ -7,24 +7,24 @@ export default class GraphAppender {
     this.graphAreaId = graphAreaId;
     this.graphMenuContentsId = graphMenuContentsId;
     this.overlayId = overlayId;
-    this.graphClass = {};
+    this.graphManager = {};
+    return this;
   }
 
-  initialize(graphMenuBtns) {
+  initialize() {
     const div = document.createElement("div");
     div.id = "graphAppender";
     div.innerHTML = `
       <form class="graphAppender" id="graphAppend_button"></form>
       `
-
     document.querySelector("#" + this.graphAreaId).appendChild(div);
-
     this.dom = document.querySelector("#graphAppend_button");
+    return this;
+  }
 
+
+  registerBtns(...graphMenuBtns) {
     this.graphMenuBtns = graphMenuBtns;
-
-
-
     document.querySelector("body").appendChild(
       (_ => {
         const style = document.createElement("style")
@@ -34,6 +34,7 @@ export default class GraphAppender {
         return style;
       })()
     )
+    return this;
   }
 
 
@@ -42,22 +43,24 @@ export default class GraphAppender {
    * 1. 追加ボタンを登録
    * 2. 各Graphクラスへのグラフの登録やstate更新をラップする
    */
-  register(...GraphClass) {
-    GraphClass.forEach(G => {
+  register(...graphManager) {
+    graphManager.forEach(G => {
+      G.setData(this.uiState.data);
       this.appendGraphButton({
         label: G.buttonLabel(),
         type: G.graphType()
       });
-      this.graphClass[G.graphType()] = G;
+      this.graphManager[G.graphType()] = G;
     })
+    return this;
   }
 
   registerGraphClass(G) {
-    this.graphClass.push(G);
+    this.graphManager.push(G);
   }
 
   appendGraph(type) {
-    const G = this.graphClass[type];
+    const G = this.graphManager[type];
     const id = G.getCount();
     this.appendGraphSetting(G);
     this.appendGraphArea(G);
@@ -115,14 +118,16 @@ export default class GraphAppender {
 
   /**
    * div#${graphAreaId}
-   *  \-div#graph-${type}_${id}.class
+   *  \-div#graph-${type}_${id}.graph
    *    \-div#nav-${type}_${id}
    *      \-ul
    *        \-li
    *          \-a#nav_save-${type}-${id}.nav_save
    *        \-li
    *          \-a#nav_setting-${type}-${id}.nav_setting
-   *    \-
+   *    \-div#plot-${type}_${id}.plot
+   *      \-h1
+   *      \-svg
    * @param {*} G 
    */
   appendGraphArea(G) {
@@ -162,6 +167,16 @@ export default class GraphAppender {
 
   getTypeId(prefix, type, id) {
     return `${prefix}-${type}_${id}`;
+  }
+
+  updateState(uiState) {
+    this.uiState = uiState;
+  }
+
+  updateDataset(dataEntries) {
+    Object.values(this.graphManager).forEach(G => {
+      G.setData(dataEntries);
+    })
   }
 
   static setOpenClose(btn, content, overlay) {

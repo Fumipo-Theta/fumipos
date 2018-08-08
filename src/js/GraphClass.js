@@ -1,3 +1,11 @@
+
+
+const testData = [
+  { x: 1, y: 2, dummy: 1 },
+  { x: 0, y: -1, dummy: 1 },
+  { x: 2, y: 10, dummy: 1 }
+]
+
 export class Graph {
   constructor(graphId, settingId) {
     this.graph = "#" + graphId;
@@ -14,35 +22,31 @@ export class Graph {
     this.extent = { x: [0, 1], y: [0, 1] }
   }
 
-  initialize() {
+  initialize(dataEntries = testData) {
     this.readSetting();
+    this.setStateX();
+    this.setStateY();
+    this.updateExtent(dataEntries);
+    this.updateSvgSize();
     this.createSvg();
-    this.createTitle();
     this.createAxis();
-
+    this.update(dataEntries);
   }
 
-  update() {
-    this.readSetting();
-    this.updateSvg();
-    this.updateTitle();
-    this.updateAxis();
-  }
 
   createSvg() {
+    d3.select(this.graph + " .plot").append("h1");
     this.svg = d3.select(this.graph + " .plot")
       .append("svg")
+    this.canvas = this.svg.append("g").attr("class", "plotArea")
     this.updateSvg();
-  }
-
-
-  createTitle() {
-    this.svg.append("h1");
     this.updateTitle();
   }
 
+
+
   createAxis() {
-    this.setAxisSize();
+    this.updateAxisSize();
     const { size, offset, padding, axis } = this.svgSize;
     const svg = this.svg;
     // y軸を登録
@@ -73,19 +77,42 @@ export class Graph {
     this.updateAxis();
   }
 
+  update(dataEntries = testData) {
+    this.readSetting();
+    this.setStateX();
+    this.setStateY();
+    this.updateExtent(dataEntries);
+    this.updateSvgSize();
+    this.updateSvg();
+    this.updateTitle();
+    this.updateAxis();
+    this.replot(dataEntries);
+  }
+
+  setTitle(text) {
+    d3.select(this.graph).select("h1").text(text);
+  }
+
+  updateTitle() {
+  }
+
   updateSvg() {
-    const { size } = this.svgSize;
+    const { size, offset, padding, axis } = this.svgSize;
     this.svg.attr("width", size.width)
       .attr("height", size.height);
+    this.canvas.attr("transform", `translate(${padding.left + offset.x},${padding.top})`)
+      .attr("width", axis.width)
+      .attr("height", axis.height)
+      .attr("fill", "gray")
   }
 
   updateAxis() {
-    this.setAxisSize();
-    this.setAxis();
+    this.updateAxisSize();
+    this.updateAxisType();
     const { size, offset, padding, axis } = this.svgSize;
 
     this.svg.select("g.y.axis")
-      .attr("transform", "translate(" + (offset.x + padding.left) + "," + (size.height - axis.height - offset.y - padding.buttom) + ")");
+      .attr("transform", `translate(${offset.x + padding.left},${size.height - axis.height - offset.y - padding.buttom} )`);
 
     this.svg.select("g.x.axis")
       .attr("transform", "translate(" + (offset.x + padding.left) + "," + (size.height - offset.y - padding.buttom) + ")");
@@ -111,12 +138,29 @@ export class Graph {
     this.svg.selectAll("path.domain").attr("fill", "none");
   }
 
-  setAxisSize() {
+  updateAxisSize() {
     const { size, padding, offset } = this.svgSize;
     this.svgSize.axis = {
       width: size.width - offset.x - padding.left - padding.right,
       height: size.height - offset.y - padding.top - padding.buttom
     }
+  }
+
+  updateSvgSize() {
+
+  }
+
+  updateAxisType() {
+    const { size, axis } = this.svgSize;
+    this.scale.x = d3.scaleLinear();
+    this.scale.x.domain(this.extent.x).range([0, axis.width]);
+    this.axis.x = d3.axisBottom(this.scale.x).ticks(5)
+    this.axis.x.tickSize(6, -size.height);
+
+    this.scale.y = d3.scaleLinear();
+    this.scale.y.domain(this.extent.y).range([axis.height, 0]);
+    this.axis.y = d3.axisLeft(this.scale.y).ticks(5)
+    this.axis.y.tickSize(6, -size.width);
   }
 
   readSetting() {
@@ -138,8 +182,20 @@ export class Graph {
           this.state[d.id] = d.value;
           break;
       }
+    });
 
-    })
+  }
+
+  setStateX() {
+
+  }
+
+  setStateY() {
+
+  }
+
+  updateExtent(df) {
+
   }
 }
 
@@ -149,6 +205,13 @@ export class GraphManager {
     this.label = "";
     this.type = "";
     this.instance = {};
+  }
+
+  setData(dataEntries) {
+    this.data = dataEntries;
+    Object.values(this.instance).forEach(g => {
+      g.update(dataEntries);
+    })
   }
 
   incrementCounter() {
@@ -178,7 +241,7 @@ export class GraphManager {
 
   appendGraph(graphId, settingId, id) {
     this.instance[id] = new this.Graph(graphId, settingId);
-    this.instance[id].initialize()
+    this.instance[id].initialize(this.data)
   }
 
   removeGraph(id) {
@@ -186,7 +249,7 @@ export class GraphManager {
   }
 
   updateGraph(id) {
-    this.instance[id].update();
+    this.instance[id].update(this.data);
   }
 };
 

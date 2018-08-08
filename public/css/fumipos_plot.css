@@ -22,7 +22,8 @@ canvas{
 
 body{
   font-size: 1.2rem;
-  
+  font-family : "Arial";
+  margin:0;
 }
 
 hr{
@@ -458,7 +459,7 @@ select{
 .menu-btn:before {
   position: absolute;
   top: 0px;
-  left: 10px;
+  left: 5px;
   color: #cfdae4;
   font: 1.5vw ;
   content: "▼";
