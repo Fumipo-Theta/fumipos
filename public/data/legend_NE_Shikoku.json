@@ -6,7 +6,7 @@
       "group": "Osaka",
       "color": "#dd9900",
       "stroke": false,
-      "stroke-width": false,
+      "stroke-width": 0,
       "symbol": "circle"
     },
     {
@@ -14,7 +14,7 @@
       "group": "E-NE_shikoku",
       "color": "#0000ff",
       "stroke": false,
-      "stroke-width": false,
+      "stroke-width": 0,
       "symbol": "circle"
     },
     {

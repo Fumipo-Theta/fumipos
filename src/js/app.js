@@ -159,18 +159,21 @@ const state = {
   ],
   symbol: {
     baseOpacity: 0.7,
-    baseRadius: 6,
+    baseRadius: 4,
     baseWidth: 1,
     onOpacity: 0.9,
-    onRadius: 9,
+    onRadius: 5,
     onWidth: 3,
+    selectedOpacity: 1,
+    selectedRadius: 6,
+    selectedWidth: 5,
     outOpacity: 0.3,
-    outRadius: 3,
-    outWidth: 0.25
+    outRadius: 2,
+    outWidth: 0.25,
   },
   styleClass: "",
 
-  dataStack: []
+  dataStack: [],
 }
 
 const emitter = new UIUpdater({

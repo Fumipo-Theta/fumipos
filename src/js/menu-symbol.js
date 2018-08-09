@@ -17,6 +17,9 @@ export const template = uiState => `
     
     Focused circle opacity
     <input class="mdl-slider mdl-js-slider" type="range" id="onOpacity" min="0" max="1" value="1" step="0.1">
+
+    Selected circle opacity
+    <input class="mdl-slider mdl-js-slider" type="range" id="selectedOpacity" min="0" max="1" value="1" step="0.1">
     <hr>
     Fade out circle Radius
     <input class="mdl-slider mdl-js-slider" type="range" id="outRadius" min="1" max="12" value="3" step="0.5">
@@ -26,7 +29,9 @@ export const template = uiState => `
     
     Focused circle Radius
     <input class="mdl-slider mdl-js-slider" type="range" id="onRadius" min="1" max="12" value="9" step="0.5">
-    
+    Selected circle Radius
+    <input class="mdl-slider mdl-js-slider" type="range" id="selectedRadius" min="1" max="12" value="9" step="0.5">
+
     <hr>
     Fade out line width
     <input class="mdl-slider mdl-js-slider" type="range" id="outWidth" min="0" max="3" value="0.25" step="0.05">
@@ -36,13 +41,14 @@ export const template = uiState => `
     
     Focused line width
     <input class="mdl-slider mdl-js-slider" type="range" id="onWidth" min="0" max="3" value="3" step="0.05">
+    Selected line width
+    <input class="mdl-slider mdl-js-slider" type="range" id="selectedWidth" min="0" max="3" value="3" step="0.05">
   `;
 
 export const eventSetter = (emitter, uiState) => {
-  uiState.symbol = {};
   [...document.querySelectorAll("#symbolForm input")].forEach(dom => {
     const id = dom.id;
-    uiState.symbol[id] = parseFloat(dom.value);
+    dom.value = uiState.symbol[id]
     dom.addEventListener(
       "change",
       ev => {

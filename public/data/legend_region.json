@@ -1,163 +1,145 @@
 {
-	"key":"region",
-	"legends":[
-		{
-			"name":"Shitara",
-			"class":"Shitara",
-			"color":"#9900ff",
-			"stroke":false,
-			"symbol":"circle"
-		},
-
-		{
-			"name":"Osaka",
-			"class":"Osaka",
-			"color":"#ffaa00",
-			"stroke":false,
-			"symbol":"circle"
-		},
-
-		{
-			"name":"SW Kii",
-			"class":"SW_kii",
-			"color":"#ffaa00",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"SE Kii",
-			"class":"SE_kii",
-			"color":"#ffaa00",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"E-NE Shikoku",
-			"class":"E-NE_shikoku",
-			"color":"#ff8888",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"C-NE Shikoku",
-			"class":"C-NE_shikoku",
-			"color":"#ff0000",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"W-NE Shikoku",
-			"class":"W-NE_shikoku",
-			"color":"#880000",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"C Shikoku",
-			"class":"C_shikoku",
-			"color":"#00ff00",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		{
-			"name":"E-NW Shikoku",
-			"class":"E-NW_shikoku",
-			"color":"#0088ff",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"C-NW Shikoku",
-			"class":"C-NW_shikoku",
-			"color":"#0000ff",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"W-NW Shikoku",
-			"class":"W-NW_shikoku",
-			"color":"#000088",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"SE Shikoku",
-			"class":"SE_shikoku",
-			"color":"#ff8800",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"OuterZone SW Shikoku",
-			"class":"OZ-SW_shikoku",
-			"color":"#8888ff",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Ashizuri SW Shikoku",
-			"class":"AZR-SW_shikoku",
-			"color":"#6666dd",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Kyushu",
-			"class":"Kyushu",
-			"color":"#999999",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Shikoku Basin",
-			"class":"Shikoku_Basin",
-			"color":"#bbbbbb",
-			"stroke":true,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Basement",
-			"class":"Basement",
-			"color":"#bbbbbb",
-			"stroke":true,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Reservor",
-			"class":"Reserver",
-			"color":"#005500",
-			"stroke":false,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Model",
-			"class":"Model",
-			"color":"#040",
-			"stroke":true,
-			"symbol":"circle"
-		},
-		
-		{
-			"name":"Lower crust",
-			"class":"LC",
-			"color":"#2193f6",
-			"stroke":false,
-			"symbol":"circle"
-		}
-	]
+  "key": "region",
+  "legends": [
+    {
+      "name": "Shitara",
+      "group": "Shitara",
+      "color": "#9900ff",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "Osaka",
+      "group": "Osaka",
+      "color": "#ffaa00",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "SW Kii",
+      "group": "SW_kii",
+      "color": "#ffaa00",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "SE Kii",
+      "group": "SE_kii",
+      "color": "#ffaa00",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "E-NE Shikoku",
+      "group": "E-NE_shikoku",
+      "color": "#ff8888",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "C-NE Shikoku",
+      "group": "C-NE_shikoku",
+      "color": "#ff0000",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "W-NE Shikoku",
+      "group": "W-NE_shikoku",
+      "color": "#880000",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "C Shikoku",
+      "group": "C_shikoku",
+      "color": "#00ff00",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "E-NW Shikoku",
+      "group": "E-NW_shikoku",
+      "color": "#0088ff",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "C-NW Shikoku",
+      "group": "C-NW_shikoku",
+      "color": "#0000ff",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "W-NW Shikoku",
+      "group": "W-NW_shikoku",
+      "color": "#000088",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "SE Shikoku",
+      "group": "SE_shikoku",
+      "color": "#ff8800",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "OuterZone SW Shikoku",
+      "group": "OZ-SW_shikoku",
+      "color": "#8888ff",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "Ashizuri SW Shikoku",
+      "group": "AZR-SW_shikoku",
+      "color": "#6666dd",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "Kyushu",
+      "group": "Kyushu",
+      "color": "#999999",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "Shikoku Basin",
+      "group": "Shikoku_Basin",
+      "color": "#bbbbbb",
+      "stroke": true,
+      "symbol": "circle"
+    },
+    {
+      "name": "Basement",
+      "group": "Basement",
+      "color": "#bbbbbb",
+      "stroke": true,
+      "symbol": "circle"
+    },
+    {
+      "name": "Reservor",
+      "group": "Reserver",
+      "color": "#005500",
+      "stroke": false,
+      "symbol": "circle"
+    },
+    {
+      "name": "Model",
+      "group": "Model",
+      "color": "#040",
+      "stroke": true,
+      "symbol": "circle"
+    },
+    {
+      "name": "Lower crust",
+      "group": "LC",
+      "color": "#2193f6",
+      "stroke": false,
+      "symbol": "circle"
+    }
+  ]
 }

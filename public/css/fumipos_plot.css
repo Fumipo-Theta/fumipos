@@ -212,22 +212,6 @@ select{
 }
 
 
-  /* Tooltip */
-  
-
-#tooltip{
-  position: absolute;
-  z-index: 10;
-  visibility: hidden;
-  padding: 0 5px;
-  border: 1px solid #000;
-  border-radius: 3px;
-  background-color: #333;
-  color: #fff;
-  font-size: 1rem;
-  opacity: 0.8;
-}
-
 /* _/_/_/_/_/_/_/_/_/_/ */
 
 /* サイドメニュー */

@@ -6,10 +6,13 @@ const testData = [
   { x: 2, y: 10, dummy: 1 }
 ]
 
+
+
 export class Graph {
-  constructor(graphId, settingId) {
+  constructor(graphId, settingId, tooltipId) {
     this.graph = "#" + graphId;
     this.settingId = "#" + settingId;
+    this.tooltip = d3.select("#" + tooltipId);
     this.state = {}
     this.svgSize = {
       size: { width: 300, height: 200 },
@@ -243,8 +246,8 @@ export class GraphManager {
     return this.style();
   }
 
-  append(graphId, settingId, id) {
-    this.instance[id] = new this.Graph(graphId, settingId);
+  append(graphId, settingId, tooltipId, id) {
+    this.instance[id] = new this.Graph(graphId, settingId, tooltipId);
     this.instance[id].initialize(this.uiState)
   }
 

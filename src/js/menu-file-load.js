@@ -67,7 +67,7 @@ export function eventSetter(emitter, uiState) {
       uiState.data = intoArray(
         indexing(0),
         mapping(([i, d]) => Object.assign(d, { id: i })),
-        mapEntries(d => ({ dummy: 1 })),
+        mapEntries(d => ({ dummy: 1, onState: "base" })),
       )(toEntries(tf.text2Dataframe(text, "csv")))
 
       document.querySelector("#selectedMainFile").innerHTML = (url);
@@ -105,7 +105,7 @@ export function eventSetter(emitter, uiState) {
       uiState.data = intoArray(
         indexing(0),
         mapping(([i, d]) => Object.assign(d, { id: i })),
-        mapEntries(d => ({ dummy: 1 })),
+        mapEntries(d => ({ dummy: 1, onState: "base" })),
       )(toEntries(tf.text2Dataframe(reader.result, "csv")))
 
       emitter.replotGraph();

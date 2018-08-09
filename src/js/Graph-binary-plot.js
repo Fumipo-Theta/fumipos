@@ -9,18 +9,31 @@ const {
   intoArray
 } = transduce;
 
+const getPrecision = (val, precise = 4) => {
+  let value = new Number(val);
+  return value.toPrecision(precise);
+}
 
 class Binary extends Graph {
-  constructor(graph, setting) {
-    super(graph, setting);
+  constructor(graph, setting, tooltip) {
+    super(graph, setting, tooltip);
   }
 
-  replot({ data, symbol, styleClass }) {
+
+  replot(state) {
     const { x, y } = this.state;
     const canvas = this.canvas;
-    const plotFunc = Binary.showPoint(x, y, this.scale, this.svgSize, symbol, styleClass)
+    const myData = {
+      r: Binary.plotStyle("Radius", 1.5, state),
+      strokeWidth: Binary.plotStyle("Width", 1.2, state),
+      opacity: Binary.plotStyle("Opacity", 1, state)
+    };
+    const plotFunc = Binary.showPoint(
+      x, y, this.scale, myData, state
+    );
 
-    const circle = canvas.selectAll("circle").data(data);
+
+    const circle = canvas.selectAll("circle").data(state.data);
     circle.exit()
       .transition()
       .attr("cy", -10)
@@ -29,22 +42,20 @@ class Binary extends Graph {
     const enter = circle.enter().append("circle")
       .attr("cy", -10)
       .attr("cx", -10);
-    enter.merge(circle).each(plotFunc);
+    const merged = enter.merge(circle)
+    merged.each(plotFunc);
+    merged.on("mouseover", Binary.onMouseOver(x, y, myData, this.tooltip, state));
+    merged.on("mouseout", Binary.onMouseOut(myData, this.tooltip, state));
+    merged.on("click", Binary.onClick(myData, state));
   }
 
 
 
-  static showPoint(x, y, scale, { offset, padding }, symbol, styleClass) {
+  static showPoint(x, y, scale, myData, { symbol, styleClass }) {
 
     return function (d) {
-      const cx = scale.x(+d[x.sup] / +d[x.sub]) //+ offset.x + padding.left;
-      const cy = scale.y(+d[y.sup] / +d[y.sub])// + padding.buttom;
-      const styleColumn = (d.hasOwnProperty(styleClass))
-        ? d[styleClass]
-        : "";
-      const study = (d.hasOwnProperty("study"))
-        ? d.study
-        : "";
+      const cx = scale.x(+d[x.sup] / +d[x.sub])
+      const cy = scale.y(+d[y.sup] / +d[y.sub])
 
       if (isNaN(cx) || isNaN(cy) || !isFinite(cx) || !isFinite(cy)) {
         d3.select(this).transition()
@@ -54,15 +65,141 @@ class Binary extends Graph {
         return false;
       }
 
-      d3.select(this).attr("r", (study === 'mine') ? symbol.baseRadius * 1.5 : symbol.baseRadius)
-        .attr('stroke-width', (study === 'mine') ? '4px' : '0px')
+      d3.select(this)
+        .attr("r", myData.r)
+        .attr('stroke-width', d => d.study === "mine" ? 1 : "none")
         .attr("fill", "none")
         .attr("name", d => (d.hasOwnProperty("name")) ? d["name"] : "")
-        .attr("class", function (d) { return ("Binary D" + d.id + " " + styleColumn + " " + d.study) })
-        .attr("opacity", symbol.baseOpacity)
+        .attr("class", d => Binary.setClass(d, styleClass))
+        .attr("opacity", myData.opacity)
         .transition()
         .attr("cx", cx)
         .attr("cy", cy)
+    }
+  }
+
+  static plotStyle(type, multiple, { symbol }) {
+    return function (d) {
+      const value = (d.onState === "selected")
+        ? symbol["selected" + type]
+        : (d.onState === "on")
+          ? symbol["on" + type]
+          : symbol["base" + type];
+      return (d.study === "mine")
+        ? value * multiple
+        : value
+    }
+  }
+
+  static setClass(d, styleClass) {
+    const styleColumn = (d.hasOwnProperty(styleClass))
+      ? d[styleClass]
+      : "none";
+    const study = (d.hasOwnProperty("study"))
+      ? d.study
+      : "none";
+
+
+    return `Binary D${d.id} ${styleColumn} ${study} ${d.onState}`
+  }
+
+  static extractClass(className, selector) {
+    const classList = className.split(" ");
+    switch (selector) {
+      case "id":
+        return classList[1];
+
+      case "style":
+        return classList[2];
+
+      case "study":
+        return classList[3];
+      case "onState":
+        return classList[4];
+
+      default:
+        return false;
+
+    }
+  }
+
+  static onMouseOver(x, y, myData, tooltip, { symbol }) {
+    return function (d) {
+      const sameId = Binary.extractClass(d3.select(this).attr("class"), "id");
+
+      d3.selectAll("." + sameId)
+        .each(d => {
+          d.onState = (d.onState === "selected")
+            ? "selected"
+            : "on"
+        })
+        .classed("base", false)
+        .classed("on", d => d.onState === "on")
+        .attr("r", myData.r)
+        .attr("opacity", myData.opacity);
+
+      d3.selectAll(".plotArea .base")
+        .transition()
+        .attr("opacity", symbol.outOpacity)
+        .attr('r', symbol.outRadius);
+
+      tooltip.style("visibility", "visible")
+        .text(`${d.name}  ${d.location} [ ${getPrecision(d[x.sup])}${(x.sub === "dummy") ? "" : "/" + getPrecision(d[x.sub]) + "=" + getPrecision(d[x.sup] / d[x.sub])} : ${getPrecision(d[y.sup])}${(y.sub === "dummy") ? "" : "/" + getPrecision(d[y.sub]) + "=" + getPrecision(d[y.sup] / d[y.sub])} ]`)
+    }
+  }
+
+  static onMouseMove(tooltip) {
+    return function (d) {
+      //tooltip.style("top", (event.pageY - 20) + "px").style("left", (event.pageX + 10) + "px");
+    }
+  }
+
+  static onMouseOut(myData, tooltip, { symbol }) {
+    return function (d) {
+      const self = d3.select(this);
+      const sameId = Binary.extractClass(
+        self.attr("class"),
+        "id"
+      );
+      d3.selectAll("." + sameId)
+        .each(d => {
+          d.onState = (d.onState === "selected")
+            ? "selected"
+            : "base"
+        })
+        .classed("on", false)
+        .classed("base", d => d.onState === "base");
+      d3.selectAll(".plotArea .base")
+        .transition()
+        .attr("opacity", myData.opacity)
+        .attr('r', myData.r);
+
+      tooltip.style("visibility", "hidden")
+    }
+  }
+
+  static onClick(myData, { symbol }) {
+    return function (d) {
+      const self = d3.select(this);
+      const sameId = Binary.extractClass(
+        self.attr("class"),
+        "id"
+      );
+      if (self.classed("selected")) {
+        d.onState = "base";
+        d3.selectAll("." + sameId)
+          .classed("selected", false)
+          .classed("base", true)
+          .attr("opacity", myData.opacity)
+          .attr("r", myData.r)
+      } else {
+        d.onState = "selected";
+        d3.selectAll("." + sameId)
+          .classed("selected", true)
+          .classed("base", false)
+          .attr("opacity", myData.opacity)
+          .attr("r", myData.r);
+      }
     }
   }
 

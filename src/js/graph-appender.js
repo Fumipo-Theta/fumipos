@@ -20,6 +20,25 @@ export default class GraphAppender {
       `
     document.querySelector("#" + this.graphAreaId).appendChild(div);
     this.dom = document.querySelector("#graphAppend_button");
+
+    const tooltip = document.createElement("span");
+    tooltip.id = "graph_tooltip";
+    tooltip.setAttribute("style", `
+    position: sticky;
+    bottom : 0;
+    left : 0;
+  z-index: 10;
+  visibility: hidden;
+  padding: 0 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1.5rem;
+
+    `)
+    document.querySelector("body").appendChild(tooltip);
+    this.tooltipId = tooltip.id;
     return this;
   }
 
@@ -64,6 +83,7 @@ export default class GraphAppender {
     G.append(
       this.getTypeId("graph", type, id),
       this.getTypeId("setting", type, id),
+      this.tooltipId,
       id
     )
     G.incrementCounter();
