@@ -56,11 +56,94 @@ export const template = uiState => `
 <div id="legend_table">
 </div>
   `;
-const createLegendTable = obj => {
+const getStyleText = function (legendStyle) {
+  const group = (legendStyle.hasOwnProperty("group"))
+    ? "." + legendStyle.group
+    : "",
+    color = (legendStyle.hasOwnProperty("color"))
+      ? legendStyle.color
+      : "white",
+    stroke = (legendStyle.hasOwnProperty("stroke"))
+      ? legendStyle.stroke
+      : "none",
+    strokeWidth = legendStyle.hasOwnProperty("stroke-width")
+      ? legendStyle["stroke-width"]
+      : "none"
 
+  return `.plotArea circle${group}{
+      fill:${color};
+      stroke:${stroke};
+      stroke-width:${strokeWidth};
+    }
+    .plotArea path${group}{
+      fill:none;
+      stroke:${stroke};
+      stroke-width:${strokeWidth};
+    }
+    td${group}{
+      color:${color};
+    }
+    `
 }
 
+
+const createLegendTable = (legendObj, uiState) => {
+  uiState.styleClass = legendObj.key;
+  d3.select("#legend_table").select("table").remove("table");
+  d3.select("#legendStyle").remove();
+  var table = d3.select("#legend_table").append("table")
+    .attr("class", "legend");
+  var thead = table.append("thead");
+  var tbody = table.append("tbody");
+
+  var theadRow = thead.append('tr')
+  theadRow.append("th").append("input")
+    .attr("type", "text")
+    .attr("id", "legendKey")
+    .attr("value", legendObj.key);
+  theadRow.append("th").text("symbol");
+  theadRow.append("th").text("color");
+
+  var tbodyRow = tbody.selectAll("tr").data(legendObj.legends);
+  tbodyRow.exit().remove();
+
+  const enteredTbodyRow = tbodyRow.enter().append("tr")
+  const mergedTbodyRow = enteredTbodyRow.merge(tbodyRow)
+  mergedTbodyRow.append("th").text(d => d.name);
+  mergedTbodyRow.append("td")
+    .attr("class", d => "switch " + d.group)
+    .text(d => (d.stroke) ? "○" : "●");
+  mergedTbodyRow.append("td").append("input")
+    .attr("class", d => d.group)
+    .attr("type", "color")
+    .attr("value", d => d.color);
+
+  /* styleタグを生成し登録 */
+  const style = '<style type="text/css" id="legendStyle">' +
+    Object.values(legendObj.legends)
+      .map(getStyleText)
+      .reduce((a, b) => a + b, "") +
+    '</style>';
+
+  $('head').append(style);
+
+  //fumiposAPI.setEventToLegend();
+};
+
+
+const setLegendFromUrl = uiState => (url) => {
+  /* レジェンド定義css読み込み */
+  fetch(url).then(function (data) {
+    return data.json();
+  }).then(function (obj) {
+    createLegendTable(obj, uiState);
+    d3.select('#legendFileLabel').text(url);
+  })
+};
+
 export const eventSetter = (emmiter, uiState) => {
+  setLegendFromUrl(uiState)("../public/data/legend_NE_Shikoku.json")
+
   document.getElementById("legendJSON").addEventListener('change', function (ev) {
     const file = ev.target.files;
     const reader = new FileReader();
