@@ -19,7 +19,6 @@ class Binary extends Graph {
     const { x, y } = this.state;
     const canvas = this.canvas;
     const plotFunc = Binary.showPoint(x, y, this.scale, this.svgSize, symbol, styleClass)
-    //const { styleClass } = state;
 
     const circle = canvas.selectAll("circle").data(data);
     circle.exit()
@@ -57,7 +56,7 @@ class Binary extends Graph {
 
       d3.select(this).attr("r", (study === 'mine') ? symbol.baseRadius * 1.5 : symbol.baseRadius)
         .attr('stroke-width', (study === 'mine') ? '4px' : '0px')
-        .attr("fill", "black")
+        .attr("fill", "none")
         .attr("name", d => (d.hasOwnProperty("name")) ? d["name"] : "")
         .attr("class", function (d) { return ("Binary D" + d.id + " " + styleColumn + " " + d.study) })
         .attr("opacity", symbol.baseOpacity)
