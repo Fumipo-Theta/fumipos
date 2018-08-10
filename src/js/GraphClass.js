@@ -13,6 +13,7 @@ export class Graph {
     this.graph = "#" + graphId;
     this.settingId = "#" + settingId;
     this.tooltip = d3.select("#" + tooltipId);
+    this.clipPathId = "clip_" + graphId
     this.state = {}
     this.svgSize = {
       size: { width: 300, height: 200 },
@@ -41,7 +42,14 @@ export class Graph {
     d3.select(this.graph + " .plot").append("h1");
     this.svg = d3.select(this.graph + " .plot")
       .append("svg")
-    this.canvas = this.svg.append("g").attr("class", "plotArea")
+    this.clipRect = this.svg.append("defs")
+      .append("clipPath")
+      .attr("id", this.clipPathId)
+      .append("rect");
+    this.canvas = this.svg.append("g")
+      .attr("class", "plotArea")
+      .attr("clip-path", `url(#${this.clipPathId})`)
+
     this.updateSvg();
     this.updateTitle();
   }
@@ -117,29 +125,28 @@ export class Graph {
     const { size, offset, padding, axis } = this.svgSize;
 
     this.svg.select("g.y.axis")
-      .attr("transform", `translate(${offset.x + padding.left},${size.height - axis.height - offset.y - padding.buttom} )`);
-
-    this.svg.select("g.x.axis")
-      .attr("transform", "translate(" + (offset.x + padding.left) + "," + (size.height - offset.y - padding.buttom) + ")");
-
-    this.svg.select(".y.axis").transition().call(this.axis.y);
-    this.svg.select(".x.axis").transition().call(this.axis.x);
-
-    this.svg.select(".y.axis").select("path").transition()
+      .attr("transform", `translate(${offset.x + padding.left},${size.height - axis.height - offset.y - padding.buttom} )`)
+      .call(this.axis.y)
+      .select("path")//.transition()
       .attr("d", "M" + axis.width + ",0H0V" + axis.height + "H" + axis.width)
 
-    this.svg.select(".x.axis").select("path").transition()
+    this.svg.select("g.x.axis")
+      .attr("transform", "translate(" + (offset.x + padding.left) + "," + (size.height - offset.y - padding.buttom) + ")")
+      .call(this.axis.x)
+      .select("path")//.transition()
       .attr("d", "M0,-" + axis.height + "V0H" + axis.width + "V-" + axis.height)
 
 
-    this.svg.select("text.ylabel").transition()
+    this.svg.select("text.ylabel")
       .attr("transform", "rotate (-90," + -offset.x + "," + axis.height * 0.6 + ")")
       .attr("x", -offset.x)
       .attr("y", axis.height * 0.6)
+      .transition()
       .text(this.state.y.name);
-    this.svg.select("text.xlabel").transition()
+    this.svg.select("text.xlabel")
       .attr("x", axis.width * 0.4)
       .attr("y", offset.y * 0.75)
+      .transition()
       .text(this.state.x.name);
 
     this.svg.selectAll("path.domain").attr("fill", "none");
@@ -151,6 +158,12 @@ export class Graph {
       width: size.width - offset.x - padding.left - padding.right,
       height: size.height - offset.y - padding.top - padding.buttom
     }
+    this.clipRect
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", this.svgSize.axis.width)
+      .attr("height", this.svgSize.axis.height)
+
   }
 
   updateSvgSize() {
@@ -190,7 +203,9 @@ export class Graph {
           break;
       }
     });
-
+    [...document.querySelector(this.settingId).querySelectorAll("select")].forEach(d => {
+      this.state[d.id] = d.value;
+    })
   }
 
   setStateX() {
