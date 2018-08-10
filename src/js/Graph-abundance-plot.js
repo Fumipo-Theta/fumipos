@@ -1,4 +1,6 @@
 import { GraphManager, Graph } from "./GraphClass.js";
+import TransExcramate from "./Graph-event-trans-excramate.js";
+
 
 const {
   transduce,
@@ -10,28 +12,75 @@ const {
   intoArray
 } = transduce;
 
-let clickFlag = false;
+
 
 class Abundance extends Graph {
   constructor(graph, setting, tooltip) {
     super(graph, setting, tooltip);
+    this.magnifyMyData = {
+      r: 1.5,
+      strokeWidth: 1.2
+    }
   }
+
 
   replot(state) {
-    const refData = Abundance.getNormList(state, this.state);
-    const plotData = Abundance.getNormalizedData(this.state.doNormalization, state, refData);
-    const { x } = this.state;
+    this.state.refData = Abundance.getNormList(state, this.state);
+    const plotFunc = Abundance.showPlot(
+      this.state,
+      this.scale,
+      this.plotStyle,
+      state
+    );
 
-    const path = this.canvas.selectAll("path").data(plotData);
-    path.exit()
-      .remove()
+    const path = this.canvas.selectAll("path").data(state.data);
+    path.exit().transition().remove()
     const entered = path.enter().append("path");
     const merged = entered.merge(path);
-    merged.each(Abundance.showPlot(x, this.scale, state))
+    merged.each(plotFunc)
 
+    merged.on("mouseover", TransExcramate.onMouseOver(
+      this.state,
+      this.plotStyle,
+      state,
+      Abundance.showTooltip(this.state, this.tooltip)
+    ));
+    merged.on("mouseout", TransExcramate.onMouseOut(
+      this.state,
+      this.plotStyle,
+      state,
+      Abundance.hideTooltip(this.state, this.tooltip)
+    ));
+    merged.on("click", TransExcramate.onClick(
+      this.state,
+      this.plotStyle,
+      state
+    ));
+
+
+    this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle))
   }
 
-  static showPlot(x, scale, { symbol, styleClass }) {
+  static showTooltip(_, tooltip) {
+    return function (d) {
+      tooltip.style("visibility", "visible")
+        .text(`${d.name}  ${d.location}`)
+    }
+  }
+
+  static hideTooltip(_, tooltip) {
+    return function (d) {
+      tooltip.style("visibility", "hidden")
+    }
+  }
+
+
+  static showPlot(
+    { x, doNormalization, refData },
+    scale,
+    plotStyle,
+    { symbol, styleClass }
+  ) {
     const { label } = x
     const line = d3.line()
       .x(d => scale.x(d.x))
@@ -41,67 +90,19 @@ class Abundance extends Graph {
       x: e,
       y: d[e]
     }))
+    const normalize = Abundance.getNormalizedData(doNormalization, refData)
     return function (d) {
       d3.select(this)
         .attr("fill", "none")
-        .attr("class", d => Abundance.setClass(d, styleClass))
-        .attr("d", d => line(getOneLine(d)))
+        .attr("class", d => Graph.setClass(d, styleClass))
         .attr("stroke-width", symbol.baseWidth)
-    }
-  }
-
-  static onMouseOver() {
-    return function (d) {
-      const sameId = Abundance.extractClass(d3.select(this).attr("class"), id);
-      d3.selectAll("." + sameId)
-        .each(d => {
-          d.onState = (d.onState === "selected")
-            ? "selected"
-            : "on"
-        })
-        .classed("base", false)
-        .classed("on", d => d.onState === "on")
-        .attr("r", myData.r)
-        .attr("opacity", myData.opacity);
-
-      d3.selectAll(".plotArea .base")
-        //.transition()
-        .attr("opacity", symbol.outOpacity)
-        .attr('r', symbol.outRadius);
-    }
-  }
-
-  static setClass(d, styleClass) {
-    const styleColumn = (d.hasOwnProperty(styleClass))
-      ? d[styleClass]
-      : "none";
-    const study = (d.hasOwnProperty("study"))
-      ? d.study
-      : "none";
-
-
-    return `Binary D${d.id} ${styleColumn} ${study} ${d.onState}`
-  }
-
-  static extractClass(className, selector) {
-    const classList = className.split(" ");
-    switch (selector) {
-      case "id":
-        return classList[1];
-
-      case "style":
-        return classList[2];
-
-      case "study":
-        return classList[3];
-      case "onState":
-        return classList[4];
-
-      default:
-        return false;
+        .transition()
+        .attr("d", d => line(getOneLine(normalize(d))))
 
     }
   }
+
+
 
 
   static getNormList({ refData }, { normInfo }) {
@@ -165,26 +166,26 @@ class Abundance extends Graph {
 
   }
 
-  static getNormalizedData(doNormalization, { data }, refData) {
-    return (doNormalization)
-      ? intoArray(
-        mapping(e => {
-          const obj = {}
-          Object.entries(e)
-            .forEach(([k, v]) => {
-              const val = v / refData[k]
-              if (isNaN(val)) {
-                obj[k] = v
-              } else {
-                obj[k] = (isFinite(val))
-                  ? val
-                  : NaN;
-              }
-            })
-          return obj
-        })
-      )(data)
-      : data;
+  static getNormalizedData(doNormalization, refData) {
+    return d => {
+      if (doNormalization) {
+        const obj = {}
+        Object.entries(d)
+          .forEach(([k, v]) => {
+            const val = v / refData[k]
+            if (isNaN(val)) {
+              obj[k] = v
+            } else {
+              obj[k] = (isFinite(val))
+                ? val
+                : NaN;
+            }
+          })
+        return obj
+      } else {
+        return d
+      }
+    }
   }
 
   updateExtent() {

@@ -62,7 +62,7 @@ const getStyleText = function (legendStyle) {
     : "",
     color = (legendStyle.hasOwnProperty("color"))
       ? legendStyle.color
-      : "none",
+      : "white", /* whiteじゃないとマウスオーバーが不安定になる */
     stroke = (legendStyle.hasOwnProperty("stroke"))
       ? legendStyle.stroke
       : "none",

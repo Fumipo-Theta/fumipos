@@ -7,7 +7,30 @@ const testData = [
 ]
 
 
-
+/**
+ * Grpahクラスの作り方
+ * 
+ * Graphクラスを継承する.
+ * 次のインスタンスメソッドを定義する
+ * 
+ * * setStateX
+ * * setStateY
+ * * updateSvgSize
+ * * updateAxisType
+ * * updateExtent
+ * * updateTitle
+ * * replot
+ * また, つぎのクラスメソッドを定義する
+ * 
+ * * showPoint
+ * 
+ * プロット要素へのuiイベントを設定するには次のクラスメソッドを定義する.
+ * 
+ * * onMouseOver
+ * * onMouseMove
+ * * onMouseOut
+ * * onClick
+*/
 export class Graph {
   constructor(graphId, settingId, tooltipId) {
     this.graph = "#" + graphId;
@@ -24,6 +47,11 @@ export class Graph {
     this.axis = {}
     this.scale = {}
     this.extent = { x: [0, 1], y: [0, 1] }
+
+    this.magnifyMyData = {
+      r: 1.5,
+      strokeWidth: 1.2
+    }
   }
 
   initialize(state) {
@@ -37,6 +65,90 @@ export class Graph {
     this.update(state);
   }
 
+  setPlotStyle(state) {
+    const {
+      r,
+      strokeWidth
+    } = this.magnifyMyData;
+    this.plotStyle = {
+      r: Graph.plotStyle("Radius", r, state),
+      strokeWidth: Graph.plotStyle("Width", strokeWidth, state),
+      opacity: Graph.plotStyle("Opacity", 1, state)
+    };
+  }
+
+  static plotStyle(type, multiple, { symbol }) {
+    return function (d) {
+      const value = (d.onState === "selected")
+        ? symbol["selected" + type]
+        : (d.onState === "on")
+          ? symbol["on" + type]
+          : symbol["base" + type];
+      return (d.study === "mine")
+        ? value * multiple
+        : value
+    }
+  }
+
+  /**
+   * replotメソッドにてデータを要素にバインドし, 
+   * データに従って要素の属性を更新してプロットに反映させる.
+   * 
+   * プロット要素へのuiイベントを他のグラフと連携するためには,
+   * このメソッドにて, アプリケーションのuiStateがもつdataを
+   * バインドする.
+   * また, プロット要素のclass属性の設定や取得には, それぞれ
+   * Graph.setClass, Graph.extractClassメソッドを用いる.
+   * 
+   * @param {uiState} state 
+   */
+  replot(state) {
+    const { data, symbol, styleClass } = state.data;
+    const binded = this.canvas.selectAll("circle")
+      .data(data)
+    binded.exit().remove();
+    const entered = binded.enter().append("circle")
+    const merged = entered.merge(binded);
+    merged.each(Graph.showPlot());
+  }
+
+  static showPlot() {
+    return function (d) {
+      const selected = d3.select(this);
+    }
+  }
+
+  static setClass(d, styleClass) {
+    const styleColumn = (d.hasOwnProperty(styleClass))
+      ? d[styleClass]
+      : "none";
+    const study = (d.hasOwnProperty("study"))
+      ? d.study
+      : "none";
+
+
+    return `Binary D${d.id} ${styleColumn} ${study} ${d.onState}`
+  }
+
+  static extractClass(className, selector) {
+    const classList = className.split(" ");
+    switch (selector) {
+      case "id":
+        return classList[1];
+
+      case "style":
+        return classList[2];
+
+      case "study":
+        return classList[3];
+      case "onState":
+        return classList[4];
+
+      default:
+        return false;
+
+    }
+  }
 
   createSvg() {
     d3.select(this.graph + " .plot").append("h1");
@@ -99,6 +211,7 @@ export class Graph {
     this.updateSvg();
     this.updateTitle();
     this.updateAxis();
+    this.setPlotStyle(state);
     this.replot(state);
   }
 
@@ -119,6 +232,10 @@ export class Graph {
       .attr("fill", "gray")
   }
 
+  /**
+   * 軸ラベルは
+   * インスタンス変数 state.x.name, state.y.name
+   */
   updateAxis() {
     this.updateAxisSize();
     this.updateAxisType();
@@ -183,6 +300,16 @@ export class Graph {
     this.axis.y.tickSize(6, -size.width);
   }
 
+  /**
+   * 連携する GraphManagerがtemplateメソッドで生成したHTMLのうち
+   * input[type=checkbox, text, number, range], select要素の
+   * idとvalueまたはcheckedを読み取る.
+   * 
+   * インスタンス変数stateにidをkeyとしてvalueまたはcheckedを格納する.
+   * 
+   * 設定をもとにインスタンス変数の状態を変更するためには, 
+   * このメソッドを継承した上で処理を追加する.
+  */
   readSetting() {
     [...document.querySelector(this.settingId).querySelectorAll("input")].forEach(d => {
       switch (d.type) {
@@ -208,12 +335,20 @@ export class Graph {
     })
   }
 
+  /**
+   * グラフの軸ラベルを設定するには, state.x, state.yについて
+   * nameを設定する必要がある.
+   */
   setStateX() {
-
+    this.state.x = {
+      name: ""
+    }
   }
 
   setStateY() {
-
+    this.state.y = {
+      name: ""
+    }
   }
 
   updateExtent({ data }) {
@@ -221,6 +356,30 @@ export class Graph {
   }
 }
 
+/**
+ * GraphManagerの作り方
+ * 
+ * GraphManagerを継承する
+ * 
+ * コンストラクタで次のインスタンス変数を定義する
+ * 
+ * * {String} label: グラフ追加ボタンの表示テキスト
+ * * {String} type: 他のGrpahManagerとかぶらない一意なテキスト
+ * * {Graph} Graph: プロットを担うGraphクラス
+ * 
+ * 次のインスタンスメソッドを定義する
+ * 
+ * * {void -> String} style: 
+ *      プロット設定メニューの表示位置とサイズを定義
+ * * {uiState -> String} template:
+ *      プロット設定メニューのHTMLを定義
+ *      input, select属性が読み取られ, 連携するGraphクラスの
+ *      インスタンス変数 stateに格納される.
+ *      state = {
+ *        [key = id of DOM] : [value = value or checked   
+ *                              attribute of the DOM]
+ *      }
+ */
 export class GraphManager {
   constructor(uiState) {
     this.graphCount = 0;
