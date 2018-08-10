@@ -62,7 +62,7 @@ const getStyleText = function (legendStyle) {
     : "",
     color = (legendStyle.hasOwnProperty("color"))
       ? legendStyle.color
-      : "white",
+      : "none",
     stroke = (legendStyle.hasOwnProperty("stroke"))
       ? legendStyle.stroke
       : "none",
@@ -71,7 +71,7 @@ const getStyleText = function (legendStyle) {
       : "none"
 
   return `.plotArea circle${group}{fill:${color};stroke:${stroke};stroke-width:${strokeWidth};}` +
-    `.plotArea path${group}{fill:none;stroke:${stroke};stroke-width:${strokeWidth};}` +
+    `.plotArea path${group}{fill:none;stroke:${color};stroke-width:${strokeWidth};}` +
     `td${group}{color:${color};}`
 }
 

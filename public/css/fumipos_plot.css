@@ -56,7 +56,7 @@ Usage::
 .inp .label {
   position: absolute;
   top: 16px;
-  left: 0;
+  left: 5px;
   font-size: 16px;
   color: #9098a9;
   font-weight: 500;
@@ -69,7 +69,7 @@ Usage::
   left: 0;
   height: 2px;
   width: 100%;
-  background: #07f;
+  background: #2196f3;
   transform: scaleX(0);
   transform-origin: 0 0;
   transition: all 0.15s ease;
@@ -79,7 +79,7 @@ Usage::
   width: 100%;
   border: 0;
   font-family: inherit;
-  padding: 12px 0;
+  padding: 12px 10px;
   height: 48px;
   font-size: 16px;
   font-weight: 500;
@@ -101,7 +101,7 @@ Usage::
   outline: none;
 }
 .inp input:focus + span {
-  color: #07f;
+  color: #2196f3;
   transform: translateY(-26px) scale(0.75);
 }
 .inp input:focus + span + .border {
@@ -164,6 +164,7 @@ label.file:focus{
   background-color: #2196f3;
   color: #fff;
   border: 0.5px solid #2196f3;
+  box-shadow: 0 0 0 3px #2196f355;
 }
 
 label.file:active{
@@ -185,6 +186,7 @@ input.button:focus{
   background-color: #2196f3;
   color: #fff;
   border: 0.5px solid #2196f3;
+  box-shadow: 0 0 0 3px #2196f355;
 }
 
 input.button:active{
@@ -192,7 +194,8 @@ input.button:active{
   background-color: #FF4081;
 }
 
-input[type="text"]{
+input[type="text"],
+input[type="number"]{
   font-size: 1.5rem;
 }
 
@@ -211,6 +214,82 @@ select{
   border: 1px solid #2196f3;
 }
 
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #c8ccd4;
+  height: 3px;
+  width: 100%;
+  border-radius: 6px;
+}
+  input[type="range"]:focus,
+  input[type="range"]:active {
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+    width: 15px;
+    height: 22px;
+    display: block;
+    border: 7px solid #4e4ebb;
+    background-color: #4e4ebb;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+  }
+
+  input[type="range"]:hover::-webkit-slider-thumb {
+    width: 15px;
+    height: 27px;
+    border: 7px solid #2196f3;
+    background-color: #2196f3;
+  }
+
+  input[type="range"]:active::-webkit-slider-thumb,
+  input[type="range"]:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px rgba(168, 203, 255, 0.6);
+    transition: .4s;
+  }
+
+  /*[CSSでのラジオボタン・チェックボックスのカスタマイズを詳しく説明してみた │ カルチャーアカデミア広島](https://cultureacademia.jp/webcreate/303/)*/
+
+input[type="checkbox"]{
+  display: none;
+}
+.checkbox-parts{
+  padding-left: 30px;
+  position:relative;
+  margin-right: 20px;
+}
+.checkbox-parts::before{
+  content: "";
+  display: block;
+  position: absolute;
+  top: 5;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #999;
+  border-radius: 4px;
+}
+input[type="checkbox"]:checked + .checkbox-parts{
+  color: #2196f3;
+}
+input[type="checkbox"]:checked + .checkbox-parts::after{
+  content: "";
+  display: block;
+  position: absolute;
+  top: -0px;
+  left: 5px;
+  width: 7px;
+  height: 14px;
+  transform: rotate(40deg);
+  border-bottom: 3px solid #2196f3;
+  border-right: 3px solid #2196f3;
+}
 
 /* _/_/_/_/_/_/_/_/_/_/ */
 
@@ -479,11 +558,26 @@ select{
   border-radius: 5px;
   box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
   max-height: 90vh;
+  overflow:hidden;
+}
+.menu-bar-content:hover{
   overflow: auto;
 }
-    
 
-
+.graph-setting{
+  display:none;
+  position: fixed;
+  margin: 5px auto;
+  padding: 15px;
+  background-color: rgba(250,250,255,0.9);
+  z-index:11;
+  border-radius: 5px;
+  box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.graph-setting:hover{
+  overflow: auto;
+}
 
   
       /* 凡例テーブルの共通部分 */
@@ -641,25 +735,6 @@ a.close_button:focus::before{
   background: rgba(0,0,0,0);
 }
 
-
-div.logo{
-  margin: 5px auto 5px;
-  border-radius: 40px;
-}
-
-img.logo{
-  transition: transform 0.3s;
-}
-
-img.logo:hover{
-  transform: rotate(-360deg);
-}
-
-
-div.title{
-  letter-spacing: 1px;
-}
-
 #header{
   box-sizing:border-box;
   width: 100%;
@@ -675,20 +750,11 @@ div.title{
   margin:auto auto;
   width: 70%;
   height:90%;
-  font-size: 2.5vw;
+  font-size: 1.75vw;
   color: #ffffff;
 }
 
-#footer{
-  box-sizing:border-box;
-  width: 100%;
-  min-height: 150px;
-  padding: 10px;
-  background-image: linear-gradient(-180deg, #00334D, #000305);
-  color: #ffffff;
-  text-align: center;
-  z-index:4;
-}  
+
 
 /* _/_/_/_/_/_/_/_/_/_/ */
 
@@ -807,6 +873,62 @@ input.graphAppender{
   font-size: 1.5rem;
   margin: 5px 0px;
   padding:30px 10px;
+  color : #888888;
+  border : 0.5px solid #888888;
 }
 
 
+#footer{
+  box-sizing:border-box;
+  width: 100%;
+  min-height: 150px;
+  padding: 10px;
+  background-image: linear-gradient(-180deg, #00334D, #000305);
+  color: #ffffff;
+  text-align: center;
+  z-index:4;
+}  
+#footer{
+  display:flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+div.logo{
+  margin: 5px auto 5px;
+  
+}
+
+img.logo{
+  height: 80px;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+img.logo:hover{
+  transform: rotate(-360deg);
+}
+
+
+div.title{
+	font-size: 32px;
+	letter-spacing: 2px;
+}
+
+div.acronym{
+	width: 100%;
+	height: 30px;
+	padding: 0px auto;
+	margin: 5 auto;
+	color: #bbccdd;
+}
+
+span.acronym{
+	font-size: 28px;
+	color: #fff;
+	text-shadow: 0px 0px 7px #fff;
+}
+
+div.name{
+	color: #bbccdd;
+}

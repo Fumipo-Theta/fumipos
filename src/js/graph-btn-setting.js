@@ -4,6 +4,7 @@ export const style = `
 a.nav_setting::before{
   content:url(../public/image/ic_settings_black_24px.svg);
   position: relative;
+  stroke : #eeeeee;
 }
 
 a.nav_setting:hover::before,

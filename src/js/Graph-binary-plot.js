@@ -69,7 +69,7 @@ class Binary extends Graph {
         .attr("r", myData.r)
         .attr('stroke-width', d => d.study === "mine" ? 1 : "none")
         .attr("fill", "none")
-        .attr("name", d => (d.hasOwnProperty("name")) ? d["name"] : "")
+
         .attr("class", d => Binary.setClass(d, styleClass))
         .attr("opacity", myData.opacity)
         .transition()
@@ -139,7 +139,7 @@ class Binary extends Graph {
         .attr("opacity", myData.opacity);
 
       d3.selectAll(".plotArea .base")
-        .transition()
+        //.transition()
         .attr("opacity", symbol.outOpacity)
         .attr('r', symbol.outRadius);
 
@@ -170,7 +170,7 @@ class Binary extends Graph {
         .classed("on", false)
         .classed("base", d => d.onState === "base");
       d3.selectAll(".plotArea .base")
-        .transition()
+        //.transition()
         .attr("opacity", myData.opacity)
         .attr('r', myData.r);
 
@@ -330,39 +330,53 @@ export default class GraphBinaryPlot extends GraphManager {
 
   style() {
     return `
-      top: 50px;
+  top: 50px;
   left: 30%;
-  display:none;
-  position: fixed;
   width: 40vw;
   min-width: 300px;
-  margin: 5px auto;
-  padding: 15px;
-  background-color: rgba(250,250,255,0.9);
-  z-index:11;
-  border-radius: 5px;
-  box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
     `
   }
 
   template(uiState) {
     return `
-    <style>
-    .binary-setting .eleInput label{
-  width: 10vw;
+<style>
+.binary-setting{
+  display : flex;
+  flex-direction : column;
+}
+.binary-setting > div{
+  display : flex;
+  align-items : center;
+  border-bottom : 1px dashed #4e4ebb;
+  margin: 3px 0;
+  padding : 10px 0;
+}
+
+.binary-setting .eleInput label{
+  /*width: 10vw;*/
   min-width: 70px;
 }
 .binary-setting .rangeInput label{
-  width: 6vw;
+  /*width: 6vw;*/
   min-width: 50px;
 }
-binary-setting .imageInput label{
-  width: 6vw;
+.binary-setting .imageInput {
+  
+}
+.binary-setting .imageInput span{
+  flex : 1;
+}
+.binary-setting .imageInput input{
+  flex : 2;
+}
+.binary-setting .imageInput label{
+  /*width: 6vw;*/
   min-width: 100px;
 }
-    </style>
 
-    <form class="binary-setting" action="#">
+</style>
+
+<form class="binary-setting" action="#">
   <a href="#" class="close_button"></a>
   <hr style="visibility:hidden">
   <div class="eleInput">
@@ -385,7 +399,7 @@ binary-setting .imageInput label{
 
   </div>
 
-  <hr>
+ 
 
   <div class="rangeInput">
     <span class="text">Range</span>
@@ -423,31 +437,30 @@ binary-setting .imageInput label{
     </label>
   </div>
 
-  <hr>
+  
   <div class="logInput">
-    <label for="#checkLogX">
-      <input type="checkbox" id="checkLogX">
-      <span class="text">log x</span>
+    <label >
+      <input type="checkbox" id="checkLogX" tabindex=0>
+      <span class="checkbox-parts">log x</span>
     </label>
 
-    <label for="#checkLogY">
-      <input type="checkbox" id="checkLogY">
-      <span class="text">log y</span>
+    <label>
+      <input type="checkbox" id="checkLogY"  tabindex=0>
+      <span class="checkbox-parts" >log y</span>
     </label>
   </div>
-  <hr>
+  
 
 
   <div class="imageInput">
-
-    <div style="width: 300px">
       <span class="text">Image size</span>
-      <input class="mdl-slider mdl-js-slider" type="range" id="imageSize" min="0.2" max="1" value="0.45" step="0.05">
-    </div>
-    <hr>
-
+      <input class="mdl-slider mdl-js-slider" type="range" id="imageSize" min="0.2" max="1" value="0.3" step="0.05">
+  
+  </div>
+  
+  <div>
     <label for="aspect" class="inp">
-      <input type="number" id="aspect" value="1" placeholder="&nbsp;">
+      <input type="number" id="aspect" value="0.8" placeholder="&nbsp;">
       <span class="label">aspect ratio</span>
       <span class="border"></span>
     </label>

@@ -29,15 +29,14 @@ export default class GraphAppender {
     left : 0;
   z-index: 10;
   visibility: hidden;
-  padding: 0 5px;
+  padding: 2px 5px;
   border: 1px solid #000;
   border-radius: 3px;
   background-color: #333;
   color: #fff;
   font-size: 1.5rem;
-
     `)
-    document.querySelector("body").appendChild(tooltip);
+    document.querySelector("#wrapper").appendChild(tooltip);
     this.tooltipId = tooltip.id;
     return this;
   }
@@ -110,6 +109,7 @@ export default class GraphAppender {
     const settingId = this.getTypeId("setting", type, id);
 
     const setting = document.createElement("div");
+    setting.classList.add("graph-setting");
     setting.innerHTML = G.getTemplate(this.uiState);
     setting.id = settingId;
     setting.setAttribute("style", G.getStyle());

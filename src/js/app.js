@@ -5,35 +5,13 @@ import * as menuLegend from "./menu-legend.js";
 import * as menuTest from "./menu-test.js";
 import GraphAppender from "./graph-appender.js";
 import GraphBinaryPlot from "./Graph-binary-plot.js";
+import GraphAbundancePlot from "./Graph-abundance-plot.js";
 import * as graphSettingBtn from "./graph-btn-setting.js";
 import * as graphDeleteBtn from "./graph-btn-delete.js";
 import * as graphPngBtn from "./graph-btn-save_as_png.js";
 import UIUpdater from "./ui-updater.js";
 
 const initializer = {
-  'component': {
-    'sideMenu': false,
-    'fixedMenu': {
-      'simulate': {
-        url: "./form_simulate.html",
-        target: "#simulate_setting",
-        button: "#melting_btn",
-        overlay: false,
-        draggable: true,
-        close: "#close_simulateForm",
-        'label': 'Simulate'
-      }
-    },
-    'graphAppender': {
-      url: "./fumipos_graphAppender.html",
-      target: "#graphAppender",
-      draggable: false
-    },
-    'footer': {
-      url: "./fumipos_footer.html",
-      target: "#footer"
-    }
-  },
 
   'legend': {
     'userStyleURL': './data/legend_region.json',
@@ -183,6 +161,9 @@ const emitter = new UIUpdater({
 const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", emitter, state)
 const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", emitter, state);
 
+window.onresize = ev => {
+  ga.replotAll();
+}
 
 window.onload = ev => {
 
@@ -212,17 +193,17 @@ window.onload = ev => {
       graphPngBtn,
       graphDeleteBtn
     )
-    .registerGraphManager(GraphBinaryPlot);
-  ga.setGraphAppendButton({ label: "Abundance", type: "Abundance" });
+    .registerGraphManager(
+      GraphBinaryPlot,
+      GraphAbundancePlot
+    );
+
   ga.setGraphAppendButton({ label: "Test", type: "Test" });
 }
 
 /*
-const fumipo = fumiposAPI.createFumipo(initializer);
-window.addEventListener('load', fumiposAPI.workSpaceInitialize(fumipo), false);
-window.addEventListener('load', fumiposAPI.autoFixedMenu(autoMode.menu), false);
- 
 window.onbeforeunload = function (e) {
   return "Unload ?";
 };
 */
+
