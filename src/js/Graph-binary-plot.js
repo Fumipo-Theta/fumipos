@@ -9,6 +9,8 @@ const {
   intoArray
 } = transduce;
 
+let clicked = false;
+
 const getPrecision = (val, precise = 4) => {
   let value = new Number(val);
   return value.toPrecision(precise);
@@ -19,6 +21,35 @@ class Binary extends Graph {
     super(graph, setting, tooltip);
   }
 
+  static globalClick(merged, myData) {
+    return function (d) {
+      if (clicked) {
+        Binary.globalDoubleClick(merged, myData)
+        clicked = false;
+        return
+      }
+      clicked = true;
+
+      // シングルタップ判定
+      setTimeout(function () {
+        if (clicked) {
+
+        }
+        clicked = false;
+      }, 300);
+    }
+  }
+
+  static globalDoubleClick(merged, myData) {
+    merged.each(d => {
+      d.onState = "base"
+    })
+    d3.selectAll(".plotArea circle")
+      .classed("selected", false)
+      .classed("base", true)
+      .attr("r", myData.r)
+      .attr("opacity", myData.opacity)
+  }
 
   replot(state) {
     const { x, y } = this.state;
@@ -47,6 +78,8 @@ class Binary extends Graph {
     merged.on("mouseover", Binary.onMouseOver(x, y, myData, this.tooltip, state));
     merged.on("mouseout", Binary.onMouseOut(myData, this.tooltip, state));
     merged.on("click", Binary.onClick(myData, state));
+
+    this.svg.on("click", Binary.globalClick(merged, myData))
   }
 
 
@@ -66,10 +99,10 @@ class Binary extends Graph {
       }
 
       d3.select(this)
-        .attr("r", myData.r)
         .attr('stroke-width', d => d.study === "mine" ? 1 : "none")
         .attr("fill", "none")
         .attr("class", d => Binary.setClass(d, styleClass))
+        .attr("r", myData.r)
         .attr("opacity", myData.opacity)
         .transition()
         .attr("cx", cx)

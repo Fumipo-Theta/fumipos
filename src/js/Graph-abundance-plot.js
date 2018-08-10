@@ -10,6 +10,8 @@ const {
   intoArray
 } = transduce;
 
+let clickFlag = false;
+
 class Abundance extends Graph {
   constructor(graph, setting, tooltip) {
     super(graph, setting, tooltip);
@@ -45,6 +47,27 @@ class Abundance extends Graph {
         .attr("class", d => Abundance.setClass(d, styleClass))
         .attr("d", d => line(getOneLine(d)))
         .attr("stroke-width", symbol.baseWidth)
+    }
+  }
+
+  static onMouseOver() {
+    return function (d) {
+      const sameId = Abundance.extractClass(d3.select(this).attr("class"), id);
+      d3.selectAll("." + sameId)
+        .each(d => {
+          d.onState = (d.onState === "selected")
+            ? "selected"
+            : "on"
+        })
+        .classed("base", false)
+        .classed("on", d => d.onState === "on")
+        .attr("r", myData.r)
+        .attr("opacity", myData.opacity);
+
+      d3.selectAll(".plotArea .base")
+        //.transition()
+        .attr("opacity", symbol.outOpacity)
+        .attr('r', symbol.outRadius);
     }
   }
 
