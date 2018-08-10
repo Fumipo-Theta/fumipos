@@ -69,7 +69,6 @@ class Binary extends Graph {
         .attr("r", myData.r)
         .attr('stroke-width', d => d.study === "mine" ? 1 : "none")
         .attr("fill", "none")
-
         .attr("class", d => Binary.setClass(d, styleClass))
         .attr("opacity", myData.opacity)
         .transition()

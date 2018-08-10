@@ -17,7 +17,7 @@ class Abundance extends Graph {
 
   replot(state) {
     const refData = Abundance.getNormList(state, this.state);
-    const plotData = Abundance.getNormalizedData(state, refData);
+    const plotData = Abundance.getNormalizedData(this.state.doNormalization, state, refData);
     const { x } = this.state;
 
     const path = this.canvas.selectAll("path").data(plotData);
@@ -83,7 +83,7 @@ class Abundance extends Graph {
 
   static getNormList({ refData }, { normInfo }) {
     return refData
-      .filter(e => e.name === normInfo[0] && e.study === normInfo[1])[0];
+      .filter(e => e.name === normInfo[0] && e.study === normInfo[1])[0]
   }
 
   updateSvgSize() {
@@ -142,24 +142,26 @@ class Abundance extends Graph {
 
   }
 
-  static getNormalizedData({ data }, refData) {
-    return intoArray(
-      mapping(e => {
-        const obj = {}
-        Object.entries(e)
-          .forEach(([k, v]) => {
-            const val = v / refData[k]
-            if (isNaN(val)) {
-              obj[k] = v
-            } else {
-              obj[k] = (isFinite(val))
-                ? val
-                : NaN;
-            }
-          })
-        return obj
-      })
-    )(data)
+  static getNormalizedData(doNormalization, { data }, refData) {
+    return (doNormalization)
+      ? intoArray(
+        mapping(e => {
+          const obj = {}
+          Object.entries(e)
+            .forEach(([k, v]) => {
+              const val = v / refData[k]
+              if (isNaN(val)) {
+                obj[k] = v
+              } else {
+                obj[k] = (isFinite(val))
+                  ? val
+                  : NaN;
+              }
+            })
+          return obj
+        })
+      )(data)
+      : data;
   }
 
   updateExtent() {
@@ -181,7 +183,7 @@ export default class GraphAbundancePlot extends GraphManager {
     return `
   top: 50px;
   left: 30%;
-  width: 40vw;
+  width: 50vw;
   min-width: 300px;
     `
   }
@@ -230,6 +232,11 @@ export default class GraphAbundancePlot extends GraphManager {
   </datalist>
 
   <div class="eleInput__Abundance">
+    <label >
+      <input type="checkbox" id="doNormalization" tabindex=0 checked>
+      <span class="checkbox-parts">Normalize</span>
+    </label>
+
     <label for="eleName" class="inp wide">
       <input  type="text" id="eleName" placeholder="&nbsp;"  pattern="^[0-9A-Za-z\s]+$" autofocus required  list="eleList" autocomplete="on" value="La Ce Pr Nd Sm Eu Gd Tb Dy Ho Er Tm Yb Lu">
       <span class="label">Element list</span>
