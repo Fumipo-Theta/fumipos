@@ -33,9 +33,9 @@ class Abundance extends Graph {
       state
     );
 
-    const path = this.canvas.selectAll("path").data(state.data);
+    const path = this.canvas.selectAll("g").data(state.data);
     path.exit().transition().remove()
-    const entered = path.enter().append("path");
+    const entered = path.enter().append("g");
     const merged = entered.merge(path);
     merged.each(plotFunc)
 
@@ -95,13 +95,29 @@ class Abundance extends Graph {
     }))
     const normalize = Abundance.getNormalizedData(doNormalization, refData)
     return function (d) {
+      const data = getOneLine(normalize(d))
+      const filtered = data.filter(defined)
       d3.select(this)
+        .attr("class", d => Graph.setClass(d, styleClass))
+        .selectAll("path")
+        .remove()
+      d3.select(this).append("path")
         .attr("fill", "none")
         .attr("class", d => Graph.setClass(d, styleClass))
         .attr("stroke-width", symbol.baseWidth)
         .transition()
         //.call(line)
-        .attr("d", d => line(getOneLine(normalize(d))))
+        .attr("d", line(data))
+      if (data.length === filtered.length) return;
+      d3.select(this).append("path")
+        .attr("fill", "none")
+        .attr("class", d => Graph.setClass(d, styleClass))
+        .attr("stroke-width", symbol.baseWidth * 0.9)
+        .attr("stroke-dasharray", "1 8")
+        .attr("stroke-linecap", "round")
+        .transition()
+        //.call(line)
+        .attr("d", line(filtered))
 
     }
   }
