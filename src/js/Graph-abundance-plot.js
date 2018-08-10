@@ -82,10 +82,13 @@ class Abundance extends Graph {
     { symbol, styleClass }
   ) {
     const { label } = x
+    const defined = d => !isNaN(d.y) && d.y !== 0 && isFinite(d.y);
     const line = d3.line()
       .x(d => scale.x(d.x))
       .y(d => scale.y(d.y))
-      .defined(d => !isNaN(d.y) && d.y !== 0);
+      .defined(defined);
+
+
     const getOneLine = d => label.map(e => ({
       x: e,
       y: d[e]
@@ -97,6 +100,7 @@ class Abundance extends Graph {
         .attr("class", d => Graph.setClass(d, styleClass))
         .attr("stroke-width", symbol.baseWidth)
         .transition()
+        //.call(line)
         .attr("d", d => line(getOneLine(normalize(d))))
 
     }
@@ -172,13 +176,18 @@ class Abundance extends Graph {
         const obj = {}
         Object.entries(d)
           .forEach(([k, v]) => {
-            const val = v / refData[k]
-            if (isNaN(val)) {
+
+            if (isNaN(refData[k]) && isNaN(v)) {
               obj[k] = v
             } else {
-              obj[k] = (isFinite(val))
-                ? val
-                : NaN;
+              const val = v / refData[k]
+              if (isNaN(refData[k])) {
+                obj[k] = NaN;
+              } else {
+                obj[k] = (isFinite(val))
+                  ? val
+                  : NaN;
+              }
             }
           })
         return obj
