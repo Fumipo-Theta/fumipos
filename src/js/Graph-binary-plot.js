@@ -60,9 +60,9 @@ class Binary extends Graph {
       this.state,
       this.plotStyle,
       state
-    ));
+    ), false);
 
-    this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle))
+    this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle), false)
   }
 
   static showTooltip({ x, y }, tooltip) {

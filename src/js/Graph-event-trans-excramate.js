@@ -1,6 +1,7 @@
 import { Graph } from "./GraphClass.js";
 
 let clicked = false;
+let isOff = false;
 
 export default class TransExcramate {
   static onMouseOver(
@@ -54,11 +55,11 @@ export default class TransExcramate {
         .classed("base", d => d.onState === "base");
 
       d3.selectAll("circle.base")
-        .attr("opacity", plotStyle.opacity)
-        .attr('r', plotStyle.r);
+        .attr("opacity", (isOff) ? symbol.outOpacity : plotStyle.opacity)
+        .attr('r', (isOff) ? symbol.outRadius : plotStyle.r);
       d3.selectAll("path.base")
-        .attr("opacity", plotStyle.opacity)
-        .attr('stroke-width', plotStyle.strokeWidth);
+        .attr("opacity", (isOff) ? symbol.outOpacity : plotStyle.opacity)
+        .attr('stroke-width', (isOff) ? symbol.outWidth : plotStyle.strokeWidth);
 
       if (typeof (callback) === "function") callback(d);
     }
@@ -99,6 +100,7 @@ export default class TransExcramate {
       if (clicked) {
         TransExcramate.globalDoubleClick(merged, plotStyle)
         clicked = false;
+        isOff = !isOff;
         return
       }
       clicked = true;
