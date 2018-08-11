@@ -249,7 +249,7 @@ export default class GraphAbundancePlot extends GraphManager {
 .abundance-setting > div{
   display : flex;
   align-items : center;
-  border-bottom : 1px dashed #4e4ebb;
+  border-bottom : 1px dashed var(--form-color);
   margin: 3px 0;
   padding : 10px 0;
 }
@@ -351,7 +351,7 @@ export default class GraphAbundancePlot extends GraphManager {
   
   <div>
     <label for="aspect" class="inp">
-      <input type="number" id="aspect" value="0.8" placeholder="&nbsp;">
+      <input type="number" id="aspect" min="0.1" value="0.8" step="0.05" placeholder="&nbsp;">
       <span class="label">aspect ratio</span>
       <span class="border"></span>
     </label>

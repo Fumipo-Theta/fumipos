@@ -39,9 +39,9 @@ export const template = uiState => `
   <form id="form_legend">
     <a href="#" class="close_button" id="close_legendForm"></a>
     <hr style="visibility:hidden">
-    <label class="file" for="legendJSON">
-      Select legend file(.JSON)
-      <input id="legendJSON" type="file" accept=".json" style="display:none;">
+    <label>
+      <input id="legendJSON" type="file" accept=".json" >
+      <span class="file-parts">Select legend file(.JSON)</span>
     </label>
     <input id="legendAutoLoad" type='button' style="display:none;">
     <hr>

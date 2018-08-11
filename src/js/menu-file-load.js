@@ -37,18 +37,18 @@ export function template(state) {
   <form id="menu-file-load" class="selectFile" action="#">
     <a href="#" class="close_button" id="close_selectFile"></a>
     <hr style="visibility:hidden">
-      <label class="file" for="selectFileMain">
-        Select plot file (.CSV)
-    <input type="file" id="selectFileMain" accept=".csv" required style="display:none">
-  </label>
+    <label>
+      <input type="file" id="selectFileMain" accept=".csv" required>
+      <span class="file-parts">Select plot file (.CSV)</span>
+    </label>
     <input class="button" type="button" id="use_test_data" value="Use test data">
     <hr>
     Selected file: <span id="selectedMainFile"></span>
 
     <hr>
-    <label class="file" for="selectFileRef">
-      Select Abundance file (.CSV)
-      <input type="file" id="selectFileRef" accept=".csv" style="display:none">
+    <label>
+      <input type="file" id="selectFileRef" accept=".csv" >
+      <span class="file-parts">Select Abundance file (.CSV)</span>
     </label>
     <input class="button" type="button" id="use_test_ref" value="Use default">
     <hr>

@@ -53,6 +53,7 @@ export default class TopMenu {
   static setOpenClose(btn, content, overlay) {
     $(btn).click(function () {
       $(content).fadeIn();
+      $(content + " input")[0].focus();
       $(overlay).fadeIn();
       return false;
     });

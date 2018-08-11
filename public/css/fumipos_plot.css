@@ -1,6 +1,18 @@
 /* 共通コンポーネント */
-  
-
+:root{
+  --focus-shadow : 0 0 0 4px rgba(168, 203, 255, 0.6);
+  --active-shadow : 0 0 3px 4px #186a7055;
+  --focus-transition : .4s;
+  --active-transition : .2s;
+  --main-color : #2196f3;
+  --active-color : #186a70;
+  --accent-color : #FF4081;
+  --button-line : 0.5px solid;
+  --ui-black: #223254;
+  --form-element-color : #4e4ebb;
+  --form-color:#9098a4;
+  --form-background:rgba(250,250,255,0.9);
+}
   /* スクロールバー */
 
   
@@ -27,11 +39,11 @@ body{
 }
 
 hr{
-  border-top: 1.5px dashed #444;
+  border-top: 1.5px dashed var(--ui-black);
 }
 
 form{
-  color: #4e4ebb;
+  color: var(--form-color);
   font: 1.5rem "Arial";
 }
 
@@ -58,7 +70,7 @@ Usage::
   top: 16px;
   left: 5px;
   font-size: 16px;
-  color: #9098a9;
+  color: var(--form-element-color);
   font-weight: 500;
   transform-origin: 0 0;
   transition: all 0.2s ease;
@@ -69,7 +81,7 @@ Usage::
   left: 0;
   height: 2px;
   width: 100%;
-  background: #2196f3;
+  background: var(--main-color);
   transform: scaleX(0);
   transform-origin: 0 0;
   transition: all 0.15s ease;
@@ -83,10 +95,10 @@ Usage::
   height: 48px;
   font-size: 16px;
   font-weight: 500;
-  border-bottom: 2px solid #c8ccd4;
+  border-bottom: 2px solid var(--form-element-color);
   background: none;
   border-radius: 0;
-  color: #223254;
+  color: var(--ui-black);
   transition: all 0.15s ease;
 }
 .inp input:hover {
@@ -101,7 +113,7 @@ Usage::
   outline: none;
 }
 .inp input:focus + span {
-  color: #2196f3;
+  color: var(--main-color);
   transform: translateY(-26px) scale(0.75);
 }
 .inp input:focus + span + .border {
@@ -115,83 +127,35 @@ Usage::
   position: relative;
   width: 100%;
   background: #fff;
-  -webkit-transition: all .5s ease;
+  -webkit-transition: all .3s ease;
   transition: all .3s ease;
   z-index: 2;
 }
 
-  
-  /* ファイル選択ボタン */
-  
-  
-label.button{
-  color: #fff;
-  background-color: #2196f3;
-  cursor: pointer;
-  min-width: 10vw;
-  font-size: 1.5rem;
-  margin: 5px 5px;
-  padding:10px;
-  border: none;
-  border-radius: 5px;
-}
 
-label.button:hover,
-label.button:focus{
-  background-color: #FF4081;
-}
-
-label.button:active{
-  border: 0.5px solid #FF4081;
-  background-color: #FF4081;
-}
-
-
-label.file{
-  background-color: transparent;
-  border: 0.5px solid #444;
-  color: #444;
-  cursor: pointer;
-  min-width: 10vw;
-  font-size: 1.5rem;
-  margin: 5px 5px;
-  padding:10px;
-}
-
-label.file:hover,
-label.file:focus{
-  transition: all .3s;
-  background-color: #2196f3;
-  color: #fff;
-  border: 0.5px solid #2196f3;
-  box-shadow: 0 0 0 3px #2196f355;
-}
-
-label.file:active{
-  border: 0.5px solid #FF4081;
-  background-color: #FF4081;
-}
 
 
 input.button{
   background-color: transparent;
-  border: 0.5px solid #444;
-  color: #444;
+  border:var(--button-line) var(--ui-black);
+  color: var(--ui-black);
   border-radius: 5px;
 }
 
 input.button:hover,
 input.button:focus{
-  transition: all .3s;
-  background-color: #2196f3;
+  transition: var(--focus-transition);
+  background-color: var(--main-color);
   color: #fff;
-  border: 0.5px solid #2196f3;
-  box-shadow: 0 0 0 3px #2196f355;
+  border: var(--button-line) var(--main-color);
+  box-shadow: var(--focus-shadow);
 }
 
 input.button:active{
-  border: 0.5px solid #FF4081;
-  background-color: #FF4081;
+  border: var(--button-line) var(--active-color);
+  background-color: var(--active-color);
+  box-shadow:var(--active-shadow);
+  transition : var(--active-transition);
 }
 
 input[type="text"],
@@ -211,7 +175,7 @@ input[type="color"]{
 select{
   font-size: 1.2rem;
   background: none;
-  border: 1px solid #2196f3;
+  border: var(--button-line) var(--main-color);
 }
 
 input[type="range"] {
@@ -235,8 +199,8 @@ input[type="range"] {
     width: 15px;
     height: 22px;
     display: block;
-    border: 7px solid #4e4ebb;
-    background-color: #4e4ebb;
+    border: 7px solid var(--form-element-color);
+    background-color: var(--form-element-color);
     border-radius: 50%;
     -webkit-border-radius: 50%;
   }
@@ -244,25 +208,34 @@ input[type="range"] {
   input[type="range"]:hover::-webkit-slider-thumb {
     width: 15px;
     height: 27px;
-    border: 7px solid #2196f3;
-    background-color: #2196f3;
+    border: 7px solid var(--main-color);
+    background-color: var(--main-color);
   }
 
   input[type="range"]:active::-webkit-slider-thumb,
   input[type="range"]:focus::-webkit-slider-thumb {
-    box-shadow: 0 0 0 4px rgba(168, 203, 255, 0.6);
-    transition: .4s;
+    box-shadow: var(--focus-shadow);
+    transition: var(--focus-transition);
   }
 
   /*[CSSでのラジオボタン・チェックボックスのカスタマイズを詳しく説明してみた │ カルチャーアカデミア広島](https://cultureacademia.jp/webcreate/303/)*/
 
+input[type="file"],
+input[type="radio"],
 input[type="checkbox"]{
-  display: none;
+  filter : alpha(opacity=0);
+  opacity: 0;
+  -moz-opacity : 0;
+  -webkit-appearance : none;
+  appearance : none;
+  position : absolute;
+  top: -1000px;
 }
 .checkbox-parts{
   padding-left: 30px;
   position:relative;
   margin-right: 20px;
+  color: var(--form-element-color);
 }
 .checkbox-parts::before{
   content: "";
@@ -272,11 +245,15 @@ input[type="checkbox"]{
   left: 0;
   width: 15px;
   height: 15px;
-  border: 1px solid #999;
+  border: 1px solid var(--form-element-color);
   border-radius: 4px;
 }
+input[type="checkbox"]:focus + .checkbox-parts{
+  box-shadow: var(--focus-shadow);
+  transition: var(--focus-transition);
+}
 input[type="checkbox"]:checked + .checkbox-parts{
-  color: #2196f3;
+  color: var(--active-color);
 }
 input[type="checkbox"]:checked + .checkbox-parts::after{
   content: "";
@@ -287,9 +264,38 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
   width: 7px;
   height: 14px;
   transform: rotate(40deg);
-  border-bottom: 3px solid #2196f3;
-  border-right: 3px solid #2196f3;
+  border-bottom: 3px solid  var(--active-color);
+  border-right: 3px solid  var(--active-color);
 }
+
+.file-parts{
+  background-color: transparent;
+  border: var(--button-line) var(--ui-black);
+  color: var(--ui-black);
+  cursor: pointer;
+  min-width: 10vw;
+  font-size: 1.5rem;
+  margin: 5px 5px;
+  padding:10px;
+}
+
+input[type="file"]:focus + .file-parts,
+input[type="file"]:hover + .file-parts{
+  background-color: var(--main-color);
+  color: #fff;
+  border: var(--button-line) var(--main-color);
+  box-shadow: var(--focus-shadow);
+  transition: var(--focus-transition);
+}
+
+
+input[type="file"]:active + .file-parts{
+  border: 0.5px solid var(--active-color);
+  background-color: var(--active-color);
+  box-shadow: var(--active-shadow);
+  transition : var(--active-transition);
+}
+
 
 /* _/_/_/_/_/_/_/_/_/_/ */
 
@@ -471,7 +477,7 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
   min-height: 4vh;
   padding: 0;
   background: #2e4153;
-  border-bottom: solid 2px #2196f3;
+  border-bottom: solid 2px var(--main-color);
   box-shadow: 0px 2px 3px 2px rgba(0,0,0,0.3), 0px 1px 1px 1px rgba(0,0,0,0.5);
 }
 
@@ -491,8 +497,8 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
   float: left;
   width: 64px;
   height: 4vh;
-  border-right: 1px solid #22303d;
-  border-left: 1px solid #22303d;
+  border-right: 1px solid var(--ui-black);
+  border-left: 1px solid var(--ui-black);
   color: #e4eaf0;
   text-decoration: none;
 }
@@ -517,7 +523,7 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
   color: #cfdae4;
   line-height: 4vh;
   text-decoration: none;
-  border-right: solid 1px #000;
+  border-right: solid 1px var(--ui-black);
 }
 .menu-btn:before {
   position: absolute;
@@ -536,12 +542,13 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
 .menu-btn:hover:before,
 .menu-btn:focus:before{
   color: #ffffff;
-  background-color: #2196f3;
+  background-color: var(--main-color);
 }
 
 .menu-btn:active,
 .menu-btn:active::before{
-  background-color: #FF4081;
+  background-color: var(--active-color);
+  transition : var(--active-transition);
 }
 
   
@@ -569,7 +576,7 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
   position: fixed;
   margin: 5px auto;
   padding: 15px;
-  background-color: rgba(250,250,255,0.9);
+  background-color: var(--form-background);
   z-index:11;
   border-radius: 5px;
   box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
@@ -584,7 +591,7 @@ input[type="checkbox"]:checked + .checkbox-parts::after{
       
 table{
   margin: 5px auto 5px;
-  border: solid 1px black; 
+  border: solid 1px var(--ui-black); 
   border-collapse: collapse;
 }
 
@@ -592,18 +599,18 @@ thead th{
   font-size: 1.5rem;
   border: solid;
   color: #fff;
-  border-color: #3F51B5;
+  border-color: var(--form-element-color);
   border-width: 1px;
   text-align: center;
-  background-color: #2e4153;
+  background-color:  var(--ui-black);
 }
 
 th,
 td{
   font-size: 1.5rem;
   border: solid;
-  color: #424242;
-  border-color: #3F51B5;
+  color: var(--ui-black);
+  border-color: var(--form-element-color);
   border-width: 1px;
   text-align: center;
 }
@@ -615,14 +622,13 @@ th{
 
 td.switch{
   background-color: #fff;
-  box-shadow: 0px 0px 0px 2px rgba(33, 150, 243, 0.8) inset;
-      /*border: 2px solid #2196f3;*/
+  box-shadow: var(--focus-shadow) inset;
   cursor: pointer;
 }
 
 td.switch:hover,
 td.switch:focus{
-  box-shadow: 0px 0px 0px 2px rgba(255, 64, 129, 0.8) inset;
+  box-shadow: var(--active-shadow) inset;
 }
 
     /* simulate setting */
@@ -641,49 +647,6 @@ td.switch:focus{
 
 /* _/_/_/_/_/_/_/_/_/_/ */
 
-/* Graph Setting menu */
-
-
-
-.eleInput__Abundance .mdl-textfield{
-  width: 90%;
-  min-width: 300px;
-}
-
-.rangeInput__Binary .mdl-textfield,
-.rangeInput__Abundance .mdl-textfield{
-  width: 6vw;
-  min-width: 50px;
-}
-
-.imageInput__Binary .mdl-textfield,
-.imageInput__Abundance .mdl-textfield{
-  width: 6vw;
-  min-width: 100px;
-}
-
-
-  /* Graph form */
-div.formAbundance,
-div.formBinary{
-  top: 50px;
-  left: 30%;
-  display:none;
-  position: fixed;
-  width: 40vw;
-  min-width: 300px;
-  margin: 5px auto;
-  padding: 15px;
-  background-color: rgba(250,250,255,0.9);
-  z-index:11;
-  border-radius: 5px;
-  box-shadow: 0px 10px 10px 3px rgba(0,0,0,0.2), 0px 5px 5px 1px rgba(0,0,0,0.5);
-}
-
-form.abundance input.button{
-  font-size: 1.5rem;
-  padding: 10px;
-}
 
 
   /* UI button */
@@ -790,17 +753,19 @@ a.close_button:focus::before{
   background-color: #fff;
   min-width:20%;
   min-height:10%;
-  margin:1px;
+  margin:5px;
   padding: 5px;
-  border-bottom:solid 1px #fff;
+
 }
 
 .graph:hover{
-  border-bottom:solid 1px #2196f3;
+  box-shadow: var(--focus-shadow);
+  transition: var(--focus-transition);
 }
 
 .graph.active{
-  border: 1px solid #2196f3;
+  box-shadow: var(--active-shadow);
+  transition: var(--active-transition);
 }
   
   /* graph UI button */
@@ -822,23 +787,6 @@ a.close_button:focus::before{
   display:flex;
   justify-content: center;
 }
-
-
-
-
-
-a.nav_visual::before{
-  content:url(../image/ic_visibility_black_24px.svg);
-}
-
-a.nav_visual:hover::before,
-a.nav_visual:focus::before{
-  transition: all .3s;
-  content:url(../image/ic_visibility_black_24px_hover.svg);
-}
-
-
-
 
   
   /* GraphAppender */
@@ -873,8 +821,8 @@ input.graphAppender{
   font-size: 1.5rem;
   margin: 5px 0px;
   padding:30px 10px;
-  color : #888888;
-  border : 0.5px solid #888888;
+  color : var(--form-color);
+  border : var(--button-line) var(--form-color);
 }
 
 
