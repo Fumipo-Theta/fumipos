@@ -25,6 +25,7 @@ export default class TopMenu {
       const openButton = document.createElement("a");
       openButton.classList.add("menu-btn")
       openButton.id = btnId;
+      openButton.href = "#";
       openButton.innerText = option.label;
       this.menuBar.appendChild(openButton);
       const left = openButton.offsetLeft;
