@@ -47,20 +47,20 @@ class Binary extends Graph {
     merged.on("mouseover", TransExcramate.onMouseOver(
       this.state,
       this.plotStyle,
-      state,
-      Binary.showTooltip(this.state, this.tooltip)
-    ));
-    merged.on("mouseout", TransExcramate.onMouseOut(
-      this.state,
-      this.plotStyle,
-      state,
-      Binary.hideTooltip(this.state, this.tooltip)
-    ));
-    merged.on("click", TransExcramate.onClick(
-      this.state,
-      this.plotStyle,
       state
-    ), false);
+    ))
+      .on("mouseover.tooltip", Binary.showTooltip(this.state, this.tooltip))
+      .on("mouseout", TransExcramate.onMouseOut(
+        this.state,
+        this.plotStyle,
+        state
+      ))
+      .on("mouseout.tooltip", Binary.hideTooltip(this.state, this.tooltip))
+      .on("click", TransExcramate.onClick(
+        this.state,
+        this.plotStyle,
+        state
+      ), false);
 
     this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle), false)
   }
@@ -302,7 +302,7 @@ export default class GraphBinaryPlot extends GraphManager {
     <span class="text">element</span>
 
     <label for="xName" class="inp">
-      <input type="text" id="xName" placeholder="&nbsp;" pattern="^[0-9A-Za-z\s]+$" required autofocus list="indexList" autocomplete="on">
+      <input type="text" id="xName" placeholder="&nbsp;" pattern="^[0-9A-Za-z\\s]+$" required autofocus list="indexList" autocomplete="on">
       <span class="label">x</span>
       <span class="border"></span>
     </label>
@@ -310,7 +310,7 @@ export default class GraphBinaryPlot extends GraphManager {
     <span class="text">vs.</span>
 
     <label for="yName" class="inp">
-      <input type="text" id="yName" placeholder="&nbsp;" pattern="^[0-9A-Za-z\s]+$" required list="indexList" autocomplete="on">
+      <input type="text" id="yName" placeholder="&nbsp;" pattern="^[0-9A-Za-z\\s]+$" required list="indexList" autocomplete="on">
       <span class="label">y</span>
       <span class="border"></span>
     </label>

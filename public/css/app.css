@@ -161,6 +161,7 @@ input.button:active{
 input[type="text"],
 input[type="number"]{
   font-size: 1.5rem;
+  text-align: center;
 }
 
 input[type="color"]{

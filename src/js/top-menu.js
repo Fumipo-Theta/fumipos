@@ -6,9 +6,14 @@ export default class TopMenu {
     this.menuCount = 0;
     this.emitter = eventEmitter;
     this.uiState = uiState;
+    this.initialize();
   }
 
   initialize() {
+    this.setMenuSpace();
+  }
+
+  setMenuSpace() {
     const menuSpace = document.createElement("div");
     menuSpace.id = "menu-bar-contents";
     document.querySelector("body").appendChild(menuSpace);
@@ -17,7 +22,7 @@ export default class TopMenu {
   }
 
   register(...menus) {
-    menus.forEach(({ template, option, eventSetter, style }) => {
+    menus.forEach(({ template, option, eventSetter, style, exportToEmitter }) => {
       const contentId = "menu-bar-content-"
         + this.menuCount++;
       const btnId = "btn-" + contentId;
@@ -42,6 +47,11 @@ export default class TopMenu {
 
 
       eventSetter(this.emitter, this.uiState);
+
+      if (Array.isArray(exportToEmitter)) {
+        this.emitter.registerAction(exportToEmitter)
+      }
+
       TopMenu.setOpenClose(
         "#" + btnId,
         "#" + contentId,
@@ -66,8 +76,6 @@ export default class TopMenu {
       $(overlay).fadeOut();
       $(content).fadeOut();
     });
-
-
   }
 
   static setDrag(content, { draggable }) {

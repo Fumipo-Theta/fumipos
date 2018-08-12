@@ -57,7 +57,23 @@ export function template(state) {
   </form>`
 };
 
+const createDataColumnIndex = (index_datalist, { data }) => {
+  if (data.length <= 0) return false;
+  const options = d3.select(index_datalist)
+    .selectAll("option")
+    .data(Object.keys(data[0]))
+  options.exit().remove();
+  const entered = options.enter().append("option");
+  entered.merge(options)
+    .attr("value", d => d);
+}
+
 export function eventSetter(emitter, uiState) {
+  const indexListId = "indexList"
+  const datalist = document.createElement("datalist")
+  datalist.id = indexListId
+  document.querySelector("body").appendChild(datalist)
+
   document.getElementById("use_test_data").onclick = function (ev) {
     const url = "./data/lava_compositions.csv";
     load(url).then(function (response) {
@@ -71,7 +87,7 @@ export function eventSetter(emitter, uiState) {
       )(toEntries(tf.text2Dataframe(text, "csv")))
 
       document.querySelector("#selectedMainFile").innerHTML = (url);
-      emitter.createDataColumnIndex(uiState);
+      createDataColumnIndex("#" + indexListId, uiState);
     })
   };
 
@@ -84,7 +100,7 @@ export function eventSetter(emitter, uiState) {
     }).then(function (text) {
       uiState.refData = toEntries(tf.text2Dataframe(text, "csv"));
 
-      emitter.replotGraph();
+
       document.querySelector("#selectedRefFile").innerHTML = (url);
     })
 
@@ -108,8 +124,9 @@ export function eventSetter(emitter, uiState) {
         mapEntries(d => ({ dummy: 1, onState: "base" })),
       )(toEntries(tf.text2Dataframe(reader.result, "csv")))
 
-      emitter.replotGraph();
-      emitter.createDataColumnIndex(uiState);
+      emitter.replot();
+      emitter.afterReplot();
+      createDataColumnIndex("#" + indexListId, uiState);
     };
 
     for (var i = 0; i < file.length; i++) {
@@ -127,7 +144,8 @@ export function eventSetter(emitter, uiState) {
     reader.onload = function (ev) {
       uiState.refData = toEntries(tf.text2Dataframe(reader.result, "csv"));
 
-      emitter.replotGraph();
+      emitter.replot();
+      emitter.afterReplot();
     };
 
     for (var i = 0; i < file.length; i++) {

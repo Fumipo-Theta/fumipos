@@ -186,7 +186,34 @@ const setLegendFromUrl = uiState => (url) => {
   })
 };
 
+const allHide = _ => {
+  const circle = d3.selectAll(".plotArea circle")
+    .attr("visibility", "hidden");
+  const path = d3.selectAll(".plotArea path")
+    .attr("visibility", "hidden");
+  const td = d3.select("table.legend")
+    .selectAll(".switch")
+    .attr("style", "color:#FFFFFF")
+    .attr("name", "hidden");
+}
+
+const allShow = _ => {
+  const circle = d3.selectAll(".plotArea circle")
+    .attr("visibility", "visible");
+  const path = d3.selectAll(".plotArea path")
+    .attr("visibility", "visible");
+  const td = d3.select("table.legend")
+    .selectAll(".switch")
+    .attr("style", "")
+    .attr("name", "visible");
+}
+
+export const exportToEmitter = [
+  { type: "afterReplot", action: toggleVisibility }
+];
+
 export const eventSetter = (emitter, uiState) => {
+
   setLegendFromUrl(uiState)("../public/data/legend_NE_Shikoku.json")
 
   document.getElementById("legendJSON").addEventListener('change', function (ev) {
@@ -199,7 +226,8 @@ export const eventSetter = (emitter, uiState) => {
       uiState.styleClass = obj.key;
       createLegendTable(obj);
       setEventToLegend(obj);
-      emitter.replotGraph();
+      emitter.replot();
+      emitter.afterReplot();
     };
     document.querySelector("#legendFileLabel").innerHTML = (file[0].name);
   }, false);

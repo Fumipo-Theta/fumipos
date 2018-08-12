@@ -1,24 +1,31 @@
 export default class UIUpdater {
   constructor(option) {
-    this.index_datalist = "#" + option.id_index_datalist;
+    this.action = {
+      replot: [],
+      afterReplot: []
+    }
   }
 
-  createDataColumnIndex({ data }) {
-    if (data.length <= 0) return false;
-    const options = d3.select(this.index_datalist)
-      .selectAll("option")
-      .data(Object.keys(data[0]))
-    options.exit().remove();
-    const entered = options.enter().append("option");
-    entered.merge(options)
-      .attr("value", d => d);
+  registerAction(array) {
+    ((Array.isArray(array))
+      ? array
+      : [array])
+      .forEach(({ type, action }) => {
+        if (!this.action.hasOwnProperty(type)) throw new Error()
+        if (this.action[type].indexOf(action) >= 0) throw new Error();
+        this.action[type].push(action);
+      })
   }
 
-  setGraphAppender(ga) {
-    this.graphAppender = ga;
+  replot() {
+    this.action.replot.forEach(action => {
+      action();
+    })
   }
 
-  replotGraph() {
-    this.graphAppender.replotAll();
+  afterReplot() {
+    this.action.afterReplot.forEach(action => {
+      action();
+    })
   }
 }

@@ -7,8 +7,7 @@ export default class TransExcramate {
   static onMouseOver(
     _,
     plotStyle,
-    { symbol },
-    callback
+    { symbol }
   ) {
     return function (d) {
       const sameId = Graph.extractClass(d3.select(this).attr("class"), "id");
@@ -33,12 +32,10 @@ export default class TransExcramate {
       d3.selectAll("path.base")
         .attr("opacity", symbol.outOpacity)
         .attr('stroke-width', symbol.outWidth);
-
-      if (typeof (callback) === "function") callback(d);
     }
   }
 
-  static onMouseOut(_, plotStyle, { symbol }, callback) {
+  static onMouseOut(_, plotStyle, { symbol }) {
     return function (d) {
       const self = d3.select(this);
       const sameId = Graph.extractClass(
@@ -60,12 +57,10 @@ export default class TransExcramate {
       d3.selectAll("path.base")
         .attr("opacity", (isOff) ? symbol.outOpacity : plotStyle.opacity)
         .attr('stroke-width', (isOff) ? symbol.outWidth : plotStyle.strokeWidth);
-
-      if (typeof (callback) === "function") callback(d);
     }
   }
 
-  static onClick(_, plotStyle, { symbol }, callback) {
+  static onClick(_, plotStyle, { symbol }) {
     return function (d) {
       const self = d3.select(this);
       const sameId = Graph.extractClass(
@@ -90,12 +85,10 @@ export default class TransExcramate {
       selected.filter("path")
         .attr("opacity", plotStyle.opacity)
         .attr("stroke-width", plotStyle.strokeWidth)
-
-      if (typeof (callback) === "function") callback(d);
     }
   }
 
-  static globalClick(merged, plotStyle, callback) {
+  static globalClick(merged, plotStyle) {
     return function (d) {
       if (clicked) {
         TransExcramate.globalDoubleClick(merged, plotStyle)
@@ -112,8 +105,6 @@ export default class TransExcramate {
         }
         clicked = false;
       }, 300);
-
-      if (typeof (callback) === "function") callback(d);
     }
   }
 

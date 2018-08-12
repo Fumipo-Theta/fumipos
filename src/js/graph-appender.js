@@ -1,18 +1,30 @@
 
 export default class GraphAppender {
   constructor(graphAreaId, graphMenuContentsId, overlayId, eventEmitter, uiState) {
+    this.exportToEventEmitter(eventEmitter);
     this.emitter = eventEmitter;
-    this.emitter.setGraphAppender(this);
     this.uiState = uiState;
     this.graphMenuBtns = [];
     this.graphAreaId = graphAreaId;
     this.graphMenuContentsId = graphMenuContentsId;
     this.overlayId = overlayId;
     this.graphManager = {};
+    this.initialize();
     return this;
   }
 
+  exportToEventEmitter(emitter) {
+    emitter.registerAction({ type: "replot", action: GraphAppender.replotAll(this) })
+  }
+
   initialize() {
+    this.setGraphAppendButtonArea();
+    this.setTooltip();
+
+    return this;
+  }
+
+  setGraphAppendButtonArea() {
     const div = document.createElement("div");
     div.id = "graphAppender";
     div.innerHTML = `
@@ -20,25 +32,26 @@ export default class GraphAppender {
       `
     document.querySelector("#" + this.graphAreaId).appendChild(div);
     this.dom = document.querySelector("#graphAppend_button");
+  }
 
+  setTooltip() {
     const tooltip = document.createElement("span");
     tooltip.id = "graph_tooltip";
     tooltip.setAttribute("style", `
     position: sticky;
     bottom : 0;
     left : 0;
-  z-index: 10;
-  visibility: hidden;
-  padding: 2px 5px;
-  border: 1px solid #000;
-  border-radius: 3px;
-  background-color: #333;
-  color: #fff;
-  font-size: 1.5rem;
+    z-index: 10;
+    visibility: hidden;
+    padding: 2px 5px;
+    border: 1px solid #000;
+    border-radius: 3px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1.5rem;
     `)
     document.querySelector("#wrapper").appendChild(tooltip);
     this.tooltipId = tooltip.id;
-    return this;
   }
 
 
@@ -74,20 +87,6 @@ export default class GraphAppender {
     return this;
   }
 
-  appendGraph(type) {
-    const G = this.graphManager[type];
-    const id = G.getCount();
-    this.appendGraphSetting(G);
-    this.appendGraphArea(G);
-    G.append(
-      this.getTypeId("graph", type, id),
-      this.getTypeId("setting", type, id),
-      this.tooltipId,
-      id
-    )
-    G.incrementCounter();
-  }
-
   setGraphAppendButton({ label, type }) {
     const appendBtn = document.createElement("input");
     appendBtn.id = `append${type}`;
@@ -100,10 +99,25 @@ export default class GraphAppender {
       false
     )
     this.dom.appendChild(appendBtn);
+  }
 
+  appendGraph(type) {
+    const G = this.graphManager[type];
+    const id = G.getCount();
+    this.appendGraphSetting(G);
+    this.appendGraphArea(G);
+    G.append(
+      this.getTypeId("graph", type, id),
+      this.getTypeId("setting", type, id),
+      this.tooltipId,
+      id
+    )
+    this.emitter.afterReplot();
+    G.incrementCounter();
   }
 
   appendGraphSetting(G) {
+    const emitter = this.emitter;
     const type = G.graphType();
     const id = G.getCount()
     const settingId = this.getTypeId("setting", type, id);
@@ -115,7 +129,10 @@ export default class GraphAppender {
     setting.setAttribute("style", G.getStyle());
     setting.addEventListener(
       "change",
-      ev => G.update(id),
+      ev => {
+        G.update(id)
+        emitter.afterReplot();
+      },
       false
     )
     document.querySelector("#" + this.graphMenuContentsId)
@@ -126,7 +143,6 @@ export default class GraphAppender {
       "#" + settingId,
       "#" + this.overlayId
     );
-
 
     $("#" + settingId).fadeIn();
     $("#" + this.overlayId).fadeIn();
@@ -153,18 +169,19 @@ export default class GraphAppender {
     const graphArea = d3.select("#" + this.graphAreaId);
 
     const graph = graphArea.insert("div", "#graphAppender")
-    graph.attr("class", "graph");
-    graph.attr("id", this.getTypeId("graph", type, id))
+      .attr("class", "graph")
+      .attr("id", this.getTypeId("graph", type, id))
 
     const graphMenu = graph.append("div");
-    graphMenu.attr("id", this.getTypeId("nav", type, id));
-    graphMenu.append("ul")
+    graphMenu.attr("id", this.getTypeId("nav", type, id))
+      .append("ul")
       .attr("style", this.menuBtnStyle);
 
     const graphBtns = graphMenu.select("ul")
       .selectAll("li")
-      .data(this.graphMenuBtns);
-    graphBtns.enter().append("li")
+      .data(this.graphMenuBtns)
+      .enter()
+      .append("li")
       .append("a")
       .attr("id", d => this.getTypeId(d.btnName, type, id))
       .attr("class", d => d.btnName)
@@ -176,9 +193,10 @@ export default class GraphAppender {
         G
       ));
 
-    const plot = graph.append("div");
-    plot.attr("id", this.getTypeId("plot", type, id));
-    plot.attr("class", "plot")
+    const plot = graph.append("div")
+      .attr("id", this.getTypeId("plot", type, id))
+      .attr("class", "plot")
+
     $(`#${this.getTypeId("graph", type, id)}`).addClass("active");
   }
 
@@ -187,15 +205,18 @@ export default class GraphAppender {
   }
 
 
-  replotAll() {
-    Object.values(this.graphManager).forEach(G => {
-      G.replot();
-    })
+  static replotAll(graphAppender) {
+    return _ => {
+      Object.values(graphAppender.graphManager).forEach(G => {
+        G.replot();
+      })
+    }
   }
 
   static setOpenClose(btn, content, overlay) {
     $(btn).click(function () {
       $(content).fadeIn();
+      $(content + " input")[0].focus();
       $(overlay).fadeIn();
       return false;
     });
@@ -209,8 +230,6 @@ export default class GraphAppender {
       $(content).fadeOut();
       $(".graph.active").removeClass("active");
     });
-
-
   }
 
 };

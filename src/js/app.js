@@ -154,15 +154,19 @@ const state = {
   dataStack: [],
 }
 
-const emitter = new UIUpdater({
-  id_index_datalist: "indexList"
-})
+const emitter = new UIUpdater()
 
 const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", emitter, state)
 const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", emitter, state);
 
+/*
+  ここで明示的にemitterにactionを登録スべきか,
+  menuアイテムなどを読み込むときに自動的にactionがセットされるようにしたほうがいいか.
+*/
+
 window.onresize = ev => {
-  ga.replotAll();
+  emitter.replot();
+  emitter.afterReplot();
 }
 
 window.onload = ev => {
@@ -179,7 +183,7 @@ window.onload = ev => {
     cursor: "move",
     opacity: 0.7
   });
-  topMenu.initialize();
+
   topMenu.register(
     menuFileLoad,
     menuSymbol,
@@ -187,12 +191,11 @@ window.onload = ev => {
     menuTest
   );
 
-  ga.initialize()
-    .registerBtns(
-      graphSettingBtn,
-      graphPngBtn,
-      graphDeleteBtn
-    )
+  ga.registerBtns(
+    graphSettingBtn,
+    graphPngBtn,
+    graphDeleteBtn
+  )
     .registerGraphManager(
       GraphBinaryPlot,
       GraphAbundancePlot

@@ -42,20 +42,20 @@ class Abundance extends Graph {
     merged.on("mouseover", TransExcramate.onMouseOver(
       this.state,
       this.plotStyle,
-      state,
-      Abundance.showTooltip(this.state, this.tooltip)
-    ));
-    merged.on("mouseout", TransExcramate.onMouseOut(
-      this.state,
-      this.plotStyle,
-      state,
-      Abundance.hideTooltip(this.state, this.tooltip)
-    ));
-    merged.on("click", TransExcramate.onClick(
-      this.state,
-      this.plotStyle,
       state
-    ));
+    ))
+      .on("mouseover.tooltip", Abundance.showTooltip(this.state, this.tooltip))
+      .on("mouseout", TransExcramate.onMouseOut(
+        this.state,
+        this.plotStyle,
+        state
+      ))
+      .on("mouseout.tooltip", Abundance.hideTooltip(this.state, this.tooltip))
+      .on("click", TransExcramate.onClick(
+        this.state,
+        this.plotStyle,
+        state
+      ));
 
 
     this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle))
@@ -289,7 +289,7 @@ export default class GraphAbundancePlot extends GraphManager {
     </label>
 
     <label for="eleName" class="inp wide">
-      <input  type="text" id="eleName" placeholder="&nbsp;"  pattern="^[0-9A-Za-z\s]+$" autofocus required  list="eleList" autocomplete="on" value="La Ce Pr Nd Sm Eu Gd Tb Dy Ho Er Tm Yb Lu">
+      <input  type="text" id="eleName" placeholder="&nbsp;"  pattern="^[0-9A-Za-z\\s]+$" autofocus required  list="eleList" autocomplete="on" value="La Ce Pr Nd Sm Eu Gd Tb Dy Ho Er Tm Yb Lu">
       <span class="label">Element list</span>
       <span class="border"></span>
     </label>

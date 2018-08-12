@@ -109,7 +109,8 @@ export const eventSetter = (emitter, uiState) => {
       "change",
       ev => {
         uiState.symbol[id] = parseFloat(dom.value);
-        emitter.replotGraph()
+        emitter.replot()
+        emitter.afterReplot();
       },
       false
     )
