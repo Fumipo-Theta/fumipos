@@ -40,11 +40,11 @@ export class Graph {
     this.state = {}
     this.svgSize = {
       size: { width: 300, height: 200 },
-      padding: { left: 15, right: 15, top: 15, buttom: 15 },
-      offset: { x: 20 + 60, y: 20 + 40 },
+      padding: { left: 10, right: 15, top: 15, buttom: 10 },
+      offset: { x: 24 + 60, y: 24 + 40 },
       axis: { width: 0, height: 0 },
-      label: { x: 20, y: 20 },
-      tick: { x: 16, y: 16 }
+      label: { x: 24, y: 24 },
+      tick: { x: 20, y: 20 }
     };
     this.axis = {}
     this.scale = {}
@@ -285,11 +285,25 @@ export class Graph {
 
   updateAxisSize() {
     const { size, padding, offset, label, tick } = this.svgSize;
+    const { x, y } = this.state;
+    const xlabelLength = (x.hasOwnProperty("name"))
+      ? x.name.length
+      : 0
 
-    label.x = parseInt(size.width / 20);
-    label.y = label.x;
-    tick.x = parseInt(label.x * 0.75);
-    tick.y = tick.x;
+    const ylabelLength = (y.hasOwnProperty("name"))
+      ? y.name.length
+      : 0
+
+    label.x = 24// parseInt(size.width / 20);
+    while (xlabelLength * label.x > size.width) {
+      label.x--;
+    }
+
+    label.y = 24;
+    while (ylabelLength * label.y > size.height) {
+      label.y--;
+    }
+
     offset.y = label.y + 40;
     offset.x = label.x + 60;
 
