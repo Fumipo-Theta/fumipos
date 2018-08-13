@@ -181,7 +181,8 @@ window.onload = ev => {
 
   $('#graph_area').sortable({
     cursor: "move",
-    opacity: 0.7
+    opacity: 0.7,
+    handle: "h1"
   });
 
   topMenu.register(

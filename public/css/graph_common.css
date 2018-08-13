@@ -41,6 +41,7 @@ path{
   font-size: 24px;
   text-align: center;
   color : #888888;
+  cursor: move;
 }
 
 h1,
