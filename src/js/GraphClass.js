@@ -41,8 +41,10 @@ export class Graph {
     this.svgSize = {
       size: { width: 300, height: 200 },
       padding: { left: 15, right: 15, top: 15, buttom: 15 },
-      offset: { x: 60, y: 60 },
-      axis: { width: 0, height: 0 }
+      offset: { x: 20 + 60, y: 20 + 40 },
+      axis: { width: 0, height: 0 },
+      label: { x: 20, y: 20 },
+      tick: { x: 16, y: 16 }
     };
     this.axis = {}
     this.scale = {}
@@ -170,7 +172,7 @@ export class Graph {
 
   createAxis() {
     this.updateAxisSize();
-    const { size, offset, padding, axis } = this.svgSize;
+    const { size, offset, padding, axis, label } = this.svgSize;
     const svg = this.svg;
     // y軸を登録
     svg.append("g")
@@ -184,7 +186,9 @@ export class Graph {
       .attr("x", -offset.x)
       .attr("y", axis.height * 0.6)
       .attr("fill", "black")
-      .text(" ");
+      .attr("text-anchor", "middle")
+      .text("y axis")
+      .style("font-size", label.y);
 
     // x軸を登録
     svg.append("g")
@@ -197,7 +201,9 @@ export class Graph {
       .attr("x", axis.width * 0.4)
       .attr("y", offset.y * 0.75)
       .attr("fill", "black")
-      .text(" ");
+      .attr("text-anchor", "middle")
+      .text("x axis")
+      .style("font-size", label.x);
 
     this.updateAxis();
   }
@@ -239,38 +245,54 @@ export class Graph {
   updateAxis() {
     this.updateAxisSize();
     this.updateAxisType();
-    const { size, offset, padding, axis } = this.svgSize;
+    const { size, offset, padding, axis, label, tick } = this.svgSize;
 
-    this.svg.select("g.y.axis")
+    const yAxis = this.svg.select("g.y.axis")
       .attr("transform", `translate(${offset.x + padding.left},${size.height - axis.height - offset.y - padding.buttom} )`)
-      .call(this.axis.y)
-      .select("path")//.transition()
+      .call(this.axis.y);
+    yAxis.select("path")//.transition()
       .attr("d", "M" + axis.width + ",0H0V" + axis.height + "H" + axis.width)
+    yAxis.selectAll(".tick text")
+      .style("font-size", tick.y)
 
-    this.svg.select("g.x.axis")
+
+    const xAxis = this.svg.select("g.x.axis")
       .attr("transform", "translate(" + (offset.x + padding.left) + "," + (size.height - offset.y - padding.buttom) + ")")
       .call(this.axis.x)
-      .select("path")//.transition()
+    xAxis.select("path")//.transition()
       .attr("d", "M0,-" + axis.height + "V0H" + axis.width + "V-" + axis.height)
+    xAxis.selectAll(".tick text")
+      .style("font-size", tick.x)
 
 
     this.svg.select("text.ylabel")
-      .attr("transform", "rotate (-90," + -offset.x + "," + axis.height * 0.6 + ")")
-      .attr("x", -offset.x)
-      .attr("y", axis.height * 0.6)
+      .attr("transform", `translate(${-(offset.x - label.y) * 0.5},${axis.height * 0.5})rotate (-90,0,0)`)
+      .attr("x", 0)
+      .attr("y", (-40 - label.y) * 0.5)
+      .style("font-size", label.y)
       .transition()
-      .text(this.state.y.name);
+      .text(this.state.y.name || "y axis");
+
     this.svg.select("text.xlabel")
-      .attr("x", axis.width * 0.4)
-      .attr("y", offset.y * 0.75)
+      .attr("x", axis.width * 0.5)
+      .attr("y", (offset.x + label.x) * 0.5)
+      .style("font-size", label.x)
       .transition()
-      .text(this.state.x.name);
+      .text(this.state.x.name || "x axis");
 
     this.svg.selectAll("path.domain").attr("fill", "none");
   }
 
   updateAxisSize() {
-    const { size, padding, offset } = this.svgSize;
+    const { size, padding, offset, label, tick } = this.svgSize;
+
+    label.x = parseInt(size.width / 20);
+    label.y = label.x;
+    tick.x = parseInt(label.x * 0.75);
+    tick.y = tick.x;
+    offset.y = label.y + 40;
+    offset.x = label.x + 60;
+
     this.svgSize.axis = {
       width: size.width - offset.x - padding.left - padding.right,
       height: size.height - offset.y - padding.top - padding.buttom

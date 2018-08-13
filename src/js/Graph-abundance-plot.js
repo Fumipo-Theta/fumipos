@@ -155,19 +155,21 @@ class Abundance extends Graph {
         .replace(/\s+/g, " ")
         .replace(/\s$/, "")
         .split(" "),
-      name: ""
+      name: " "
     }
   }
 
   setStateY() {
     this.state.y = {
-      name: "Abundance"
+      name: " "
     }
   }
 
   updateTitle() {
-    const { x, y, normInfo } = this.state;
-    this.setTitle(`Normalized by ${normInfo[0]}`);
+    const { x, y, normInfo, doNormalization } = this.state;
+    this.setTitle((doNormalization)
+      ? `Normalized by ${normInfo[0]}`
+      : `Abundance`);
   }
 
   updateAxisType() {
