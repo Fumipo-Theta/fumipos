@@ -62,7 +62,26 @@ class Binary extends Graph {
         state
       ), false);
 
-    this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle), false)
+    this.svg.on("click.onoff", TransExcramate.globalClick(merged, this.plotStyle), false)
+    TransExcramate.updateExtentByBrush(this.brushArea, {
+      end: Binary.updateExtentByBrush(state).bind(this)
+    });
+  }
+
+  static updateExtentByBrush(state) {
+    return function (d3_event) {
+      const [start, end] = d3_event.selection;
+      this.extent.x = [
+        this.scale.x.invert(start[0]),
+        this.scale.x.invert(end[0])
+      ];
+      this.extent.y = [
+        this.scale.y.invert(end[1]),
+        this.scale.y.invert(start[1])
+      ];
+      this.updateAxis();
+      this.replot(state);
+    }
   }
 
   static showTooltip({ x, y }, tooltip) {
@@ -165,7 +184,7 @@ class Binary extends Graph {
     this.scale.x.domain(this.extent.x)
       .range([0, axis.width])
       .nice();
-    this.axis.x = d3.axisBottom(this.scale.x)
+    this.axis.x = d3.axisBottom(this.scale.x).ticks(5)
     this.axis.x.tickSize(6, -size.height);
 
     this.scale.y = (this.state.y.islog)
@@ -174,7 +193,7 @@ class Binary extends Graph {
     this.scale.y.domain(this.extent.y)
       .range([axis.height, 0])
       .nice();
-    this.axis.y = d3.axisLeft(this.scale.y)
+    this.axis.y = d3.axisLeft(this.scale.y).ticks(5)
     this.axis.y.tickSize(6, -size.width);
 
   }

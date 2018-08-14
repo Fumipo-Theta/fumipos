@@ -1,7 +1,8 @@
 import { Graph } from "./GraphClass.js";
 
-let clicked = false;
-let isOff = false;
+let clicked = false;  // for click events
+let isOff = false; // for double click detction
+
 
 export default class TransExcramate {
   static onMouseOver(
@@ -122,5 +123,52 @@ export default class TransExcramate {
       .classed("base", true)
       .attr("stroke-width", plotStyle.strokeWidth)
       .attr("opacity", plotStyle.opacity)
+  }
+
+  static selectByBrush(g_plot_d3) {
+    g_plot_d3.call(
+      d3.brush()
+        .on("end", d => {
+          g_plot_d3.selectAll("circle")
+            .each(function (d) {
+              if (!d3.event.selection) return
+              const self = d3.select(this);
+              const cx = self.attr("cx")
+              const cy = self.attr("cy")
+              const [start, end] = d3.event.selection;
+              if ((start[0] <= cx && cx <= end[0])
+                && (start[1] <= cy && cy <= end[1])) {
+                self.attr("opacity", 1)
+              } else {
+                self.attr("opacity", 0.1)
+              }
+            })
+
+        })
+    )
+  }
+
+  static updateExtentByBrush(g_plot_d3, callback) {
+    g_plot_d3.call(
+      d3.brush()
+        .on("start", function () {
+          d3.event
+          g_plot_d3.selectAll(".selection")
+            .attr("display", "")
+          g_plot_d3.selectAll(".handle")
+            .attr("display", "")
+        }, false)
+        .on("end", function () {
+          if (!d3.event.selection) return
+          callback.end(d3.event);
+          g_plot_d3.selectAll(".selection")
+            .attr("display", "none")
+          g_plot_d3.selectAll(".handle")
+            .attr("display", "none")
+          d3.event.selection = null;
+        }, false)
+    ).selectAll(".overlay") // これ以降を記述すると, brushイベントとcircleのクリックイベントが両立する
+      .each(d => d.type === "selection")
+      .on("mousedown", d => d)
   }
 }

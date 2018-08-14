@@ -160,9 +160,13 @@ export class Graph {
       .append("clipPath")
       .attr("id", this.clipPathId)
       .append("rect");
+    this.brushArea = this.svg.append("g")
+      .attr("class", "brushArea")
+      .attr("clip-path", `url(#${this.clipPathId})`)
     this.canvas = this.svg.append("g")
       .attr("class", "plotArea")
       .attr("clip-path", `url(#${this.clipPathId})`)
+
 
     this.updateSvg();
     this.updateTitle();
@@ -209,6 +213,7 @@ export class Graph {
   }
 
   update(state) {
+    this.setPlotStyle(state);
     this.readSetting();
     this.setStateX();
     this.setStateY();
@@ -217,7 +222,6 @@ export class Graph {
     this.updateSvg();
     this.updateTitle();
     this.updateAxis();
-    this.setPlotStyle(state);
     this.replot(state);
   }
 
@@ -236,6 +240,9 @@ export class Graph {
       .attr("width", axis.width)
       .attr("height", axis.height)
       .attr("fill", "gray")
+    this.brushArea.attr("transform", `translate(${padding.left + offset.x},${padding.top})`)
+      .attr("width", axis.width)
+      .attr("height", axis.height)
   }
 
   /**

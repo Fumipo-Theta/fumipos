@@ -9,6 +9,7 @@ import GraphAbundancePlot from "./Graph-abundance-plot.js";
 import * as graphSettingBtn from "./graph-btn-setting.js";
 import * as graphDeleteBtn from "./graph-btn-delete.js";
 import * as graphPngBtn from "./graph-btn-save_as_png.js";
+import * as graphRefreshBtn from "./graph-btn-refresh.js";
 import UIUpdater from "./ui-updater.js";
 
 const initializer = {
@@ -194,6 +195,7 @@ window.onload = ev => {
 
   ga.registerBtns(
     graphSettingBtn,
+    graphRefreshBtn,
     graphPngBtn,
     graphDeleteBtn
   )
