@@ -9,7 +9,7 @@
     <style type="text/css" id="graph_style"></style>
     <style type="text/css" id="legendStyle"></style>
     <title>FUMIPOS multiple plot</title>
-    <script src="../../jslib/loadScript.js"></script>
+
 </head>
 
 <body>
@@ -61,7 +61,7 @@
 
     <!--datalist id="indexList"></datalist-->
 </body>
-
+<script src="../src/js/lib/loadScript.js"></script>
 <script type="text/javascript">
     if (typeof require !== "undefined") {
         const remote = require('electron').remote;
@@ -70,11 +70,11 @@
         var webScripts = [];
     } else {
         var webScripts = [
-            "../../jslib/jquery-2.2.0.min.js",
-            "../../jslib/jquery-ui.min.js",
-            "../../jslib/jquery.ui.touch-punch.min.js",
-            "../../jslib/d3.v5.min.js",
-            "../../jslib/funcTools.js"
+            "../src/js/lib/jquery-2.2.0.min.js",
+            "../src/js/lib/jquery-ui.min.js",
+            "../src/js/lib/jquery.ui.touch-punch.min.js",
+            "../src/js/lib/d3.v5.min.js",
+            "../src/js/lib/funcTools.js"
         ]
     }
     const scripts = [...webScripts];

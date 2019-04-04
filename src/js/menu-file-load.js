@@ -1,29 +1,29 @@
-import tf from "../../../jslib/textParser_esm.js";
+import tf from "./lib/textParser_esm.js";
 const {
-  Dataframe,
-  transduce,
-  statefullTransducer
+    Dataframe,
+    transduce,
+    statefullTransducer
 } = funcTools;
 const {
-  mapping,
-  intoArray
+    mapping,
+    intoArray
 } = transduce;
 const {
-  indexing
+    indexing
 } = statefullTransducer;
 const {
-  toEntries,
-  mapEntries
+    toEntries,
+    mapEntries
 } = Dataframe;
 
 
 const load = (typeof require === 'undefined') ?
-  fetch
-  : require("node-fetch");
+    fetch
+    : require("node-fetch");
 
 
 export function template(state) {
-  return `
+    return `
   <style>
     #menu-file-load input.button{
     cursor: pointer;
@@ -58,105 +58,105 @@ export function template(state) {
 };
 
 const createDataColumnIndex = (index_datalist, { data }) => {
-  if (data.length <= 0) return false;
-  const options = d3.select(index_datalist)
-    .selectAll("option")
-    .data(Object.keys(data[0]))
-  options.exit().remove();
-  const entered = options.enter().append("option");
-  entered.merge(options)
-    .attr("value", d => d);
+    if (data.length <= 0) return false;
+    const options = d3.select(index_datalist)
+        .selectAll("option")
+        .data(Object.keys(data[0]))
+    options.exit().remove();
+    const entered = options.enter().append("option");
+    entered.merge(options)
+        .attr("value", d => d);
 }
 
 export function eventSetter(emitter, uiState) {
-  const indexListId = "indexList"
-  const datalist = document.createElement("datalist")
-  datalist.id = indexListId
-  document.querySelector("body").appendChild(datalist)
+    const indexListId = "indexList"
+    const datalist = document.createElement("datalist")
+    datalist.id = indexListId
+    document.querySelector("body").appendChild(datalist)
 
-  document.getElementById("use_test_data").onclick = function (ev) {
-    const url = "./data/lava_compositions.csv";
-    load(url).then(function (response) {
-      return response.text();
-    }).then(function (text) {
+    document.getElementById("use_test_data").onclick = function (ev) {
+        const url = "./data/lava_compositions.csv";
+        load(url).then(function (response) {
+            return response.text();
+        }).then(function (text) {
 
-      uiState.data = intoArray(
-        indexing(0),
-        mapping(([i, d]) => Object.assign(d, { id: i })),
-        mapEntries(d => ({ dummy: 1, onState: "base" })),
-      )(toEntries(tf.text2Dataframe(text, "csv")))
+            uiState.data = intoArray(
+                indexing(0),
+                mapping(([i, d]) => Object.assign(d, { id: i })),
+                mapEntries(d => ({ dummy: 1, onState: "base" })),
+            )(toEntries(tf.text2Dataframe(text, "csv")))
 
-      document.querySelector("#selectedMainFile").innerHTML = (url);
-      createDataColumnIndex("#" + indexListId, uiState);
-    })
-  };
-
-
-  document.getElementById('use_test_ref').onclick = function (ev) {
-    const url = "./data/Refferencial_abundance.csv";
-
-    load(url).then(function (response) {
-      return response.text();
-    }).then(function (text) {
-      uiState.refData = toEntries(tf.text2Dataframe(text, "csv"));
-
-
-      document.querySelector("#selectedRefFile").innerHTML = (url);
-    })
-
-  }
-
-  document.getElementById("use_test_data").click();
-  document.getElementById('use_test_ref').click();
-
-  /* Button for use user data */
-  document.getElementById("selectFileMain").onchange = function (ev) {
-    var file = ev.target.files;
-    var reader = new FileReader();
-
-    reader.readAsText(file[0]);
-    //console.log(file)
-    reader.onload = function (ev) {
-
-      uiState.data = intoArray(
-        indexing(0),
-        mapping(([i, d]) => Object.assign(d, { id: i })),
-        mapEntries(d => ({ dummy: 1, onState: "base" })),
-      )(toEntries(tf.text2Dataframe(reader.result, "csv")))
-
-      emitter.replot();
-      emitter.afterReplot();
-      createDataColumnIndex("#" + indexListId, uiState);
+            document.querySelector("#selectedMainFile").innerHTML = (url);
+            createDataColumnIndex("#" + indexListId, uiState);
+        })
     };
 
-    for (var i = 0; i < file.length; i++) {
-      document.querySelector("#selectedMainFile").innerHTML = (file[i].name + "\n");
+
+    document.getElementById('use_test_ref').onclick = function (ev) {
+        const url = "./data/Refferencial_abundance.csv";
+
+        load(url).then(function (response) {
+            return response.text();
+        }).then(function (text) {
+            uiState.refData = toEntries(tf.text2Dataframe(text, "csv"));
+
+
+            document.querySelector("#selectedRefFile").innerHTML = (url);
+        })
+
     }
-  };
 
-  /* Button for user defined refferance data */
-  document.getElementById("selectFileRef").onchange = function (ev) {
-    var file = ev.target.files;
-    var reader = new FileReader();
+    document.getElementById("use_test_data").click();
+    document.getElementById('use_test_ref').click();
 
-    reader.readAsText(file[0]);
-    //console.log(file)
-    reader.onload = function (ev) {
-      uiState.refData = toEntries(tf.text2Dataframe(reader.result, "csv"));
+    /* Button for use user data */
+    document.getElementById("selectFileMain").onchange = function (ev) {
+        var file = ev.target.files;
+        var reader = new FileReader();
 
-      emitter.replot();
-      emitter.afterReplot();
+        reader.readAsText(file[0]);
+        //console.log(file)
+        reader.onload = function (ev) {
+
+            uiState.data = intoArray(
+                indexing(0),
+                mapping(([i, d]) => Object.assign(d, { id: i })),
+                mapEntries(d => ({ dummy: 1, onState: "base" })),
+            )(toEntries(tf.text2Dataframe(reader.result, "csv")))
+
+            emitter.replot();
+            emitter.afterReplot();
+            createDataColumnIndex("#" + indexListId, uiState);
+        };
+
+        for (var i = 0; i < file.length; i++) {
+            document.querySelector("#selectedMainFile").innerHTML = (file[i].name + "\n");
+        }
     };
 
-    for (var i = 0; i < file.length; i++) {
-      document.querySelector("#selectedRefFile").innerHTML = (file[i].name + "\n");
+    /* Button for user defined refferance data */
+    document.getElementById("selectFileRef").onchange = function (ev) {
+        var file = ev.target.files;
+        var reader = new FileReader();
+
+        reader.readAsText(file[0]);
+        //console.log(file)
+        reader.onload = function (ev) {
+            uiState.refData = toEntries(tf.text2Dataframe(reader.result, "csv"));
+
+            emitter.replot();
+            emitter.afterReplot();
+        };
+
+        for (var i = 0; i < file.length; i++) {
+            document.querySelector("#selectedRefFile").innerHTML = (file[i].name + "\n");
+        }
     }
-  }
 };
 
 export const option = {
-  label: "Select file",
-  draggable: false
+    label: "Select file",
+    draggable: false
 }
 
 export const style = `
