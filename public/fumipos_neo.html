@@ -1,82 +1,84 @@
 <html>
 
 <head>
-  <meta http-equiv="Content-Type" charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Content-Type" charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link rel="stylesheet" href="css/app.css" charset="utf-8">
-  <link rel="icon" type="image/png" href="image/icon.png" sizes="64x64">
-  <style type="text/css" id="graph_style"></style>
-  <style type="text/css" id="legendStyle"></style>
-  <title>FUMIPOS multiple plot</title>
-  <script src="../../jslib/loadScript.js"></script>
+    <link rel="stylesheet" href="css/app.css" charset="utf-8">
+    <link rel="icon" type="image/png" href="image/icon.png" sizes="64x64">
+    <style type="text/css" id="graph_style"></style>
+    <style type="text/css" id="legendStyle"></style>
+    <title>FUMIPOS multiple plot</title>
+    <script src="../../jslib/loadScript.js"></script>
 </head>
 
 <body>
-  <div id="wrapper">
+    <div id="wrapper">
 
-    <div id="setting_menu">
-      <div id="setting_overlay"></div>
+        <div id="setting_menu">
+            <div id="setting_overlay"></div>
+        </div>
+        <div id="overlay" class="overlay"></div>
+
+
+        <div id="fixed-menu">
+            <div id="fixed-menu-contents">
+                <a id="home" href="./index.html"></a>
+            </div>
+        </div>
+        <div id="menuSpace"></div>
+
+        <div id="graph_area"></div>
+
+
     </div>
-    <div id="overlay" class="overlay"></div>
+    <div id="footer">
 
+        <div class="title">
+            <img src="./image/FUMIPOS_logo.png">
+        </div>
+        <div class="acronym">
+            <span class="acronym">F</span>antastic
+            <span class="acronym">U</span>seable
+            <span class="acronym">M</span>ultiple
+            <span class="acronym">I</span>nteractive
+            <span class="acronym">P</span>lot
+            <span class="acronym">O</span>perating
+            <span class="acronym">S</span>ystem
+        </div>
 
-    <div id="fixed-menu">
-      <div id="fixed-menu-contents">
-        <a id="home" href="./index.html"></a>
-      </div>
+        <div class="logo">
+            <a href="./index.html" class="footer-link-to-home">
+                <img class="logo" src="./image/ProfilePhoto.jpg">
+            </a>
+            <p>by Fumipo Theta</p>
+        </div>
+
     </div>
-    <div id="menuSpace"></div>
-
-    <div id="graph_area"></div>
-
-
-  </div>
-  <div id="footer">
-
-    <div class="title">FUMIPOS</div>
-    <div class="acronym">
-      <span class="acronym">F</span>antastic
-      <span class="acronym">U</span>seable
-      <span class="acronym">M</span>ultiple
-      <span class="acronym">I</span>nteractive
-      <span class="acronym">P</span>lot
-      <span class="acronym">O</span>perating
-      <span class="acronym">S</span>ystem
-    </div>
-
-    <div class="logo">
-      <a href="./index.html" class="footer-link-to-home">
-        <img class="logo" src="./image/ProfilePhoto.jpg">
-      </a>
-      <p>by Fumitoshi Morisato</p>
-    </div>
-
-  </div>
-  <!-- Loading javascript component -->
-  <!--script src="../../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script-->
+    <!-- Loading javascript component -->
+    <!--script src="../../multiCrystallization/js/multiCrystallization_v1.4.1.js" charset="utf-8"></script-->
 
 
-  <!--datalist id="indexList"></datalist-->
+    <!--datalist id="indexList"></datalist-->
 </body>
 
 <script type="text/javascript">
-  if (typeof require !== "undefined") {
-    const remote = require('electron').remote;
-    const dialog = remote.dialog;
-    const browserWindow = remote.BrowserWindow;
-    var webScripts = [];
-  } else {
-    var webScripts = [
-      "../../jslib/jquery-2.2.0.min.js",
-      "../../jslib/jquery-ui.min.js",
-      "../../jslib/jquery.ui.touch-punch.min.js",
-      "../../jslib/d3.v5.min.js",
-      "../../jslib/funcTools.js"
-    ]
-  }
-  const scripts = [...webScripts];
-  scripts.map(src => loadScript({ src }));
+    if (typeof require !== "undefined") {
+        const remote = require('electron').remote;
+        const dialog = remote.dialog;
+        const browserWindow = remote.BrowserWindow;
+        var webScripts = [];
+    } else {
+        var webScripts = [
+            "../../jslib/jquery-2.2.0.min.js",
+            "../../jslib/jquery-ui.min.js",
+            "../../jslib/jquery.ui.touch-punch.min.js",
+            "../../jslib/d3.v5.min.js",
+            "../../jslib/funcTools.js"
+        ]
+    }
+    const scripts = [...webScripts];
+    scripts.map(src => loadScript({ src }));
 
 
 </script>
