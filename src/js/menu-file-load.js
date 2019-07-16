@@ -1,4 +1,6 @@
-import tf from "./lib/textParser_esm.js";
+import tf from "./lib/textParser_esm";
+import funcTools from "./lib/funcTools"
+
 const {
     Dataframe,
     transduce,

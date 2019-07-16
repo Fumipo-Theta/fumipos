@@ -12,6 +12,7 @@ import * as graphPngBtn from "./graph-btn-save_as_png.js";
 import * as graphRefreshBtn from "./graph-btn-refresh.js";
 import UIUpdater from "./ui-updater.js";
 
+
 const initializer = {
 
     'legend': {
@@ -203,6 +204,8 @@ window.onload = ev => {
             GraphBinaryPlot,
             GraphAbundancePlot
         );
+
+    ga.setGraphAppendButton({ label: "Test", type: "Test" });
 }
 
 /*
