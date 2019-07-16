@@ -40,12 +40,12 @@ export class Graph {
         this.tooltip = d3.select("#" + tooltipId);
         this.clipPathId = "clip_" + graphId
         this.state = {}
-        this.graphGeometry = new GraphGeometry(
-            { width: 300, height: 200 }, // figureSize
-            { left: 10, right: 15, top: 15, buttom: 10 }, //figurePadding
-            { x: 24 + 60, y: 24 + 40 }, // axisOffset
-            { width: 0, height: 0 }, // axisSize
-        )
+        this.graphGeometry = new GraphGeometry({
+            figureSize: { width: 300, height: 200 },
+            figurePadding: { left: 10, right: 15, top: 15, buttom: 10 },
+            axisOffset: { x: 24 + 60, y: 24 + 40 },
+            axisSize: { width: 0, height: 0 },
+        })
         /* svg style */
         this.xlabel = new TextStyle({ fontSize: 24 })
         this.ylabel = new TextStyle({ fontSize: 24 })

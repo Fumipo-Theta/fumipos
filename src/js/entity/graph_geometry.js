@@ -1,11 +1,20 @@
+import requireProperty from "../validation/require_property"
+import isDefined from "../validation/is_defined"
+
 function checkSizeValidity(sizeDict) {
-    if (!sizeDict.hasOwnProperty("width") | !sizeDict.hasOwnProperty("height")) {
-        throw new ReferenceError("Invalid object for size")
-    }
+    requireProperty(sizeDict, "width")
+    requireProperty(sizeDict, "height")
+    return sizeDict
 }
 
+
 export default class GraphGeometry {
-    constructor(figureSize, figurePadding, axisOffset, axisSize) {
+    constructor({ figureSize, figurePadding, axisOffset, axisSize } = {}) {
+        isDefined(figureSize)
+        isDefined(figurePadding)
+        isDefined(axisOffset)
+        isDefined(axisSize)
+
         this._figureSize = figureSize
         this._figurePadding = figurePadding
         this._axisOffset = axisOffset
@@ -13,9 +22,9 @@ export default class GraphGeometry {
     }
 
     get figureSize() { return this._figureSize }
-    set figureSize(size) { checkSizeValidity(size); this._figureSize = size }
+    set figureSize(size) { this._figureSize = checkSizeValidity(size); }
     get figurePadding() { return this._figurePadding }
     get axisOffset() { return this._axisOffset }
     get axisSize() { return this._axisSize }
-    set axisSize(size) { checkSizeValidity(size); this._axisSize = size }
+    set axisSize(size) { this._axisSize = checkSizeValidity(size); }
 }
