@@ -162,7 +162,6 @@ export const option = {
 }
 
 export const style = `
-  left: 5%;
   width: 40vw;
   overflow: auto;
   `

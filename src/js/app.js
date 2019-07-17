@@ -1,16 +1,16 @@
-import TopMenu from "./top-menu.js";
-import * as menuFileLoad from "./menu-file-load.js";
-import * as menuSymbol from "./menu-symbol.js";
-import * as menuLegend from "./menu-legend.js";
-import * as menuTest from "./menu-test.js";
-import GraphAppender from "./graph-appender.js";
-import GraphBinaryPlot from "./Graph-binary-plot.js";
-import GraphAbundancePlot from "./Graph-abundance-plot.js";
-import * as graphSettingBtn from "./graph-btn-setting.js";
-import * as graphDeleteBtn from "./graph-btn-delete.js";
-import * as graphPngBtn from "./graph-btn-save_as_png.js";
-import * as graphRefreshBtn from "./graph-btn-refresh.js";
-import UIUpdater from "./ui-updater.js";
+import TopMenu from "./top-menu";
+import * as menuFileLoad from "./menu-file-load";
+import * as menuSymbol from "./menu-symbol";
+import * as menuLegend from "./menu-legend";
+import GraphAppender from "./graph-appender";
+import GraphBinaryPlot from "./Graph-binary-plot";
+import GraphAbundancePlot from "./Graph-abundance-plot";
+import * as graphSettingBtn from "./graph-btn-setting";
+import * as graphDeleteBtn from "./graph-btn-delete";
+import * as graphPngBtn from "./graph-btn-save_as_png";
+import * as graphRefreshBtn from "./graph-btn-refresh";
+import UIUpdater from "./ui-updater";
+import Overlay from "./overlay"
 
 
 const initializer = {
@@ -157,9 +157,9 @@ const state = {
 }
 
 const emitter = new UIUpdater()
-
-const topMenu = new TopMenu("fixed-menu-contents", "setting_overlay", emitter, state)
-const ga = new GraphAppender("graph_area", "setting_menu", "setting_overlay", emitter, state);
+const settingOverlay = new Overlay("#setting_overlay")
+const topMenu = new TopMenu("fixed-menu-contents", settingOverlay, emitter, state)
+const ga = new GraphAppender("graph_area", "setting_menu", settingOverlay, emitter, state);
 
 /*
   ここで明示的にemitterにactionを登録スべきか,
@@ -191,7 +191,6 @@ window.onload = ev => {
         menuFileLoad,
         menuSymbol,
         menuLegend,
-        menuTest
     );
 
     ga.registerBtns(
@@ -205,7 +204,6 @@ window.onload = ev => {
             GraphAbundancePlot
         );
 
-    ga.setGraphAppendButton({ label: "Test", type: "Test" });
 }
 
 /*

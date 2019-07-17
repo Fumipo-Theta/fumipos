@@ -245,6 +245,5 @@ export const option = {
 }
 
 export const style = `
-  left: 25%;
   min-width: 25vw;
   `;

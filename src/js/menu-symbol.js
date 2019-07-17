@@ -58,7 +58,7 @@ export const template = uiState => `
       <input type="range" id="selectedOpacity" min="0" max="1" value="1" step="0.1">
     </li>
     </ul>
-    
+
     <span class="list-title">Symbol size</span>
     <ul>
     <li>
@@ -102,28 +102,25 @@ export const template = uiState => `
   `;
 
 export const eventSetter = (emitter, uiState) => {
-  [...document.querySelectorAll("#symbolForm input")].forEach(dom => {
-    const id = dom.id;
-    dom.value = uiState.symbol[id]
-    dom.addEventListener(
-      "change",
-      ev => {
-        uiState.symbol[id] = parseFloat(dom.value);
-        emitter.replot()
-        emitter.afterReplot();
-      },
-      false
-    )
-  })
+    [...document.querySelectorAll("#symbolForm input")].forEach(dom => {
+        const id = dom.id;
+        dom.value = uiState.symbol[id]
+        dom.addEventListener(
+            "change",
+            ev => {
+                uiState.symbol[id] = parseFloat(dom.value);
+                emitter.replot()
+                emitter.afterReplot();
+            },
+            false
+        )
+    })
 }
 
 export const option = {
-  label: "Symbol",
-  draggable: false
+    label: "Symbol",
+    draggable: false
 }
 
 export const style = `
-  left: 15%;
-  
-  
   `

@@ -2,6 +2,14 @@ import { GraphManager, Graph } from "./GraphClass";
 import TransExcramate from "./Graph-event-trans-excramate";
 import funcTools from "./lib/funcTools"
 
+import AST from "ast/src/arithmetic/maybe/ast"
+
+(function () {
+    const ast = new AST()
+    ast.parse("x * y")
+    console.log(ast.evaluate({ x: 6, y: 7 }))
+})()
+
 const {
     transduce,
     Dataframe

@@ -1,5 +1,6 @@
 
 export const template = _ => `
+  <a href="#" class="close_button" ></a>
   <label for="inp" class="inp">
     <input type="text" id="inp" placeholder="&nbsp;">
     <span class="label">お名前</span>
@@ -12,8 +13,8 @@ export const eventSetter = (_, __) => {
 };
 
 export const option = {
-  label: "Test menu",
-  draggable: true
+    label: "Test menu",
+    draggable: true
 }
 
 export const style = `
