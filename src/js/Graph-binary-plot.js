@@ -1,14 +1,9 @@
 import { GraphManager, Graph } from "./GraphClass";
 import TransExcramate from "./Graph-event-trans-excramate";
 import funcTools from "./lib/funcTools"
+import { setClass } from "./usecases/plot_data_class_name"
+import AST from "ast/src/arithmetic/primitive/ast"
 
-import AST from "ast/src/arithmetic/maybe/ast"
-
-(function () {
-    const ast = new AST()
-    ast.parse("x * y")
-    console.log(ast.evaluate({ x: 6, y: 7 }))
-})()
 
 const {
     transduce,
@@ -27,6 +22,12 @@ const getPrecision = (val, precise = 4) => {
     return value.toPrecision(precise);
 }
 
+/**
+ * Make binary plot of x and y axis.
+ * Arithmetic formula with column name of data table is
+ *  available for x and y axis.
+ *
+ */
 class Binary extends Graph {
     constructor(graph, setting, tooltip) {
         super(graph, setting, tooltip);
@@ -34,46 +35,49 @@ class Binary extends Graph {
             r: 1.5,
             strokeWidth: 1.2
         }
+        this.xAST = new AST()
+        this.yAST = new AST()
     }
 
 
-    replot(state) {
+    replot(uiState) {
 
         const canvas = this.canvas;
         const plotFunc = Binary.showPoint(
-            this.state,
+            this.xAST,
+            this.yAST,
             this.scale,
             this.plotStyle,
-            state
+            uiState
         );
 
-        const circle = canvas.selectAll("circle").data(state.data);
+        const circle = canvas.selectAll("circle").data(uiState.data);
         circle.exit().transition().remove();
         const enter = circle.enter().append("circle")
         const merged = enter.merge(circle)
         merged.each(plotFunc);
 
         merged.on("mouseover", TransExcramate.onMouseOver(
-            this.state,
+            this.console,
             this.plotStyle,
-            state
+            uiState
         ))
-            .on("mouseover.tooltip", Binary.showTooltip(this.state, this.tooltip))
+            .on("mouseover.tooltip", this.showTooltip())
             .on("mouseout", TransExcramate.onMouseOut(
-                this.state,
+                this.console,
                 this.plotStyle,
-                state
+                uiState
             ))
-            .on("mouseout.tooltip", Binary.hideTooltip(this.state, this.tooltip))
+            .on("mouseout.tooltip", this.hideTooltip())
             .on("click", TransExcramate.onClick(
-                this.state,
+                this.console,
                 this.plotStyle,
-                state
+                uiState
             ), false);
 
         this.svg.on("click.onoff", TransExcramate.globalClick(merged, this.plotStyle), false)
         TransExcramate.updateExtentByBrush(this.brushArea, {
-            end: Binary.updateExtentByBrush(state).bind(this)
+            end: Binary.updateExtentByBrush(uiState).bind(this)
         });
     }
 
@@ -93,29 +97,30 @@ class Binary extends Graph {
         }
     }
 
-    static showTooltip({ x, y }, tooltip) {
-        return function (d) {
-            tooltip.style("visibility", "visible")
-                .text(`${d.name}  ${d.location} [ ${getPrecision(d[x.sup])}${(x.sub === "dummy") ? "" : "/" + getPrecision(d[x.sub]) + "=" + getPrecision(d[x.sup] / d[x.sub])} : ${getPrecision(d[y.sup])}${(y.sub === "dummy") ? "" : "/" + getPrecision(d[y.sub]) + "=" + getPrecision(d[y.sup] / d[y.sub])} ]`)
+    showTooltip() {
+        return (d) => {
+            this.tooltip.style("visibility", "visible")
+                .text(`${d.name}  ${d.location} [ ${getPrecision(this.xAST.evaluate(d))}, ${getPrecision(this.yAST.evaluate(d))} ]`)
         }
     }
 
-    static hideTooltip(_, tooltip) {
-        return function (d) {
-            tooltip.style("visibility", "hidden")
+    hideTooltip() {
+        return (d) => {
+            this.tooltip.style("visibility", "hidden")
         }
     }
 
     static showPoint(
-        { x, y },
+        xAST,
+        yAST,
         scale,
         plotStyle,
-        { styleClass }
+        { styleClass, optionalClasses }
     ) {
 
         return function (d) {
-            const cx = scale.x(+d[x.sup] / +d[x.sub])
-            const cy = scale.y(+d[y.sup] / +d[y.sub])
+            const cx = scale.x(xAST.evaluate(d))
+            const cy = scale.y(yAST.evaluate(d))
 
             const self = d3.select(this)
 
@@ -127,7 +132,7 @@ class Binary extends Graph {
             }
             self.attr('stroke-width', d => d.study === "mine" ? 1 : "none")
                 .attr("fill", "none")
-                .attr("class", d => Graph.setClass(d, styleClass))
+                .attr("class", d => setClass(d, "Binary", styleClass, optionalClasses))
                 .attr("opacity", plotStyle.opacity)
                 .transition()
                 .attr("r", plotStyle.r)
@@ -149,11 +154,38 @@ class Binary extends Graph {
         }
     }
 
+    getSetting() {
+        const setting = {};
+        [...document.querySelector(this.settingId).querySelectorAll("input")].forEach(d => {
+            switch (d.type) {
+                case "checkbox":
+                    setting[d.id] = d.checked;
+                    break;
+                case "text":
+                    setting[d.id] = d.value;
+                    break;
+                case "number":
+                    setting[d.id] = parseFloat(d.value);
+                    break;
+                case "range":
+                    setting[d.id] = parseFloat(d.value);
+                    break;
+                default:
+                    setting[d.id] = d.value;
+                    break;
+            }
+        });
+        [...document.querySelector(this.settingId).querySelectorAll("select")].forEach(d => {
+            setting[d.id] = d.value;
+        })
+        return setting
+    }
 
-    updateSvgSize() {
+
+    updateFigureSize() {
         const width = parseInt(
-            document.querySelector("body").clientWidth * this.state.imageSize);
-        const aspect = this.state.aspect;
+            document.querySelector("body").clientWidth * this.console.imageSize);
+        const aspect = this.console.aspect;
 
         this.graphGeometry.figureSize = {
             width: parseInt(width),
@@ -161,34 +193,30 @@ class Binary extends Graph {
         }
     }
 
-    setStateX() {
-        this.state.x = Binary.parseDataName(
-            this.state.xName,
-            this.state.x_min,
-            this.state.x_max,
-            this.state.checkLogX
-        )
+    updateXAxis() {
+        this.xAxis.label = this.console.xName
+        this.xAxis.setRange(this.console.x_min, this.console.x_max)
+        this.yAxis.scaleType = (this.console.checkLogX) ? "log" : "linear"
+
+        this.xAST.parse(this.console.xName)
     }
 
-    setStateY() {
-        this.state.y = Binary.parseDataName(
-            this.state.yName,
-            this.state.y_min,
-            this.state.y_max,
-            this.state.checkLogY
-        )
+    updateYAxis() {
+        this.yAxis.label = this.console.yName
+        this.yAxis.setRange(this.console.y_min, this.console.y_max)
+        this.yAxis.scaleType = (this.console.checkLogY) ? "log" : "linear"
+        this.yAST.parse(this.console.yName)
     }
 
 
     updateTitle() {
-        const { x, y } = this.state;
-        this.setTitle(`${x.name} vs. ${y.name}`);
+        this.setTitle(`${this.xAxis.label} vs. ${this.yAxis.label}`);
     }
 
     updateAxisType() {
         const size = this.graphGeometry.figureSize;
         const axis = this.graphGeometry.axisSize;
-        this.scale.x = (this.state.x.islog)
+        this.scale.x = (this.xAxis.isLog())
             ? d3.scaleLog()
             : d3.scaleLinear();
         this.scale.x.domain(this.extent.x)
@@ -197,7 +225,7 @@ class Binary extends Graph {
         this.axis.x = d3.axisBottom(this.scale.x).ticks(5)
         this.axis.x.tickSize(6, -size.height);
 
-        this.scale.y = (this.state.y.islog)
+        this.scale.y = (this.yAxis.isLog())
             ? d3.scaleLog()
             : d3.scaleLinear();
         this.scale.y.domain(this.extent.y)
@@ -210,58 +238,33 @@ class Binary extends Graph {
 
     updateExtent({ data }) {
         if (!Array.isArray(data)) return null;
-        const { x, y } = this.state;
+
+        const xRangeCand = d3.extent(data
+            .map(d => this.xAST.evaluate(d))
+            .filter(isFinite))
+        const yRangeCand = d3.extent(data
+            .map(d => this.yAST.evaluate(d))
+            .filter(isFinite))
+
         this.extent.x = [
-            (isNaN(x.min))
-                ? d3.min(data.filter(d => isFinite(+d[x.sup] / +d[x.sub])), d => +d[x.sup] / +d[x.sub])
-                : x.min,
-            (isNaN(x.max))
-                ? d3.max(data.filter(d => isFinite(+d[x.sup] / +d[x.sub])), d => +d[x.sup] / +d[x.sub])
-                : x.max
+            isNaN(this.xAxis.min)
+                ? xRangeCand[0]
+                : this.xAxis.min,
+            isNaN(this.xAxis.max)
+                ? xRangeCand[1]
+                : this.xAxis.max
         ];
 
         this.extent.y = [
-            (isNaN(y.min))
-                ? d3.min(data.filter(d => isFinite(+d[y.sup] / +d[y.sub])), d => +d[y.sup] / +d[y.sub])
-                : y.min,
-            (isNaN(y.max))
-                ? d3.max(data.filter(d => isFinite(+d[y.sup] / +d[y.sub])), d => +d[y.sup] / +d[y.sub])
-                : y.max
+            isNaN(this.yAxis.min)
+                ? yRangeCand[0]
+                : this.yAxis.min,
+            isNaN(this.yAxis.max)
+                ? yRangeCand[1]
+                : this.yAxis.max
         ];
 
-    }
 
-
-    static parseDataName(name, min, max, islog) {
-        const obj = {
-            name: name,
-            islog: islog,
-            max: max,
-            min: min,
-            char: new Array(name.match(/[A-Z]+/gi)),
-            num: new Array(name.match(/[0-9]+/g))
-        };
-        const type = (name.match(/^[0-9]+/))
-            ? {
-                type: "isotope",
-                element: name.match(/[a-z]+/i)[0],
-                sup: name,
-                sub: "dummy"
-            }
-            : (name.match(/\//))
-                ? {
-                    type: "ratio",
-                    element: name.split("/")[0],
-                    sup: name.split("/")[0],
-                    sub: name.split("/")[1]
-                }
-                : {
-                    type: "abundance",
-                    element: "dummy",
-                    sup: name,
-                    sub: "dummy"
-                }
-        return Object.assign(obj, type);
     }
 
 }

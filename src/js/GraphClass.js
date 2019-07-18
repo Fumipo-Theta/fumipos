@@ -1,13 +1,7 @@
 import GraphGeometry from "./entity/graph_geometry"
-import GraphStyle from "./entity/graph_style"
 import TextStyle from "./entity/text_style"
-
-const testData = [
-    { x: 1, y: 2, dummy: 1 },
-    { x: 0, y: -1, dummy: 1 },
-    { x: 2, y: 10, dummy: 1 }
-]
-
+import GraphAxisInfo from "./entity/graph_axis_info"
+import NotImplementedError from "./error/not_implemented_error"
 
 /**
  * Grpahクラスの作り方
@@ -39,7 +33,7 @@ export class Graph {
         this.settingId = "#" + settingId;
         this.tooltip = d3.select("#" + tooltipId);
         this.clipPathId = "clip_" + graphId
-        this.state = {}
+        this.console = {}
         this.graphGeometry = new GraphGeometry({
             figureSize: { width: 300, height: 200 },
             figurePadding: { left: 10, right: 15, top: 15, buttom: 10 },
@@ -52,6 +46,9 @@ export class Graph {
         this.xtick = new TextStyle({ fontSize: 20 })
         this.ytick = new TextStyle({ fontSize: 20 })
 
+        this.xAxis = new GraphAxisInfo("x", 0, 1, "linear")
+        this.yAxis = new GraphAxisInfo("y", 0, 1, "linear")
+
         this.axis = {}
         this.scale = {}
         this.extent = { x: [0, 1], y: [0, 1] }
@@ -63,25 +60,25 @@ export class Graph {
     }
 
     initialize(state) {
-        this.readSetting();
-        this.setStateX();
-        this.setStateY();
+        this.console = this.getSetting();
+        this.updateXAxis();
+        this.updateYAxis();
         this.updateExtent(state);
-        this.updateSvgSize();
-        this.createSvg();
+        this.updateFigureSize();
+        this.createFigure();
         this.createAxis();
         this.update(state);
     }
 
-    setPlotStyle(state) {
+    setPlotStyle(uiState) {
         const {
             r,
             strokeWidth
         } = this.magnifyMyData;
         this.plotStyle = {
-            r: Graph.plotStyle("Radius", r, state),
-            strokeWidth: Graph.plotStyle("Width", strokeWidth, state),
-            opacity: Graph.plotStyle("Opacity", 1, state)
+            r: Graph.plotStyle("Radius", r, uiState),
+            strokeWidth: Graph.plotStyle("Width", strokeWidth, uiState),
+            opacity: Graph.plotStyle("Opacity", 1, uiState)
         };
     }
 
@@ -92,9 +89,7 @@ export class Graph {
                 : (d.onState === "on")
                     ? symbol["on" + type]
                     : symbol["base" + type];
-            return (d.study === "mine")
-                ? value * multiple
-                : value
+            return value
         }
     }
 
@@ -108,57 +103,14 @@ export class Graph {
      * また, プロット要素のclass属性の設定や取得には, それぞれ
      * Graph.setClass, Graph.extractClassメソッドを用いる.
      *
-     * @param {uiState} state
+     * @param {uiState} uiState
      */
-    replot(state) {
-        const { data, symbol, styleClass } = state.data;
-        const binded = this.canvas.selectAll("circle")
-            .data(data)
-        binded.exit().remove();
-        const entered = binded.enter().append("circle")
-        const merged = entered.merge(binded);
-        merged.each(Graph.showPlot());
+    replot(uiState) {
+        throw new NotImplementedError("replot")
     }
 
-    static showPlot() {
-        return function (d) {
-            const selected = d3.select(this);
-        }
-    }
 
-    static setClass(d, styleClass) {
-        const styleColumn = (d.hasOwnProperty(styleClass))
-            ? d[styleClass]
-            : "none";
-        const study = (d.hasOwnProperty("study"))
-            ? d.study
-            : "none";
-
-
-        return `Binary D${d.id} ${styleColumn} ${study} ${d.onState}`
-    }
-
-    static extractClass(className, selector) {
-        const classList = className.split(" ");
-        switch (selector) {
-            case "id":
-                return classList[1];
-
-            case "style":
-                return classList[2];
-
-            case "study":
-                return classList[3];
-            case "onState":
-                return classList[4];
-
-            default:
-                return false;
-
-        }
-    }
-
-    createSvg() {
+    createFigure() {
         d3.select(this.graph + " .plot").append("h1");
         this.svg = d3.select(this.graph + " .plot")
             .append("svg")
@@ -224,11 +176,11 @@ export class Graph {
 
     update(state) {
         this.setPlotStyle(state);
-        this.readSetting();
-        this.setStateX();
-        this.setStateY();
+        this.console = this.getSetting();
+        this.updateXAxis();
+        this.updateYAxis();
         this.updateExtent(state);
-        this.updateSvgSize();
+        this.updateFigureSize();
         this.updateSvg();
         this.updateTitle();
         this.updateAxis();
@@ -240,6 +192,7 @@ export class Graph {
     }
 
     updateTitle() {
+        throw new NotImplementedError("updateTitle")
     }
 
     updateSvg() {
@@ -297,14 +250,14 @@ export class Graph {
             .attr("y", (-40 - this.ylabel.size) * 0.5)
             .style("font-size", this.ylabel.size)
             .transition()
-            .text(this.state.y.name || "y axis");
+            .text(this.yAxis.label);
 
         this.svg.select("text.xlabel")
             .attr("x", axis.width * 0.5)
             .attr("y", (offset.x + this.xlabel.size) * 0.5)
             .style("font-size", this.xlabel.size)
             .transition()
-            .text(this.state.x.name || "x axis");
+            .text(this.xAxis.label);
 
         this.svg.selectAll("path.domain").attr("fill", "none");
     }
@@ -314,14 +267,9 @@ export class Graph {
         const padding = this.graphGeometry.figurePadding
         const offset = this.graphGeometry.axisOffset
 
-        const { x, y } = this.state;
-        const xlabelLength = (x.hasOwnProperty("name"))
-            ? x.name.length
-            : 0
+        const xlabelLength = this.xAxis.label.length
 
-        const ylabelLength = (y.hasOwnProperty("name"))
-            ? y.name.length
-            : 0
+        const ylabelLength = this.yAxis.label.length
 
         this.xlabel.size = 24// parseInt(size.width / 20);
         while (xlabelLength * this.xlabel.size > size.width) {
@@ -348,23 +296,12 @@ export class Graph {
 
     }
 
-    updateSvgSize() {
-
+    updateFigureSize() {
+        throw new NotImplementedError("updateFigureSize")
     }
 
     updateAxisType() {
-        const size = this.graphGeometry.figureSize
-        const axis = this.graphGeometry.axisSize;
-
-        this.scale.x = d3.scaleLinear();
-        this.scale.x.domain(this.extent.x).range([0, axis.width]);
-        this.axis.x = d3.axisBottom(this.scale.x).ticks(5)
-        this.axis.x.tickSize(6, -size.height);
-
-        this.scale.y = d3.scaleLinear();
-        this.scale.y.domain(this.extent.y).range([axis.height, 0]);
-        this.axis.y = d3.axisLeft(this.scale.y).ticks(5)
-        this.axis.y.tickSize(6, -size.width);
+        throw new NotImplementedError("updateAxisType")
     }
 
     /**
@@ -376,50 +313,28 @@ export class Graph {
      *
      * 設定をもとにインスタンス変数の状態を変更するためには,
      * このメソッドを継承した上で処理を追加する.
+     *
+     * @return {Object<string,number|string|boolean>}
     */
-    readSetting() {
-        [...document.querySelector(this.settingId).querySelectorAll("input")].forEach(d => {
-            switch (d.type) {
-                case "checkbox":
-                    this.state[d.id] = d.checked;
-                    break;
-                case "text":
-                    this.state[d.id] = d.value;
-                    break;
-                case "number":
-                    this.state[d.id] = parseFloat(d.value);
-                    break;
-                case "range":
-                    this.state[d.id] = parseFloat(d.value);
-                    break;
-                default:
-                    this.state[d.id] = d.value;
-                    break;
-            }
-        });
-        [...document.querySelector(this.settingId).querySelectorAll("select")].forEach(d => {
-            this.state[d.id] = d.value;
-        })
+    getSetting() {
+        throw new NotImplementedError("getSetting")
     }
+
 
     /**
      * グラフの軸ラベルを設定するには, state.x, state.yについて
      * nameを設定する必要がある.
      */
-    setStateX() {
-        this.state.x = {
-            name: ""
-        }
+    updateXAxis() {
+        throw new NotImplementedError("updateXAxis")
     }
 
-    setStateY() {
-        this.state.y = {
-            name: ""
-        }
+    updateYAxis() {
+        throw new NotImplementedError("updateYAxis")
     }
 
     updateExtent({ data }) {
-
+        throw new NotImplementedError("updateExtent")
     }
 }
 
@@ -498,5 +413,13 @@ export class GraphManager {
 
     update(id) {
         this.instance[id].update(this.uiState);
+    }
+
+    style() {
+        throw new NotImplementedError("style")
+    }
+
+    template(uiState) {
+        throw new NotImplementedError("template")
     }
 };

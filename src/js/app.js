@@ -152,7 +152,7 @@ const state = {
         outWidth: 0.25,
     },
     styleClass: "",
-
+    optionalClasses: ["study"],
     dataStack: [],
 }
 

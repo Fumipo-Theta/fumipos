@@ -1,6 +1,7 @@
 import { GraphManager, Graph } from "./GraphClass";
 import TransExcramate from "./Graph-event-trans-excramate";
 import funcTools from "./lib/funcTools"
+import { setClass } from "./usecases/plot_data_class_name"
 
 const {
     transduce,
@@ -25,9 +26,10 @@ class Abundance extends Graph {
 
 
     replot(state) {
-        this.state.refData = Abundance.getNormList(state, this.state);
+        this.console.refData = Abundance.getNormList(state, this.console);
         const plotFunc = Abundance.showPlot(
-            this.state,
+            this.xAxis,
+            this.console,
             this.scale,
             this.plotStyle,
             state
@@ -40,19 +42,19 @@ class Abundance extends Graph {
         merged.each(plotFunc)
 
         merged.on("mouseover", TransExcramate.onMouseOver(
-            this.state,
+            this.console,
             this.plotStyle,
             state
         ))
-            .on("mouseover.tooltip", Abundance.showTooltip(this.state, this.tooltip))
+            .on("mouseover.tooltip", this.showTooltip())
             .on("mouseout", TransExcramate.onMouseOut(
-                this.state,
+                this.console,
                 this.plotStyle,
                 state
             ))
-            .on("mouseout.tooltip", Abundance.hideTooltip(this.state, this.tooltip))
+            .on("mouseout.tooltip", this.hideTooltip())
             .on("click", TransExcramate.onClick(
-                this.state,
+                this.console,
                 this.plotStyle,
                 state
             ));
@@ -61,27 +63,27 @@ class Abundance extends Graph {
         this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle))
     }
 
-    static showTooltip(_, tooltip) {
-        return function (d) {
-            tooltip.style("visibility", "visible")
+    showTooltip() {
+        return (d) => {
+            this.tooltip.style("visibility", "visible")
                 .text(`${d.name}  ${d.location}`)
         }
     }
 
-    static hideTooltip(_, tooltip) {
-        return function (d) {
-            tooltip.style("visibility", "hidden")
+    hideTooltip() {
+        return (d) => {
+            this.tooltip.style("visibility", "hidden")
         }
     }
 
 
     static showPlot(
-        { x, doNormalization, refData },
+        xAxis,
+        { doNormalization, refData },
         scale,
         plotStyle,
-        { symbol, styleClass }
+        { symbol, styleClass, optionalClasses }
     ) {
-        const { label } = x
         const defined = d => !isNaN(d.y) && d.y !== 0 && isFinite(d.y);
         const line = d3.line()
             .x(d => scale.x(d.x))
@@ -89,7 +91,7 @@ class Abundance extends Graph {
             .defined(defined);
 
 
-        const getOneLine = d => label.map(e => ({
+        const getOneLine = d => xAxis.label.map(e => ({
             x: e,
             y: d[e]
         }))
@@ -98,12 +100,12 @@ class Abundance extends Graph {
             const data = getOneLine(normalize(d))
             const filtered = data.filter(defined)
             d3.select(this)
-                .attr("class", d => Graph.setClass(d, styleClass))
+                .attr("class", d => setClass(d, "Abundance", styleClass, optionalClasses))
                 .selectAll("path")
                 .remove()
             d3.select(this).append("path")
                 .attr("fill", "none")
-                .attr("class", d => Graph.setClass(d, styleClass))
+                .attr("class", d => setClass(d, "Abundance", styleClass, optionalClasses))
                 .attr("stroke-width", plotStyle.strokeWidth)
                 .attr("opacity", plotStyle.opacity)
                 .transition()
@@ -112,7 +114,7 @@ class Abundance extends Graph {
             if (data.length === filtered.length) return;
             d3.select(this).append("path")
                 .attr("fill", "none")
-                .attr("class", d => Graph.setClass(d, styleClass))
+                .attr("class", d => setClass(d, "Abundance", styleClass, optionalClasses))
                 .attr("stroke-width", plotStyle.strokeWidth * 0.9)
                 .attr("opacity", plotStyle.opacity)
                 .attr("stroke-dasharray", "1 8")
@@ -132,10 +134,39 @@ class Abundance extends Graph {
             .filter(e => e.name === normInfo[0] && e.study === normInfo[1])[0]
     }
 
-    updateSvgSize() {
+    getSetting() {
+        const setting = {};
+        [...document.querySelector(this.settingId).querySelectorAll("input")].forEach(d => {
+            switch (d.type) {
+                case "checkbox":
+                    setting[d.id] = d.checked;
+                    break;
+                case "text":
+                    setting[d.id] = d.value;
+                    break;
+                case "number":
+                    setting[d.id] = parseFloat(d.value);
+                    break;
+                case "range":
+                    setting[d.id] = parseFloat(d.value);
+                    break;
+                default:
+                    setting[d.id] = d.value;
+                    break;
+            }
+        });
+        [...document.querySelector(this.settingId).querySelectorAll("select")].forEach(d => {
+            setting[d.id] = d.value;
+        })
+
+        setting.normInfo = setting.reserver.split(",")
+        return setting
+    }
+
+    updateFigureSize() {
         const width = parseInt(
-            document.querySelector("body").clientWidth * this.state.imageSize);
-        const aspect = this.state.aspect;
+            document.querySelector("body").clientWidth * this.console.imageSize);
+        const aspect = this.console.aspect;
 
         this.graphGeometry.figureSize = {
             width: parseInt(width),
@@ -143,30 +174,20 @@ class Abundance extends Graph {
         }
     }
 
-    readSetting() {
-        super.readSetting();
-        this.state.normInfo = this.state.reserver.split(",")
+
+    updateXAxis() {
+        this.xAxis.label = this.console.eleName
+            .replace(/,/g, " ")
+            .replace(/\s+/g, " ")
+            .replace(/\s$/, "")
+            .split(" ")
     }
 
-    setStateX() {
-        this.state.x = {
-            label: this.state.eleName
-                .replace(/,/g, " ")
-                .replace(/\s+/g, " ")
-                .replace(/\s$/, "")
-                .split(" "),
-            name: " "
-        }
-    }
-
-    setStateY() {
-        this.state.y = {
-            name: " "
-        }
+    updateYAxis() {
     }
 
     updateTitle() {
-        const { x, y, normInfo, doNormalization } = this.state;
+        const { normInfo, doNormalization } = this.console;
         this.setTitle((doNormalization)
             ? `Normalized by ${normInfo[0]}`
             : `Abundance`);
@@ -219,8 +240,8 @@ class Abundance extends Graph {
     }
 
     updateExtent() {
-        const { x, y_min, y_max } = this.state;
-        this.extent.x = x.label;
+        const { y_min, y_max } = this.console;
+        this.extent.x = this.xAxis.label;
         this.extent.y = [y_min, y_max]
     }
 }
