@@ -1,7 +1,7 @@
 {
     "name": "fumipos",
-    "version": "1.0.0",
-    "description": "",
+    "version": "3.0.0",
+    "description": "Fantastic Usable Multiple Interactive Plot Operating System",
     "main": "app.js",
     "directories": {
         "doc": "docs"
@@ -12,7 +12,7 @@
         "watch": "webpack --watch"
     },
     "keywords": [],
-    "author": "",
+    "author": "Fumipo-Theta",
     "license": "ISC",
     "devDependencies": {
         "webpack": "^4.7.0",
@@ -24,7 +24,7 @@
         "jquery": "^3.3.1",
         "jquery-ui": "^1.12.1",
         "jquery-ui-touch-punch": "^0.2.3",
-        "node-fetch": "^2.1.2",
+        "node-fetch": "^2.6.0",
         "webpack-jquery-loaders-pack": "^0.1.1"
     }
 }
