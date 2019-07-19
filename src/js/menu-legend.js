@@ -214,7 +214,7 @@ export const exportToEmitter = [
 
 export const eventSetter = (emitter, uiState) => {
 
-    setLegendFromUrl(uiState)("../data/legend_NE_Shikoku.json")
+    setLegendFromUrl(uiState)("./data/legend_NE_Shikoku.json")
 
     document.getElementById("legendJSON").addEventListener('change', function (ev) {
         const file = ev.target.files;
