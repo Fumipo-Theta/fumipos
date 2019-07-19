@@ -2,7 +2,7 @@ export const btnName = "nav_save";
 
 export const style = `
 a.nav_save::before{
-  content:url(../image/ic_file_download_24px.svg);
+  content:url(./image/ic_file_download_24px.svg);
   position: relative;
 
 }
@@ -10,7 +10,7 @@ a.nav_save::before{
 a.nav_save:hover::before,
 a.nav_save:focus::before{
   transition: all .3s;
-  content:url(../image/ic_file_download_24px_hover.svg);
+  content:url(./image/ic_file_download_24px_hover.svg);
 }
 `
 

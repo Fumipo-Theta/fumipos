@@ -4,7 +4,7 @@ export const btnName = "nav_setting";
 
 export const style = `
 a.nav_setting::before{
-  content:url(../image/ic_settings_black_24px.svg);
+  content:url(./image/ic_settings_black_24px.svg);
   position: relative;
   stroke : #eeeeee;
 }
@@ -12,7 +12,7 @@ a.nav_setting::before{
 a.nav_setting:hover::before,
 a.nav_setting:focus::before{
   transition: all .3s;
-  content:url(../image/ic_settings_black_24px_hover.svg);
+  content:url(./image/ic_settings_black_24px_hover.svg);
 }
 `
 

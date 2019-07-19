@@ -2,7 +2,7 @@ export const btnName = "nav_delete";
 
 export const style = `
 a.nav_delete::before{
-  content:url(../image/ic_delete_sweep_black_24px.svg);
+  content:url(./image/ic_delete_sweep_black_24px.svg);
   position: relative;
 
 }
@@ -10,7 +10,7 @@ a.nav_delete::before{
 a.nav_delete:hover::before,
 a.nav_delete:focus::before{
   transition: all .3s;
-  content:url(../image/ic_delete_sweep_black_24px_hover.svg);
+  content:url(./image/ic_delete_sweep_black_24px_hover.svg);
 }
 `
 
