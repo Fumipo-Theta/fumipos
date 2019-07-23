@@ -2,8 +2,22 @@ import { GraphManager, Graph } from "./GraphClass";
 import TransExcramate from "./Graph-event-trans-excramate";
 import funcTools from "./lib/funcTools"
 import { setClass } from "./usecases/plot_data_class_name"
-import AST from "ast/src/arithmetic/primitive/ast"
+import PrimitiveAST from "ast/src/arithmetic/primitive/ast"
+import labelPresenter from "./usecases/label_presenter"
 
+class AST extends PrimitiveAST {
+    constructor(...arg) {
+        super(...arg)
+    }
+
+    evaluate(...arg) {
+        try {
+            return super.evaluate(...arg)
+        } catch (e) {
+            if (e instanceof TypeError) return NaN
+        }
+    }
+}
 
 const {
     transduce,
@@ -194,7 +208,7 @@ class Binary extends Graph {
     }
 
     updateXAxis() {
-        this.xAxis.label = this.console.xName
+        this.xAxis.label = labelPresenter(this.console.xName)
         this.xAxis.setRange(this.console.x_min, this.console.x_max)
         this.yAxis.scaleType = (this.console.checkLogX) ? "log" : "linear"
 
@@ -202,7 +216,7 @@ class Binary extends Graph {
     }
 
     updateYAxis() {
-        this.yAxis.label = this.console.yName
+        this.yAxis.label = labelPresenter(this.console.yName)
         this.yAxis.setRange(this.console.y_min, this.console.y_max)
         this.yAxis.scaleType = (this.console.checkLogY) ? "log" : "linear"
         this.yAST.parse(this.console.yName)
