@@ -2,7 +2,22 @@ import { GraphManager, Graph } from "./GraphClass";
 import TransExcramate from "./Graph-event-trans-excramate";
 import funcTools from "./lib/funcTools"
 import { setClass } from "./usecases/plot_data_class_name"
-import AST from "ast/src/arithmetic/primitive/ast"
+import PrimitiveAST from "ast/src/arithmetic/primitive/ast"
+import labelPresenter from "./usecases/label_presenter"
+
+class AST extends PrimitiveAST {
+    constructor(...arg) {
+        super(...arg)
+    }
+
+    evaluate(...arg) {
+        try {
+            return super.evaluate(...arg)
+        } catch (e) {
+            if (e instanceof TypeError) return NaN
+        }
+    }
+}
 
 
 const {
@@ -62,7 +77,7 @@ class Binary extends Graph {
             this.plotStyle,
             uiState
         ))
-            .on("mouseover.tooltip", this.showTooltip())
+            .on("mouseover.tooltip", this.showTooltip(uiState))
             .on("mouseout", TransExcramate.onMouseOut(
                 this.console,
                 this.plotStyle,
@@ -97,16 +112,16 @@ class Binary extends Graph {
         }
     }
 
-    showTooltip() {
+    showTooltip(uiState) {
         return (d) => {
-            this.tooltip.style("visibility", "visible")
-                .text(`${d.name}  ${d.location} [ ${getPrecision(this.xAST.evaluate(d))}, ${getPrecision(this.yAST.evaluate(d))} ]`)
+            this.tooltip.updateContent(`${uiState.tooltipAST.evaluate(d)} [ ${getPrecision(this.xAST.evaluate(d))}, ${getPrecision(this.yAST.evaluate(d))} ]`)
+            this.tooltip.show()
         }
     }
 
     hideTooltip() {
         return (d) => {
-            this.tooltip.style("visibility", "hidden")
+            this.tooltip.hide()
         }
     }
 
@@ -194,7 +209,7 @@ class Binary extends Graph {
     }
 
     updateXAxis() {
-        this.xAxis.label = this.console.xName
+        this.xAxis.label = labelPresenter(this.console.xName)
         this.xAxis.setRange(this.console.x_min, this.console.x_max)
         this.yAxis.scaleType = (this.console.checkLogX) ? "log" : "linear"
 
@@ -202,10 +217,14 @@ class Binary extends Graph {
     }
 
     updateYAxis() {
-        this.yAxis.label = this.console.yName
+        this.yAxis.label = labelPresenter(this.console.yName)
         this.yAxis.setRange(this.console.y_min, this.console.y_max)
         this.yAxis.scaleType = (this.console.checkLogY) ? "log" : "linear"
         this.yAST.parse(this.console.yName)
+    }
+
+    updateState() {
+
     }
 
 

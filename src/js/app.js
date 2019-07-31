@@ -1,5 +1,6 @@
 import TopMenu from "./top-menu";
 import * as menuFileLoad from "./menu-file-load";
+import * as menuTooltip from "./menu-tooltip"
 import * as menuSymbol from "./menu-symbol";
 import * as menuLegend from "./menu-legend";
 import GraphAppender from "./graph-appender";
@@ -11,6 +12,22 @@ import * as graphPngBtn from "./graph-btn-save_as_png";
 import * as graphRefreshBtn from "./graph-btn-refresh";
 import UIUpdater from "./ui-updater";
 import Overlay from "./overlay"
+import Tooltip from "./tooltip"
+import ConcatStringAST from "ast/src/arithmetic/concat_string/ast"
+class StringAST extends ConcatStringAST {
+    constructor(...arg) {
+        super(...arg)
+    }
+
+    evaluate(...arg) {
+        try {
+            return super.evaluate(...arg)
+        } catch (e) {
+            if (e instanceof TypeError) return ""
+        }
+    }
+}
+
 
 
 const initializer = {
@@ -154,24 +171,28 @@ const state = {
     styleClass: "",
     optionalClasses: ["study"],
     dataStack: [],
+    tooltipAST: new StringAST()
 }
 
 const emitter = new UIUpdater()
 const settingOverlay = new Overlay("#setting_overlay")
 const topMenu = new TopMenu("fixed-menu-contents", settingOverlay, emitter, state)
-const ga = new GraphAppender("graph_area", "setting_menu", settingOverlay, emitter, state);
+const tooltip = new Tooltip("#graph_area")
+const ga = new GraphAppender("graph_area", "setting_menu", settingOverlay, tooltip, emitter, state);
+
+
 
 /*
   ここで明示的にemitterにactionを登録スべきか,
   menuアイテムなどを読み込むときに自動的にactionがセットされるようにしたほうがいいか.
 */
 
-window.onresize = ev => {
+window.onresize = () => {
     emitter.replot();
     emitter.afterReplot();
 }
 
-window.onload = ev => {
+window.onload = () => {
 
     let url = './css/graph_common.css'
 
@@ -189,6 +210,7 @@ window.onload = ev => {
 
     topMenu.register(
         menuFileLoad,
+        menuTooltip,
         menuSymbol,
         menuLegend,
     );

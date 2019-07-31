@@ -16,6 +16,11 @@ const {
 
 
 class Abundance extends Graph {
+    /**
+     * @param{string} graph
+     * @param{string} setting
+     * @param{Tooltip} tooltip
+     */
     constructor(graph, setting, tooltip) {
         super(graph, setting, tooltip);
         this.magnifyMyData = {
@@ -25,17 +30,17 @@ class Abundance extends Graph {
     }
 
 
-    replot(state) {
-        this.console.refData = Abundance.getNormList(state, this.console);
+    replot(uiState) {
+        this.console.refData = Abundance.getNormList(uiState, this.console);
         const plotFunc = Abundance.showPlot(
             this.xAxis,
             this.console,
             this.scale,
             this.plotStyle,
-            state
+            uiState
         );
 
-        const path = this.canvas.selectAll("g").data(state.data);
+        const path = this.canvas.selectAll("g").data(uiState.data);
         path.exit().transition().remove()
         const entered = path.enter().append("g");
         const merged = entered.merge(path);
@@ -44,35 +49,35 @@ class Abundance extends Graph {
         merged.on("mouseover", TransExcramate.onMouseOver(
             this.console,
             this.plotStyle,
-            state
+            uiState
         ))
-            .on("mouseover.tooltip", this.showTooltip())
+            .on("mouseover.tooltip", this.showTooltip(uiState))
             .on("mouseout", TransExcramate.onMouseOut(
                 this.console,
                 this.plotStyle,
-                state
+                uiState
             ))
             .on("mouseout.tooltip", this.hideTooltip())
             .on("click", TransExcramate.onClick(
                 this.console,
                 this.plotStyle,
-                state
+                uiState
             ));
 
 
         this.svg.on("click", TransExcramate.globalClick(merged, this.plotStyle))
     }
 
-    showTooltip() {
+    showTooltip(uiState) {
         return (d) => {
-            this.tooltip.style("visibility", "visible")
-                .text(`${d.name}  ${d.location}`)
+            this.tooltip.updateContent(`${uiState.tooltipAST.evaluate(d)}`)
+            this.tooltip.show()
         }
     }
 
     hideTooltip() {
         return (d) => {
-            this.tooltip.style("visibility", "hidden")
+            this.tooltip.hide()
         }
     }
 
