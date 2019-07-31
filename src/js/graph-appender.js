@@ -2,9 +2,10 @@ import publisher from "./pub-sub"
 import { isActive, activate, deactivate } from "./usecases/toggle_active_state"
 
 export default class GraphAppender {
-    constructor(graphAreaId, graphMenuContentsId, overlay, eventEmitter, uiState) {
+    constructor(graphAreaId, graphMenuContentsId, overlay, tooltip, eventEmitter, uiState) {
         this.exportToEventEmitter(eventEmitter);
         this.emitter = eventEmitter;
+        this.tooltip = tooltip;
         this.uiState = uiState;
         this.graphMenuBtns = [];
         this.graphAreaId = graphAreaId;
@@ -24,8 +25,6 @@ export default class GraphAppender {
 
     initialize() {
         this.setGraphAppendButtonArea();
-        this.setTooltip();
-
         return this;
     }
 
@@ -39,25 +38,8 @@ export default class GraphAppender {
         this.dom = document.querySelector("#graphAppend_button");
     }
 
-    setTooltip() {
-        const tooltip = document.createElement("span");
-        tooltip.id = "graph_tooltip";
-        tooltip.setAttribute("style", `
-    position: sticky;
-    bottom : 0;
-    left : 0;
-    z-index: 10;
-    visibility: hidden;
-    padding: 2px 5px;
-    border: 1px solid #000;
-    border-radius: 3px;
-    background-color: #333;
-    color: #fff;
-    font-size: 1.5rem;
-    `)
-        document.querySelector("#wrapper").appendChild(tooltip);
-        this.tooltipId = tooltip.id;
-    }
+
+
 
 
     registerBtns(...graphMenuBtns) {
@@ -114,7 +96,7 @@ export default class GraphAppender {
         G.append(
             this.getTypeId("graph", type, id),
             this.getTypeId("setting", type, id),
-            this.tooltipId,
+            this.tooltip,
             id
         )
         this.emitter.afterReplot();

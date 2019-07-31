@@ -19,6 +19,7 @@ class AST extends PrimitiveAST {
     }
 }
 
+
 const {
     transduce,
     Dataframe
@@ -76,7 +77,7 @@ class Binary extends Graph {
             this.plotStyle,
             uiState
         ))
-            .on("mouseover.tooltip", this.showTooltip())
+            .on("mouseover.tooltip", this.showTooltip(uiState))
             .on("mouseout", TransExcramate.onMouseOut(
                 this.console,
                 this.plotStyle,
@@ -111,16 +112,16 @@ class Binary extends Graph {
         }
     }
 
-    showTooltip() {
+    showTooltip(uiState) {
         return (d) => {
-            this.tooltip.style("visibility", "visible")
-                .text(`${d.name}  ${d.location} [ ${getPrecision(this.xAST.evaluate(d))}, ${getPrecision(this.yAST.evaluate(d))} ]`)
+            this.tooltip.updateContent(`${uiState.tooltipAST.evaluate(d)} [ ${getPrecision(this.xAST.evaluate(d))}, ${getPrecision(this.yAST.evaluate(d))} ]`)
+            this.tooltip.show()
         }
     }
 
     hideTooltip() {
         return (d) => {
-            this.tooltip.style("visibility", "hidden")
+            this.tooltip.hide()
         }
     }
 
@@ -220,6 +221,10 @@ class Binary extends Graph {
         this.yAxis.setRange(this.console.y_min, this.console.y_max)
         this.yAxis.scaleType = (this.console.checkLogY) ? "log" : "linear"
         this.yAST.parse(this.console.yName)
+    }
+
+    updateState() {
+
     }
 
 

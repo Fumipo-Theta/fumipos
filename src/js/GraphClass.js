@@ -28,10 +28,10 @@ import NotImplementedError from "./error/not_implemented_error"
  * * onClick
 */
 export class Graph {
-    constructor(graphId, settingId, tooltipId) {
+    constructor(graphId, settingId, tooltip) {
         this.graph = "#" + graphId;
         this.settingId = "#" + settingId;
-        this.tooltip = d3.select("#" + tooltipId);
+        this.tooltip = tooltip
         this.clipPathId = "clip_" + graphId
         this.console = {}
         this.graphGeometry = new GraphGeometry({
@@ -177,6 +177,7 @@ export class Graph {
     update(state) {
         this.setPlotStyle(state);
         this.console = this.getSetting();
+        this.updateState();
         this.updateXAxis();
         this.updateYAxis();
         this.updateExtent(state);
@@ -186,6 +187,8 @@ export class Graph {
         this.updateAxis();
         this.replot(state);
     }
+
+    updateState() { }
 
     setTitle(text) {
         d3.select(this.graph).select("h1").text(text);
@@ -402,8 +405,8 @@ export class GraphManager {
         return this.style();
     }
 
-    append(graphId, settingId, tooltipId, id) {
-        this.instance[id] = new this.Graph(graphId, settingId, tooltipId);
+    append(graphId, settingId, tooltip, id) {
+        this.instance[id] = new this.Graph(graphId, settingId, tooltip);
         this.instance[id].initialize(this.uiState)
     }
 

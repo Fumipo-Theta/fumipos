@@ -553,9 +553,14 @@ input[type="file"]:active+.file-parts {
     border-right: solid 1px var(--ui-black);
 }
 
-.menu-btn.active {
-    background-color: #2196f3;
+.menu-btn.active,
+.menu-btn.active:hover,
+.menu-btn.active:before,
+.menu-btn.active:hover:before {
+    background-color: var(--main-color);
     color: #cfdae4;
+    border-radius: 5px 5px 0 0;
+    border-bottom: 1px solid var(--main-color)
 }
 
 .menu-btn:before {
@@ -579,7 +584,9 @@ input[type="file"]:active+.file-parts {
 .menu-btn:hover:before,
 .menu-btn:focus:before {
     color: #ffffff;
-    background-color: var(--main-color);
+    background-color: var(--active-color);
+    border-radius: 5px 5px 0 0;
+    border-bottom: 1px solid var(--main-color)
 }
 
 .menu-btn:active,
@@ -790,7 +797,7 @@ a.close_button:focus::before {
     min-height: 10%;
     margin: 5px;
     padding: 5px;
-
+    border-radius: 10px;
 }
 
 .graph:hover {
