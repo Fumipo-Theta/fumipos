@@ -187,12 +187,12 @@ const ga = new GraphAppender("graph_area", "setting_menu", settingOverlay, toolt
   menuアイテムなどを読み込むときに自動的にactionがセットされるようにしたほうがいいか.
 */
 
-window.onresize = ev => {
+window.onresize = () => {
     emitter.replot();
     emitter.afterReplot();
 }
 
-window.onload = ev => {
+window.onload = () => {
 
     let url = './css/graph_common.css'
 
