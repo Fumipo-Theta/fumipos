@@ -146,6 +146,14 @@ const autoMode = {
 
 }
 
+/**
+ * {id} {name} ->{id}+ +{name}
+ * @param {string} expression
+ */
+const tooltipPreprocessor = (expression) => {
+    return expression.replace(/\}\s{0,}\{/g, "}+ +{")
+}
+
 const state = {
     data: [
         { x: 1, y: 2, dummy: 1, study: "mine" },
@@ -171,7 +179,7 @@ const state = {
     styleClass: "",
     optionalClasses: ["study"],
     dataStack: [],
-    tooltipAST: new StringAST()
+    tooltipAST: new StringAST(tooltipPreprocessor)
 }
 
 const emitter = new UIUpdater()
