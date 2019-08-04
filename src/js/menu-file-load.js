@@ -59,7 +59,12 @@ export function template(state) {
   </form>`
 };
 
-const createDataColumnIndex = (index_datalist, { data }) => {
+/**
+ * Update option DOMs according to data
+ * @param {string} index_datalist
+ * @param {UiState}
+ */
+const updateDataColumnsSudjestList = (index_datalist, { data }) => {
     if (data.length <= 0) return false;
     const options = d3.select(index_datalist)
         .selectAll("option")
@@ -89,7 +94,7 @@ export function eventSetter(emitter, uiState) {
             )(toEntries(tf.text2Dataframe(text, "csv")))
 
             document.querySelector("#selectedMainFile").innerHTML = (url);
-            createDataColumnIndex("#" + indexListId, uiState);
+            updateDataColumnsSudjestList("#" + indexListId, uiState);
         })
     };
 
@@ -128,7 +133,7 @@ export function eventSetter(emitter, uiState) {
 
             emitter.replot();
             emitter.afterReplot();
-            createDataColumnIndex("#" + indexListId, uiState);
+            updateDataColumnsSudjestList("#" + indexListId, uiState);
         };
 
         for (var i = 0; i < file.length; i++) {
